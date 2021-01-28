@@ -1,3 +1,11 @@
+/**
+ * @file
+ * @name vue-i18n.js
+ * @exports ../main.ts
+ * @exports ./axios.js
+ * @exports ./vuetify.js
+ * Operates Internationalization (i18n).
+ */
 import Vue from "vue";
 import VueI18n from "vue-i18n";
 

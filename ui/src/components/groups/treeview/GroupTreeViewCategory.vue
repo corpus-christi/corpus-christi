@@ -132,9 +132,7 @@
                 >
                   category</v-icon
                 >
-                <v-icon v-else-if="item.type === 'group'">
-                  group
-                </v-icon>
+                <v-icon v-else-if="item.type === 'group'"> group </v-icon>
               </template>
             </v-treeview>
           </v-card-text>

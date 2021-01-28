@@ -3,23 +3,35 @@
 </template>
 
 <script>
+/**
+ * @file
+ * @name App.vue
+ * @exports main.ts
+ * Main App. Does Initialization.
+ */
 import { mapMutations, mapState } from "vuex";
 import { setJWT } from "./plugins/axios";
 import { Locale } from "./models/Locale";
 import { eventBus } from "./plugins/event-bus.js";
 import DefaultLayout from "./layouts/DefaultLayout";
+import { mapGetters } from "vuex";
 
 export default {
   name: "App",
   components: {
     DefaultLayout,
   },
-  computed: mapState(["currentJWT"]),
+  computed: {
+    ...mapState(["currentJWT"]),
+    ...mapGetters(["currentLocaleModel"]),
+  },
   methods: mapMutations(["setLocaleModels", "setCurrentLocale"]),
 
+  /**
+   * @function
+   * Initialize early application stuff
+   */
   created: function () {
-    // Initialize early application stuff
-
     // Locales
     this.$http.get("/api/v1/i18n/locales").then((response) => {
       const localeData = response.data;
@@ -62,6 +74,7 @@ export default {
     // Authentication information in local storage.
     setJWT(this.currentJWT);
   },
+
   data() {
     return {
       bus: eventBus,

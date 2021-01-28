@@ -40,6 +40,7 @@
       </v-layout>
     </v-toolbar>
 
+    <!-- Table of existing assets -->
     <v-data-table
       :items-per-page-options="rowsPerPageItem"
       :headers="headers"
@@ -47,6 +48,9 @@
       :search="search"
       :loading="tableLoading"
       class="elevation-1"
+      hide-default-footer
+      @page-count="pageCount = $event"
+      :page.sync="page"
     >
       <template v-slot:item="props">
         <tr>
@@ -129,6 +133,9 @@
         </tr>
       </template>
     </v-data-table>
+    <div class="text-center pt-2">
+      <v-pagination v-model="page" :length="pageCount"></v-pagination>
+    </div>
 
     <v-snackbar v-model="snackbar.show">
       {{ snackbar.text }}
@@ -162,7 +169,7 @@
             data-cy="cancel-archive"
             >{{ $t("actions.cancel") }}</v-btn
           >
-          <v-spacer></v-spacer>
+          <v-spacer />
           <v-btn
             v-on:click="archiveAsset"
             color="primary"
@@ -196,6 +203,9 @@ export default {
 
   data() {
     return {
+      page: 1,
+      pageCount: 0,
+
       rowsPerPageItem: [
         10,
         15,
@@ -384,7 +394,7 @@ export default {
             this.showSnackbar(this.$t("assets.error-editing-asset"));
           });
       } else {
-        console.log(newAsset);
+        //console.log(newAsset);
         delete newAsset.event_count;
         this.$http
           .post("/api/v1/assets/?include_location=1", newAsset)

@@ -21,7 +21,7 @@
         data-cy="attendance-cancel"
         >{{ $t("actions.cancel") }}</v-btn
       >
-      <v-spacer></v-spacer>
+      <v-spacer />
       <v-btn
         color="primary"
         v-on:click="changeAttendance"

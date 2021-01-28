@@ -4,7 +4,7 @@
       <v-col md="3">
         <v-toolbar-title>{{ $t("groups.meetings.title") }}</v-toolbar-title>
       </v-col>
-      <v-spacer></v-spacer>
+      <v-spacer />
       <v-col md="2">
         <v-text-field
           v-model="search"
@@ -14,7 +14,7 @@
           hide-details
         ></v-text-field>
       </v-col>
-      <v-spacer></v-spacer>
+      <v-spacer />
       <template v-if="isOverseer && ifAdmin">
         <v-col md="1">
           <v-select
@@ -27,7 +27,7 @@
           >
           </v-select>
         </v-col>
-        <v-spacer></v-spacer>
+        <v-spacer />
         <v-col>
           <v-btn
             color="primary"
@@ -187,7 +187,7 @@
             data-cy="cancel-archive"
             >{{ $t("actions.cancel") }}</v-btn
           >
-          <v-spacer></v-spacer>
+          <v-spacer />
           <v-btn
             v-on:click="archiveMeeting"
             color="primary"
@@ -214,7 +214,7 @@
             data-cy="cancel-archive"
             >{{ $t("actions.cancel") }}</v-btn
           >
-          <v-spacer></v-spacer>
+          <v-spacer />
           <v-btn
             v-on:click="archiveMeetingAttendance"
             color="primary"
@@ -234,7 +234,7 @@
           <div>
             <h2>{{ $t("events.attendance") }}</h2>
           </div>
-          <v-spacer></v-spacer>
+          <v-spacer />
           <v-btn class="mx-2" fab small color="primary">
             <v-icon v-on:click="addAttendances">add</v-icon>
           </v-btn>
@@ -310,7 +310,7 @@
             data-cy="cancel-delete"
             >{{ $t("actions.cancel") }}</v-btn
           >
-          <v-spacer></v-spacer>
+          <v-spacer />
           <v-btn
             v-on:click="deleteParticipant"
             color="primary"
@@ -335,13 +335,13 @@
 <script>
 import CustomForm from "../../CustomForm";
 import EntitySearch from "../../EntitySearch";
-import { eventBus } from "../../../plugins/event-bus.js";
+import { eventBus } from "@/plugins/event-bus";
 import { mapState } from "vuex";
 import {
   convertToGroupMap,
   isOverseer,
   getParticipantById,
-} from "../../../models/GroupHierarchyNode.ts";
+} from "@/models/GroupHierarchyNode";
 
 export default {
   components: { "meeting-form": CustomForm, EntitySearch },

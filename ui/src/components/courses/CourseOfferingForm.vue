@@ -33,7 +33,7 @@
       <v-btn color="secondary" text :disabled="saving" v-on:click="cancel">
         {{ $t("actions.cancel") }}
       </v-btn>
-      <v-spacer></v-spacer>
+      <v-spacer />
       <v-btn
         color="primary"
         raised

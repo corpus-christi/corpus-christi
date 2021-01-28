@@ -1,4 +1,4 @@
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, time
 
 from flask import request
 from flask.json import jsonify
@@ -15,6 +15,16 @@ from ..images.models import Image, ImageEvent
 from ..people.models import Person
 from ..shared.helpers import get_exclusion_list, modify_entity
 
+class ChurchError(Exception):
+    def __init__(self, response = "Church is happening at this time"):
+        self.response = response
+        super().__init__(self.response)
+
+class DoubleBooked(Exception):
+    def __init__(self, response = "There is already an event happening in this location at this time"):
+        self.response = response
+        super().__init__(self.response)
+
 
 # ---- Event
 @events.route('/', methods=['POST'])
@@ -27,13 +37,50 @@ def create_event():
     try:
         valid_event = event_schema.load(request.json)
     except ValidationError as err:
+        print(ValidationError)
         return jsonify(err.messages), 422
 
     new_event = Event(**valid_event)
+    others = db.session.query(Event).filter_by(location_id=new_event.location_id)
+    
+    start_filter = str(new_event.start)
+    end_filter = str(new_event.end)
+    churchTime = time(13, 0, 0)
+    churchEndTime = time(17, 0, 0)
+    newStartDateTime = datetime.strptime(start_filter, '%Y-%m-%d %H:%M:%S%z')
+    newEndDateTime = datetime.strptime(end_filter, '%Y-%m-%d %H:%M:%S%z')
+    eventStartDay = newStartDateTime.weekday()
+    eventEndDay = newEndDateTime.weekday()
+    newStartTime = time(newStartDateTime.hour, newStartDateTime.minute, newStartDateTime.second)
+    newEndTime = time(newEndDateTime.hour, newEndDateTime.minute, newEndDateTime.second)
+    print(newStartTime, newEndTime, churchTime, churchEndTime, eventStartDay)
+    if(eventStartDay == 6 or eventEndDay == 6):
+        a=newStartTime < churchTime and newEndTime > churchTime
+        b=newStartTime < churchEndTime and newEndTime > churchEndTime
+        c=newStartTime > churchTime and newEndTime < churchEndTime
+        print(a, b, c)
+        if(a or b or c):
+            raise ChurchError
+            #return jsonify("Church is going on")
+    if(others):
+        for event in others:
+            otherEventStart = datetime.strptime(str(event.start), '%Y-%m-%d %H:%M:%S') + timedelta(hours=5)
+            otherEventEnd = datetime.strptime(str(event.end), '%Y-%m-%d %H:%M:%S') + timedelta(hours=5) #Only works if location is in EST
+            otherEventStartTime = time(otherEventStart.hour, otherEventStart.minute, otherEventStart.second) 
+            otherEventEndTime = time(otherEventEnd.hour, otherEventEnd.minute, otherEventEnd.second) 
+            print("others ", otherEventStartTime, otherEventEndTime, newStartTime, newEndTime)
+            d=newStartTime < otherEventStartTime and newEndTime > otherEventStartTime
+            e=newStartTime < otherEventEndTime and newEndTime >= otherEventEndTime
+            f=newStartTime >= otherEventStartTime and newEndTime <= otherEventEndTime
+            g=otherEventStart.day == newStartDateTime.day and otherEventEnd.day == newEndDateTime.day 
+            print(d, e, f, g)
+            if((d or e or f) and g):
+                raise DoubleBooked  
+                #return jsonify("There is already another event happening here")
+    
     db.session.add(new_event)
     db.session.commit()
     return jsonify(event_schema.dump(new_event)), 201
-
 
 @events.route('/')
 def read_all_events():

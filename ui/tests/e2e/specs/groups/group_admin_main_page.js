@@ -9,7 +9,7 @@ describe("Admin Login Test", function () {
     cy.get("[data-cy=cur-locale]").click();
   });
   it("WHEN: Switches the language", () => {
-    cy.get("[data-cy=language-dropdown]").click('center');
+    cy.get("[data-cy=language-dropdown]").click("center");
   });
   //Login
   it("WHEN: Providing correct login credentials", function () {
@@ -21,53 +21,63 @@ describe("Admin Login Test", function () {
   it("WHEN: Switch to Group Page", function () {
     cy.get("[data-cy=toggle-nav-drawer]").click();
     cy.get("[data-cy=groups]").click();
-    cy.location('pathname')
-      .should('include', '/groups/all');
+    cy.location("pathname").should("include", "/groups/all");
   });
   it("WHEN: Test ascending/descending sort ", function () {
-    for(let i =0; i< 5; i++){
-      cy.wait(1000).get('tr>th').eq(i).click().click().click();
+    for (let i = 0; i < 5; i++) {
+      cy.wait(1000).get("tr>th").eq(i).click().click().click();
     }
   });
   it("WHEN: Test drop down menu", function () {
-    cy.get('*[class^="v-select__selection"]').contains("View Active").click()
-    cy.get(".v-menu__content").contains("View Active").click()
-    cy.get('*[class^="v-select__selection"]').contains("View Active").click()
-    cy.get(".v-menu__content").contains("View Archived").click()
-    cy.get('*[class^="v-select__selection"]').contains("View Archived").click()
-    cy.get(".v-menu__content").contains("View All").click()
-  })
+    cy.get('*[class^="v-select__selection"]').contains("View Active").click();
+    cy.get(".v-menu__content").contains("View Active").click();
+    cy.get('*[class^="v-select__selection"]').contains("View Active").click();
+    cy.get(".v-menu__content").contains("View Archived").click();
+    cy.get('*[class^="v-select__selection"]').contains("View Archived").click();
+    cy.get(".v-menu__content").contains("View All").click();
+  });
   it("WHEN: Add a group", function () {
     cy.wait(1000).get('*[class^="shrink col"]').eq(1).click();
     cy.get('*[class^="v-list-item__content"]').contains(" Add Group ").click();
-    cy.get("[data-cy=title]").type("Test Group")
-    cy.get("[data-cy=description]").type("Test Group Description")
-    cy.get('*[class^="v-btn__content"]').contains(" Create a new Group Type ").click()
-    cy.get("[type=text]").eq(5).type("Cypress Test Group")
-    cy.get('*[class^="v-btn__content"]').contains("Save").click()
-    cy.get('*[class^="v-btn__content"]').contains("Save ").click()
-  })
+    cy.get("[data-cy=title]").type("Test Group");
+    cy.get("[data-cy=description]").type("Test Group Description");
+    cy.get('*[class^="v-btn__content"]')
+      .contains(" Create a new Group Type ")
+      .click();
+    cy.get("[type=text]").eq(5).type("Cypress Test Group");
+    cy.get('*[class^="v-btn__content"]').contains("Save").click();
+    cy.get('*[class^="v-btn__content"]').contains("Save ").click();
+  });
   it("WHEN: Test search bar", function () {
-    cy.wait(1000).get("[data-cy=form-search]").type("Test Group", {force: true}).wait(2000).clear();
-  })
+    cy.wait(1000)
+      .get("[data-cy=form-search]")
+      .type("Test Group", { force: true })
+      .wait(2000)
+      .clear();
+  });
   it("WHEN: Test archive button", function () {
     cy.wait(1000).get("[data-cy=archive]").first().click();
     cy.get("[data-cy=confirm-archive]").click();
-  })
+  });
   it("WHEN: Test Edit Group", function () {
     cy.wait(1000).get("[data-cy=edit]").first().click();
-    cy.get("[data-cy=title]").clear().type("Test Group")
-    cy.get("[data-cy=description]").clear().type("Test Group Description")
-    cy.get('*[class^="v-btn__content"]').contains("Save ").click()
-  })
+    cy.get("[data-cy=title]").clear().type("Test Group");
+    cy.get("[data-cy=description]").clear().type("Test Group Description");
+    cy.get('*[class^="v-btn__content"]').contains("Save ").click();
+  });
   it("WHEN: Split a group", function () {
     cy.wait(1000).get("[data-cy=split]").last().click();
-    cy.get("[name=child-title]").clear().type("Test Group Name")
-    cy.get("[name=child-description]").clear().type("Test Group Description")
-    cy.get("[data-cy=entity-search-field]").eq(2).click()
-    cy.get("[role=option]").last().click()
-    cy.get('*[class^="v-btn__content"]').contains("Next").click()
-    cy.wait(1000).get('*[class^="v-btn v-btn--contained theme--light v-size--default primary"]').eq(2).click();
-    cy.wait(1000).get('*[class^="v-btn__content"]').contains("Confirm").click()
-  })
+    cy.get("[name=child-title]").clear().type("Test Group Name");
+    cy.get("[name=child-description]").clear().type("Test Group Description");
+    cy.get("[data-cy=entity-search-field]").eq(2).click();
+    cy.get("[role=option]").last().click();
+    cy.get('*[class^="v-btn__content"]').contains("Next").click();
+    cy.wait(1000)
+      .get(
+        '*[class^="v-btn v-btn--contained theme--light v-size--default primary"]'
+      )
+      .eq(2)
+      .click();
+    cy.wait(1000).get('*[class^="v-btn__content"]').contains("Confirm").click();
+  });
 });

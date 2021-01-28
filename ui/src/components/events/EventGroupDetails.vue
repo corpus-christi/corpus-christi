@@ -94,7 +94,7 @@
             data-cy="cancel-add"
             >{{ $t("actions.cancel") }}</v-btn
           >
-          <v-spacer></v-spacer>
+          <v-spacer />
           <v-btn
             v-on:click="addGroup()"
             color="primary"
@@ -122,7 +122,7 @@
             data-cy="cancel-delete"
             >{{ $t("actions.cancel") }}</v-btn
           >
-          <v-spacer></v-spacer>
+          <v-spacer />
           <v-btn
             v-on:click="deleteGroup()"
             color="primary"
@@ -171,6 +171,12 @@ export default {
     };
   },
 
+  watch: {
+    groups(val) {
+      this.groupList = val;
+    },
+  },
+
   methods: {
     closeAddGroupDialog() {
       this.addGroupDialog.loading = false;
@@ -179,54 +185,21 @@ export default {
     },
 
     addGroup() {
-      const eventId = this.$route.params.event;
-      let groupId = this.addGroupDialog.group.id;
-      const idx = this.groups.findIndex((t) => t.id === groupId);
+      // Emit group-added event
       this.addGroupDialog.loading = true;
-      if (idx > -1) {
-        this.closeAddGroupDialog();
-        this.showSnackbar(this.$t("groups.group-on-event"));
-        return;
-      }
-
-      this.$http
-        .post(`/api/v1/events/${eventId}/groups/${groupId}`)
-        .then(() => {
-          this.showSnackbar(this.$t("groups.group-added"));
-          this.closeAddGroupDialog();
-          this.$emit("group-added");
-        })
-        .catch((err) => {
-          console.log(err);
-          this.addGroupDialog.loading = false;
-          if (err.response.status == 422) {
-            this.showSnackbar(this.$t("groups.error-group-assigned"));
-          } else {
-            this.showSnackbar(this.$t("groups.error-adding-group"));
-          }
-        });
+      this.$emit("group-added", { group: this.addGroupDialog.group });
+      this.closeAddGroupDialog();
+      this.addGroupDialog.loading = false;
     },
 
     deleteGroup() {
       let id = this.deleteGroupDialog.groupId;
-      const idx = this.groups.findIndex((t) => t.id === id);
       this.deleteGroupDialog.loading = true;
-      const eventId = this.$route.params.event;
-      this.$http
-        .delete(`/api/v1/events/${eventId}/groups/${id}`)
-        .then((resp) => {
-          console.log("REMOVED", resp);
-          this.deleteGroupDialog.show = false;
-          this.deleteGroupDialog.loading = false;
-          this.deleteGroupDialog.groupId = -1;
-          this.groups.splice(idx, 1); //TODO maybe fix me?
-          this.showSnackbar(this.$t("groups.group-removed"));
-        })
-        .catch((err) => {
-          console.log(err);
-          this.deleteGroupDialog.loading = false;
-          this.showSnackbar(this.$t("groups.error-removing-group"));
-        });
+      // Emit group-deleted event
+      this.$emit("group-deleted", { groupId: id });
+      this.deleteGroupDialog.show = false;
+      this.deleteGroupDialog.loading = false;
+      this.deleteGroupDialog.groupId = -1;
     },
 
     showDeleteGroupDialog(groupId) {

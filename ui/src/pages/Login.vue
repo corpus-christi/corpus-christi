@@ -4,12 +4,15 @@
       <v-layout align-center justify-center>
         <v-flex xs12 sm8 md6>
           <v-card class="elevation-12">
+            <!-- Login Form Header -->
             <v-toolbar dark color="primary">
               <v-toolbar-title>{{ $t("login.header") }}</v-toolbar-title>
-              <v-spacer></v-spacer>
+              <v-spacer />
             </v-toolbar>
+            <!-- The Form -->
             <v-card-text>
               <v-form>
+                <!-- Username Text Box -->
                 <v-text-field
                   v-model="username"
                   v-bind:label="$t('person.username')"
@@ -19,6 +22,7 @@
                   v-on:keyup.enter="login"
                   data-cy="username"
                 />
+                <!-- Password Text Box -->
                 <v-text-field
                   v-model="password"
                   v-bind:label="$t('person.password')"
@@ -29,6 +33,7 @@
                   data-cy="password"
                 />
               </v-form>
+              <!-- Offer to signup at the bottom of the form -->
               <v-flex>
                 {{ $t("person.no-account") }}
                 <router-link v-bind:to="{ name: 'signup' }" data-cy="signup">
@@ -36,6 +41,7 @@
                 </router-link>
               </v-flex>
             </v-card-text>
+            <!-- Cancel and Login buttons at the bottom of the page -->
             <v-card-actions>
               <v-layout fill-height justify-end align-end column xs12>
                 <v-flex>
@@ -56,11 +62,21 @@
 </template>
 
 <script>
+/**
+ * @file
+ * @name Login.vue
+ */
 import { mapMutations } from "vuex";
 import Account from "../models/Account";
 import jwtDecode from "jwt-decode";
-import { eventBus } from "../plugins/event-bus.js";
+import { eventBus } from "@/plugins/event-bus";
 
+/**
+ * @module
+ * @name Login
+ * @exports ../router.js
+ * Creates the Login page.
+ */
 export default {
   name: "Login",
   data() {
@@ -104,7 +120,7 @@ export default {
           // Normally want to use `push`, but unlikely that
           // the user wants to return to the login page.
           const route = this.$route.query.redirect || { name: "people" };
-          this.$router.replace(route);
+          await this.$router.replace(route);
         }
       } catch (err) {
         console.log(err);

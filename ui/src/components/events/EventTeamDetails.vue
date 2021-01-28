@@ -94,7 +94,7 @@
             data-cy="cancel-add"
             >{{ $t("actions.cancel") }}</v-btn
           >
-          <v-spacer></v-spacer>
+          <v-spacer />
           <v-btn
             v-on:click="addTeam()"
             color="primary"
@@ -122,7 +122,7 @@
             data-cy="cancel-delete"
             >{{ $t("actions.cancel") }}</v-btn
           >
-          <v-spacer></v-spacer>
+          <v-spacer />
           <v-btn
             v-on:click="deleteTeam()"
             color="primary"
@@ -179,54 +179,20 @@ export default {
     },
 
     addTeam() {
-      const eventId = this.$route.params.event;
-      let teamId = this.addTeamDialog.team.id;
-      const idx = this.teams.findIndex((t) => t.id === teamId);
       this.addTeamDialog.loading = true;
-      if (idx > -1) {
-        this.closeAddTeamDialog();
-        this.showSnackbar(this.$t("teams.team-on-event"));
-        return;
-      }
-
-      this.$http
-        .post(`/api/v1/events/${eventId}/teams/${teamId}`)
-        .then(() => {
-          this.showSnackbar(this.$t("teams.team-added"));
-          this.closeAddTeamDialog();
-          this.$emit("team-added");
-        })
-        .catch((err) => {
-          console.log(err);
-          this.addTeamDialog.loading = false;
-          if (err.response.status == 422) {
-            this.showSnackbar(this.$t("teams.error-team-assigned"));
-          } else {
-            this.showSnackbar(this.$t("teams.error-adding-team"));
-          }
-        });
+      // Emit team-added event
+      this.$emit("team-added", { team: this.addTeamDialog.team });
+      this.closeAddTeamDialog();
     },
 
     deleteTeam() {
       let id = this.deleteTeamDialog.teamId;
-      const idx = this.teams.findIndex((t) => t.id === id);
       this.deleteTeamDialog.loading = true;
-      const eventId = this.$route.params.event;
-      this.$http
-        .delete(`/api/v1/events/${eventId}/teams/${id}`)
-        .then((resp) => {
-          console.log("REMOVED", resp);
-          this.deleteTeamDialog.show = false;
-          this.deleteTeamDialog.loading = false;
-          this.deleteTeamDialog.teamId = -1;
-          this.teams.splice(idx, 1); //TODO maybe fix me?
-          this.showSnackbar(this.$t("teams.team-removed"));
-        })
-        .catch((err) => {
-          console.log(err);
-          this.deleteTeamDialog.loading = false;
-          this.showSnackbar(this.$t("teams.error-removing-team"));
-        });
+      // Emit team-deleted event
+      this.$emit("team-deleted", { teamId: id });
+      this.deleteTeamDialog.show = false;
+      this.deleteTeamDialog.loading = false;
+      this.deleteTeamDialog.groupId = -1;
     },
 
     showDeleteTeamDialog(teamId) {

@@ -2,7 +2,7 @@
   <v-container grid-list-md>
     <v-layout row wrap>
       <v-flex xs12 sm12 md4>
-        <h1 style="margin-left: 25px;">
+        <h1 style="margin-left: 25px">
           {{ $t("public.headers.upcoming-events") }}
         </h1>
       </v-flex>
@@ -21,13 +21,15 @@
           min-width="290px"
           data-cy="start-date-picker"
         >
-          <v-text-field
-            slot="activator"
-            v-model="filterStart"
-            v-bind:label="$t('events.start-date')"
-            prepend-icon="event"
-            readonly
-          />
+          <template v-slot:activator="{ on }">
+            <v-text-field
+              v-on="on"
+              v-model="filterStart"
+              v-bind:label="$t('events.start-date')"
+              prepend-icon="event"
+              readonly
+            ></v-text-field>
+          </template>
           <v-date-picker
             v-model="filterStart"
             @input="showStartDatePicker = false"
@@ -49,13 +51,15 @@
           min-width="290px"
           data-cy="end-date-picker"
         >
-          <v-text-field
-            slot="activator"
-            v-model="filterEnd"
-            v-bind:label="$t('events.end-date')"
-            prepend-icon="event"
-            readonly
-          />
+          <template v-slot:activator="{ on }">
+            <v-text-field
+              v-on="on"
+              v-model="filterEnd"
+              v-bind:label="$t('events.end-date')"
+              prepend-icon="event"
+              readonly
+            />
+          </template>
           <v-date-picker
             v-model="filterEnd"
             @input="showEndDatePicker = false"

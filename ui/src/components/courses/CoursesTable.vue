@@ -6,7 +6,7 @@
         <v-flex shrink align-self-center>
           <v-toolbar-title>{{ $t("courses.course") }}</v-toolbar-title>
         </v-flex>
-        <v-spacer></v-spacer>
+        <v-spacer />
         <v-flex shrink justify-self-end>
           <v-btn
             color="primary"
@@ -53,16 +53,19 @@
       </v-layout>
     </v-toolbar>
 
-    <!-- Table of existing people -->
+    <!-- Table of existing courses -->
     <v-data-table
       :headers="headers"
       :search="search"
       :items="showCourses"
       :loading="!tableLoaded"
-      :rows-per-page-items="rowsPerPageItem"
-      :pagination.sync="paginationInfo"
+      :items-per-page-options="rowsPerPageItem"
       class="elevation-1"
       data-cy="courses-table"
+      v-on:click:row="goToCourse"
+      hide-default-footer
+      @page-count="pageCount = $event"
+      :page.sync="page"
     >
       <v-progress-linear
         slot="progress"
@@ -85,6 +88,9 @@
         </td>
       </template>
     </v-data-table>
+    <div class="text-center pt-2">
+      <v-pagination v-model="page" :length="pageCount"></v-pagination>
+    </div>
 
     <v-snackbar v-model="snackbar.show" data-cy="courses-table-snackbar">
       {{ snackbar.text }}
@@ -130,7 +136,7 @@
           >
             {{ $t("actions.cancel") }}
           </v-btn>
-          <v-spacer></v-spacer>
+          <v-spacer />
           <v-btn
             v-on:click="deactivate(deactivateDialog.course)"
             color="primary"
@@ -184,11 +190,8 @@ export default {
         { text: "$vuetify.dataIterator.rowsPerPageAll", value: -1 },
       ],
 
-      paginationInfo: {
-        sortBy: "start",
-        rowsPerPage: 10,
-        page: 1,
-      },
+      page: 1,
+      pageCount: 0,
 
       courses: [],
 
@@ -234,6 +237,13 @@ export default {
   },
 
   methods: {
+    goToCourse(course) {
+      this.$router.push({
+        name: "course-details",
+        params: { courseId: course.id },
+      });
+    },
+
     clickThrough(course) {
       this.$router.push({
         name: "course-details",

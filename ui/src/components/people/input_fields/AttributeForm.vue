@@ -62,7 +62,7 @@ export default {
 
     getExistingAttribute(attributeId) {
       let idx = this.existingAttributes.findIndex((item) => {
-        return item.attributeId == attributeId;
+        return item.attributeId === attributeId;
       });
       let existingAttribute = this.existingAttributes[idx];
       return this.getStringOrEnumValue(existingAttribute);

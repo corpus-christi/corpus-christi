@@ -1,3 +1,11 @@
+/**
+ * @file
+ * @name axios.js
+ * @exports ../App.vue
+ * @exports ../main.ts
+ * @exports ../store.js
+ * @todo Add comments describing what this file does.
+ */
 import Vue from "vue";
 import axios from "axios";
 import store from "../store.js";

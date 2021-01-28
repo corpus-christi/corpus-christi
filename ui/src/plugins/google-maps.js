@@ -1,14 +1,25 @@
+/**
+ * @file
+ * @name google-maps.js
+ * @exports ../main.ts
+ * Operates the Google Maps plugin from the main Public page.
+ */
 import Vue from "vue";
 import * as VueGoogleMaps from "vue2-google-maps";
 import Geocoder from "@pderas/vue2-geocoder";
 
+// Store your Google Maps API key in a top-level `.env` file
+// with the indicated key (`VUE_APP_...`). Vue CLI will read
+// it and replace it here.
+const GOOGLE_MAPS_API_KEY = process.env.VUE_APP_GOOGLE_MAPS_API_KEY;
+
 Vue.use(VueGoogleMaps, {
   load: {
-    key: "AIzaSyB9IPbx6gxLz5xW46EDnddSwwAu1FI74MI",
+    key: GOOGLE_MAPS_API_KEY,
     libraries: "places",
   },
 });
 
 Vue.use(Geocoder, {
-  googleMapsApiKey: "AIzaSyB9IPbx6gxLz5xW46EDnddSwwAu1FI74MI",
+  googleMapsApiKey: GOOGLE_MAPS_API_KEY,
 });

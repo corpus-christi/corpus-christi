@@ -1,38 +1,41 @@
 <template>
   <v-container>
     <v-layout row>
+      <!-- A link to see Courses -->
       <v-flex xs12 sm6 md5>
-        <v-toolbar color="cyan" dark style="z-index: 1;">
+        <v-toolbar color="cyan" dark style="z-index: 1">
           <v-toolbar-title>
             {{ $t("public.headers.upcoming-classes") }}
           </v-toolbar-title>
         </v-toolbar>
-        <v-list style="padding-top: 0px; z-index: 0;">
-          <v-expansion-panel>
-            <!-- TODO: filter events that have course offerings -->
-            <!-- TODO: add register button function -->
-            <v-expansion-panel-content
-              v-for="(course, idx) in offeredCourses"
-              v-bind:key="idx"
-              ><div slot="header">{{ course.name }}</div>
-              <v-card>
-                <span>
-                  <v-card-text>{{ course.description }}</v-card-text>
-                </span>
-                <v-card-actions>
-                  <v-spacer></v-spacer>
-                  <v-btn
-                    raised
-                    color="primary"
-                    v-on:click="registerClicked(course)"
-                  >
-                    {{ $t("courses.register") }}
-                  </v-btn>
-                  <v-spacer></v-spacer>
-                </v-card-actions>
-              </v-card>
-            </v-expansion-panel-content>
-          </v-expansion-panel>
+        <v-list style="padding-top: 0px; z-index: 0">
+          <v-expansion-panels>
+            <v-expansion-panel>
+              <!-- TODO: filter events that have course offerings -->
+              <!-- TODO: add register button function -->
+              <v-expansion-panel-content
+                v-for="(course, idx) in offeredCourses"
+                v-bind:key="idx"
+                ><div slot="header">{{ course.name }}</div>
+                <v-card>
+                  <span>
+                    <v-card-text>{{ course.description }}</v-card-text>
+                  </span>
+                  <v-card-actions>
+                    <v-spacer />
+                    <v-btn
+                      raised
+                      color="primary"
+                      v-on:click="registerClicked(course)"
+                    >
+                      {{ $t("courses.register") }}
+                    </v-btn>
+                    <v-spacer />
+                  </v-card-actions>
+                </v-card>
+              </v-expansion-panel-content>
+            </v-expansion-panel>
+          </v-expansion-panels>
 
           <v-card>
             <v-card-actions>
@@ -64,36 +67,39 @@
         </v-btn>
       </v-snackbar>
 
+      <!-- A link to see Events -->
       <v-flex xs12 sm6 md5 offset-md2>
-        <v-toolbar color="blue" dark style="z-index: 1;">
+        <v-toolbar color="blue" dark style="z-index: 1">
           <v-toolbar-title>
             {{ $t("public.headers.upcoming-events") }}
           </v-toolbar-title>
         </v-toolbar>
-        <v-list style="padding-top: 0px; z-index: 0;">
-          <v-expansion-panel>
-            <v-expansion-panel-content
-              v-for="(event, idx) in filteredEvents"
-              v-bind:key="idx"
-            >
-              <div slot="header">
-                {{ event.title }} <br />
-                <span class="grey--text">
-                  <div>{{ getDisplayDate(event.start) }}</div>
-                </span>
-              </div>
-              <v-card>
-                <v-card-text>{{ event.description }}</v-card-text>
-                <v-card-actions>
-                  <v-spacer></v-spacer>
-                  <v-btn raised color="primary">{{
-                    $t("public.events.join")
-                  }}</v-btn>
-                  <v-spacer></v-spacer>
-                </v-card-actions>
-              </v-card>
-            </v-expansion-panel-content>
-          </v-expansion-panel>
+        <v-list style="padding-top: 0px; z-index: 0">
+          <v-expansion-panels>
+            <v-expansion-panel>
+              <v-expansion-panel-content
+                v-for="(event, idx) in filteredEvents"
+                v-bind:key="idx"
+              >
+                <div slot="header">
+                  {{ event.title }} <br />
+                  <span class="grey--text">
+                    <div>{{ getDisplayDate(event.start) }}</div>
+                  </span>
+                </div>
+                <v-card>
+                  <v-card-text>{{ event.description }}</v-card-text>
+                  <v-card-actions>
+                    <v-spacer />
+                    <v-btn raised color="primary">{{
+                      $t("public.events.join")
+                    }}</v-btn>
+                    <v-spacer />
+                  </v-card-actions>
+                </v-card>
+              </v-expansion-panel-content>
+            </v-expansion-panel>
+          </v-expansion-panels>
           <!-- <v-divider light></v-divider> -->
           <v-card>
             <v-card-actions>
@@ -111,6 +117,7 @@
       </v-flex>
     </v-layout>
 
+    <!-- Google Maps on the main page -->
     <v-layout class="mt-3">
       <v-flex>
         <v-toolbar color="blue" dark>
@@ -125,11 +132,22 @@
 </template>
 
 <script>
+/**
+ * @file
+ * @name Public.vue
+ * @todo You can't see this page while logged in. This is a problem, since some people might still want to use the map.
+ */
 import GoogleMap from "../components/GoogleMap";
 import { isEmpty } from "lodash";
 import { mapGetters } from "vuex";
 import CourseRegistrationForm from "../components/public/CourseRegistrationForm";
 
+/**
+ * @module
+ * @name Public
+ * @exports ../router.js
+ * The main Arco Page.
+ */
 export default {
   name: "Public",
   components: { GoogleMap, CourseRegistrationForm },

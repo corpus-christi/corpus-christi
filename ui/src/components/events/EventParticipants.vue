@@ -2,7 +2,7 @@
   <div>
     <v-toolbar>
       <v-toolbar-title>{{ $t("events.participants.title") }}</v-toolbar-title>
-      <v-spacer></v-spacer>
+      <v-spacer />
       <v-text-field
         v-model="search"
         append-icon="search"
@@ -10,8 +10,8 @@
         single-line
         hide-details
       ></v-text-field>
-      <v-spacer></v-spacer>
-      <v-spacer></v-spacer>
+      <v-spacer />
+      <v-spacer />
       <v-btn
         color="primary"
         raised
@@ -21,6 +21,18 @@
         <v-icon dark left>add</v-icon>
         {{ $t("actions.add-person") }}
       </v-btn>
+
+      <person-dialog
+      v-on:snack="showSnackbar"
+      v-on:cancel="cancelPerson"
+      v-on:attachPerson="createdPerson"
+      v-bind:dialog-state="dialogState"
+      v-bind:all-people="allPeople"
+      v-bind:person="person"
+    />
+
+    
+
     </v-toolbar>
     <v-data-table
       :items-per-page-options="rowsPerPageItem"
@@ -70,6 +82,10 @@
           </div>
         </v-card-title>
         <v-card-text>
+          <v-btn color="primary" v-on:click="newPerson" data-cy="new-person">
+            <v-icon left>person_add</v-icon>
+            {{ $t("actions.add-person") }}
+          </v-btn>
           <!-- TODO maybe include existingEntities -->
           <entity-search
             multiple
@@ -85,7 +101,7 @@
             data-cy=""
             >{{ $t("actions.cancel") }}</v-btn
           >
-          <v-spacer></v-spacer>
+          <v-spacer />
           <v-btn
             v-on:click="addParticipants"
             :disabled="addParticipantDialog.newParticipants.length == 0"
@@ -113,7 +129,7 @@
             data-cy="cancel-delete"
             >{{ $t("actions.cancel") }}</v-btn
           >
-          <v-spacer></v-spacer>
+          <v-spacer />
           <v-btn
             v-on:click="deleteParticipant"
             color="primary"
@@ -136,9 +152,10 @@
 </template>
 
 <script>
+import PersonDialog from "../PersonDialog";
 import EntitySearch from "../EntitySearch";
 export default {
-  components: { "entity-search": EntitySearch },
+  components: { "entity-search": EntitySearch, PersonDialog },
   name: "EventParticipants",
   data() {
     return {
@@ -149,8 +166,11 @@ export default {
         { text: "$vuetify.dataIterator.rowsPerPageAll", value: -1 },
       ],
       tableLoading: false,
+      dialogState: "",
       search: "",
       people: [],
+      person: {},
+      allPeople: [],
       addParticipantDialog: {
         show: false,
         newParticipants: [],
@@ -198,6 +218,19 @@ export default {
   },
 
   methods: {
+
+    newPerson() {
+      this.dialogState = "new";
+    },
+
+    cancelPerson() {
+      this.dialogState = "";
+    },
+
+    createdPerson(person){
+      this.addParticipantDialog.newParticipants.push(person)
+    },
+
     activateNewParticipantDialog() {
       this.addParticipantDialog.show = true;
     },
@@ -227,6 +260,8 @@ export default {
           this.addParticipantDialog.loading = false;
           this.addParticipantDialog.show = false;
           this.addParticipantDialog.newParticipants = [];
+          this.person = {};
+          this.allpeople = [];
           this.getParticipants();
         })
         .catch((err) => {
