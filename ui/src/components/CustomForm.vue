@@ -63,13 +63,9 @@
             />
           </v-flex>
           <v-flex shrink>
-            <v-btn
-              text
-              color="primary"
-              small
-              @click="showAddressCreator = true"
-              >{{ $t("actions.add-address") }}</v-btn
-            >
+            <v-btn text color="primary" small @click="showAddressCreator = true"
+              >{{ $t("actions.add-address") }}
+            </v-btn>
           </v-flex>
         </v-layout>
 
@@ -154,15 +150,15 @@
                   color="primary"
                   @click="startTimeModal = false"
                   data-cy="start-time-cancel"
-                  >{{ $t("actions.cancel") }}</v-btn
-                >
+                  >{{ $t("actions.cancel") }}
+                </v-btn>
                 <v-btn
                   text
                   color="primary"
                   @click="$refs.dialog1.save(startTime)"
                   data-cy="start-time-ok"
-                  >{{ $t("actions.confirm") }}</v-btn
-                >
+                  >{{ $t("actions.confirm") }}
+                </v-btn>
               </v-time-picker>
             </v-dialog>
           </v-flex>
@@ -244,15 +240,15 @@
                   color="primary"
                   @click="endTimeModal = false"
                   data-cy="end-time-cancel"
-                  >{{ $t("actions.cancel") }}</v-btn
-                >
+                  >{{ $t("actions.cancel") }}
+                </v-btn>
                 <v-btn
                   text
                   color="primary"
                   @click="$refs.dialog2.save(endTime)"
                   data-cy="end-time-ok"
-                  >{{ $t("actions.confirm") }}</v-btn
-                >
+                  >{{ $t("actions.confirm") }}
+                </v-btn>
               </v-time-picker>
             </v-dialog>
           </v-flex>
@@ -265,6 +261,13 @@
           hidden
           readonly
         />
+        <!-- Filter by gender -->
+        <!-- TODO - Need to add a localization for this label-->
+        <v-checkbox v-model="filterByGender" label="Filter by gender" />
+        <v-radio-group v-if="filterByGender" v-model="object.gender">
+          <v-radio label="Male" value="M" />
+          <v-radio label="Female" value="F" />
+        </v-radio-group>
       </form>
     </v-card-text>
     <v-divider />
@@ -275,8 +278,8 @@
         v-on:click="cancel"
         :disabled="formDisabled"
         data-cy="form-cancel"
-        >{{ $t("actions.cancel") }}</v-btn
-      >
+        >{{ $t("actions.cancel") }}
+      </v-btn>
       <v-spacer />
       <v-btn
         color="primary"
@@ -286,8 +289,8 @@
         :loading="addMoreLoading"
         :disabled="formDisabled"
         data-cy="form-addanother"
-        >{{ $t("actions.add-another") }}</v-btn
-      >
+        >{{ $t("actions.add-another") }}
+      </v-btn>
       <v-btn
         color="primary"
         raised
@@ -295,8 +298,8 @@
         :loading="saveLoading"
         :disabled="formDisabled"
         data-cy="form-save"
-        >{{ $t("actions.save") }}</v-btn
-      >
+        >{{ $t("actions.save") }}
+      </v-btn>
     </v-card-actions>
   </v-card>
 </template>
@@ -383,6 +386,7 @@ export default {
       showImageChooser: false,
       imageSaved: false,
       currentAddress: 0,
+      filterByGender: false,
     };
   },
 
