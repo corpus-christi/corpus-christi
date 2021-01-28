@@ -1,6 +1,5 @@
 <template>
   <v-row class="shrink" align="center">
-    <v-col v-if="isTranslator" cols="5">
     <!-- The switch Translators can use to enable Language Transparent Mode -->
     <v-col v-if="isTranslator">
       <v-switch
