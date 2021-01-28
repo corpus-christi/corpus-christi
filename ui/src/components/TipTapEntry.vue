@@ -115,15 +115,7 @@
     </div>
   </editor-menu-bar>
   <editor-content 
-  ref="editor"
   :editor="dialogData"/>
-  <button
-  @click="sendBody"
-  >Save Body</button>
-  <v-spacer></v-spacer>
-  <button
-  @click="clearBody">
-  Clear Body</button>
   </div>
 </template>
 
@@ -210,6 +202,7 @@ export default {
         onUpdate: ({ getJSON, getHTML }) => {
           this.json = getJSON();
           this.html = getHTML();
+          this.$emit("sending", this.html);
         },
       });
       return data;

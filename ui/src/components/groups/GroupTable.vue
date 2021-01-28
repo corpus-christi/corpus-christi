@@ -169,7 +169,7 @@
                 <v-icon small>email</v-icon>
               </v-btn></template
             >
-            <span>{{ $t("groups.email.tooltip") }}</span>
+            <span>{{ $t("groups.batch-actions.email") }}</span>
           </v-tooltip>
           <v-tooltip bottom>
             <template v-slot:activator="{ on }"
@@ -276,6 +276,7 @@
       <email-form
         v-bind:initialData="emailDialog.recipientData"
         v-on:cancel="cancelEmail"
+        v-on:sent="cancelEmail"
       ></email-form>
 
 

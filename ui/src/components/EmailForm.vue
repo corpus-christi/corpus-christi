@@ -33,11 +33,13 @@
       >
       </v-text-field>
     </v-card-text>
+    <span class="outlined">
     <tip-tap-entry
     @sending="updateBody"
     @clearing="updateBody"
     >
     </tip-tap-entry>
+    </span>
     <!--<v-card-text>
       <v-textarea :label="$t('groups.members.email.body')" v-model="email.body">
       </v-textarea>
@@ -190,7 +192,8 @@ export default {
       console.log("pre-EMAIL", this.email);
       let email = {
         ...this.email,
-        recipients: this.email.recipients.map((p) => p.person.email)
+        recipients: this.email.recipients.map((p) => p.person.email),
+        recipientIds: this.email.recipients.map((p) => p.person.id)
       };
       console.log("SENDING", email);
       this.$http
@@ -254,6 +257,7 @@ export default {
         body: "",
         recipients: [],
         managerName: "",
+        senderId:-1,
         managerEmail: "corpus.christi.test@gmail.com",
       },
       expand: false,
@@ -281,6 +285,7 @@ export default {
     this.AllGroupManagers();
     this.myEmail = this.currentAccount.email;
     this.email.managerName = this.currentAccount.firstName + " " + this.currentAccount.lastName;
+    this.email.senderId = this.currentAccount.id;
   },
 };
 </script>

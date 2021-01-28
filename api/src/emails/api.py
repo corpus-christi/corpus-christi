@@ -12,7 +12,8 @@ from bs4 import BeautifulSoup
 
 
 from . import emails
-from .models import EmailSchema
+from .models import EmailSchema, Email, Recipient
+from .. import db
 
 
 # ---- Email
@@ -37,6 +38,8 @@ def send_email():
     SUBJECT = valid_email_request['subject']
     BODY = valid_email_request['body']
     recipients = valid_email_request['recipients']
+    recipientIds = valid_email_request['recipientIds']
+    senderId = valid_email_request['senderId']
     ATTACHMENT_PATH = False
 
     print(SENDER_EMAIL)
@@ -45,7 +48,7 @@ def send_email():
     print(BODY)
     print(recipients)
 
-    newBody = BeautifulSoup(body, "html.parser")
+    newBody = BeautifulSoup(BODY, "html.parser")
 
     
 
@@ -58,7 +61,6 @@ def send_email():
 
     # this forms and sends the email
     def send(to_addr: str, subject: str, body: str, attachment: str = None):
-        print(newBody.get_text())
         msg = MIMEMultipart('alternative')
         msg['From'] = SENDER_NAME + ' <' + EMAIL_ADDRESS + '>'
         msg['To'] = to_addr
@@ -87,7 +89,17 @@ def send_email():
     with smtplib.SMTP_SSL('smtp.gmail.com', 465) as smtp:
         smtp.login(EMAIL_ADDRESS, EMAIL_PASSWORD)
         send(EMAIL_ADDRESS, SUBJECT, BODY, ATTACHMENT_PATH)
+    dbData = {'subject': SUBJECT, 'body': newBody.get_text(), 'sender_id':senderId}
+    new_email= Email(**dbData)
+    print("New email", new_email)
+    db.session.add(new_email)
+    db.session.commit()
 
-    new_email=Email(newBody, SUBJECT)
+    thisEmail = db.session.query(Email).filter_by(subject=SUBJECT).first() #Not guaranteed to find correct email if there are two with the same subject
+    print("THIS EMAIL",thisEmail)
+    for id in recipientIds:
+        new_recipient=Recipient(**{'person_id':id, 'email_id':thisEmail.id})
+        db.session.add(new_recipient)
+        db.session.commit()
 
     return "Sent"
