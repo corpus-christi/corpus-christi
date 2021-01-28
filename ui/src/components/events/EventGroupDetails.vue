@@ -193,13 +193,13 @@ export default {
     },
 
     deleteGroup() {
-     let id = this.deleteGroupDialog.groupId;
-     this.deleteGroupDialog.loading = true;
-     // Emit group-deleted event
-     this.$emit("group-deleted", { groupId: id });
-     this.deleteGroupDialog.show = false;
-     this.deleteGroupDialog.loading = false;
-     this.deleteGroupDialog.groupId = -1;
+      let id = this.deleteGroupDialog.groupId;
+      this.deleteGroupDialog.loading = true;
+      // Emit group-deleted event
+      this.$emit("group-deleted", { groupId: id });
+      this.deleteGroupDialog.show = false;
+      this.deleteGroupDialog.loading = false;
+      this.deleteGroupDialog.groupId = -1;
     },
 
     showDeleteGroupDialog(groupId) {

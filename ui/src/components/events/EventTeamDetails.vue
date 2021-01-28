@@ -179,11 +179,10 @@ export default {
     },
 
     addTeam() {
-       this.addTeamDialog.loading = true;
-       // Emit team-added event
-       this.$emit("team-added", { team: this.addTeamDialog.team });
-       this.closeAddTeamDialog();
-       
+      this.addTeamDialog.loading = true;
+      // Emit team-added event
+      this.$emit("team-added", { team: this.addTeamDialog.team });
+      this.closeAddTeamDialog();
     },
 
     deleteTeam() {

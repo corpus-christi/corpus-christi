@@ -22,7 +22,7 @@
           :disabled="addressWasSaved"
           @click="changeAddressView(true)"
         >
-        {{ $t("actions.add-address") }}
+          {{ $t("actions.add-address") }}
         </v-btn>
 
         <address-form
@@ -137,12 +137,10 @@ export default {
     addressSaved() {
       return this.addressWasSaved;
     },
-
   },
 
   methods: {
-
-    checkLocation(){
+    checkLocation() {
       return this.asset.location;
     },
 
