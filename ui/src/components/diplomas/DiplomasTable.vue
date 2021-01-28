@@ -6,7 +6,7 @@
         <v-flex md2>
           <v-toolbar-title>{{ $t("diplomas.diplomas") }}</v-toolbar-title>
         </v-flex>
-        <v-spacer></v-spacer>
+        <v-spacer />
         <v-flex md3>
           <v-text-field
             v-model="search"
@@ -17,7 +17,7 @@
             data-cy="diplomas-table-search"
           ></v-text-field>
         </v-flex>
-        <v-spacer></v-spacer>
+        <v-spacer />
         <v-flex md3>
           <v-select
             v-model="viewStatus"
@@ -42,7 +42,7 @@
       </v-layout>
     </v-toolbar>
 
-    <!-- Table of existing people -->
+    <!-- Table of existing diplomas -->
     <v-data-table
       :headers="headers"
       :items="showDiplomas"
@@ -50,6 +50,10 @@
       :search="search"
       class="elevation-1"
       data-cy="diplomas-table"
+      v-on:click:row="goToDiploma"
+      hide-default-footer
+      @page-count="pageCount = $event"
+      :page.sync="page"
     >
       <template slot="items" slot-scope="props">
         <tr>
@@ -69,6 +73,9 @@
         </tr>
       </template>
     </v-data-table>
+    <div class="text-center pt-2">
+      <v-pagination v-model="page" :length="pageCount"></v-pagination>
+    </div>
 
     <v-snackbar v-model="snackbar.show">
       {{ snackbar.text }}
@@ -107,7 +114,7 @@
             :disabled="deactivateDialog.loading"
             >{{ $t("actions.cancel") }}</v-btn
           >
-          <v-spacer></v-spacer>
+          <v-spacer />
           <v-btn
             v-on:click="deactivate(deactivateDialog.diploma)"
             color="primary"
@@ -151,6 +158,10 @@ export default {
         course: {},
         loading: false,
       },
+
+      page: 1,
+      pageCount: 0,
+
       addMore: false,
       tableLoaded: false,
       selected: [],
@@ -193,6 +204,13 @@ export default {
   },
 
   methods: {
+    goToDiploma(diploma) {
+      this.$router.push({
+        name: "diploma-details",
+        params: { diplomaId: diploma.id },
+      });
+    },
+
     dispatchAction(actionName, diploma) {
       switch (actionName) {
         case "edit":

@@ -30,7 +30,7 @@
           chips
           deletable-chips
           clearable
-          outline
+          outlined
           multiple
           hide-selected
           return-object
@@ -48,10 +48,10 @@
         v-on:click="cancel"
         >{{ $t("actions.cancel") }}</v-btn
       >
-      <v-spacer></v-spacer>
+      <v-spacer />
       <v-btn
         color="primary"
-        outline
+        outlined
         v-on:click="addAnother"
         v-if="!editMode"
         :loading="addMoreLoading"

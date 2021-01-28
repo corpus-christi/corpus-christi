@@ -6,7 +6,7 @@
         <v-flex shrink align-self-center>
           <v-toolbar-title>{{ $t("courses.course-offering") }}</v-toolbar-title>
         </v-flex>
-        <v-spacer></v-spacer>
+        <v-spacer />
         <v-flex shrink justify-self-end>
           <v-btn color="primary" raised v-on:click.stop="newCourseOffering">
             <v-icon left>library_add</v-icon>
@@ -36,14 +36,16 @@
       </v-layout>
     </v-toolbar>
 
-    <!-- Table of existing people -->
+    <!-- Table of existing course offerings -->
     <v-data-table
       :headers="headers"
       :search="search"
       :items="showCourseOfferings"
       class="elevation-1"
-      :rows-per-page-items="rowsPerPageItem"
-      :pagination.sync="paginationInfo"
+      :items-per-page-options="rowsPerPageItem"
+      hide-default-footer
+      @page-count="pageCount = $event"
+      :page.sync="page"
     >
       <v-progress-linear
         slot="progress"
@@ -66,6 +68,9 @@
         </td>
       </template>
     </v-data-table>
+    <div class="text-center pt-2">
+      <v-pagination v-model="page" :length="pageCount"></v-pagination>
+    </div>
 
     <v-snackbar v-model="snackbar.show">
       {{ snackbar.text }}
@@ -103,7 +108,7 @@
             data-cy
             >{{ $t("actions.cancel") }}</v-btn
           >
-          <v-spacer></v-spacer>
+          <v-spacer />
           <v-btn
             v-on:click="deactivate(deactivateDialog.courseOffering)"
             color="primary"
@@ -161,11 +166,8 @@ export default {
         { text: "$vuetify.dataIterator.rowsPerPageAll", value: -1 },
       ],
 
-      paginationInfo: {
-        sortBy: "start",
-        rowsPerPage: 10,
-        page: 1,
-      },
+      page: 1,
+      pageCount: 0,
 
       courseOfferings: [],
 

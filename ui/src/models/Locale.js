@@ -1,3 +1,14 @@
+/**
+ * @file
+ * @name Locale.js
+ * @exports ../App.vue
+ * @exports ../store.js
+ * @exports ../layouts/app-bars/ArcoAppBar.vue
+ * @exports ../layouts/app-bars/StandardAppBar.vue
+ * @exports ../plugins/vuex-persistedstate.js
+ * Creates the Locale object for managing language and locale.
+ */
+
 export function assertValidLocaleString(localeString) {
   if (!/^[a-z]{2}-[A-Z]{2}$/.test(localeString)) {
     throw Error(`Invalid locale '${JSON.stringify(localeString)}'`);

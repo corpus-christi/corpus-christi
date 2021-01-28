@@ -1,6 +1,8 @@
 <template>
+  <!-- TODO: The way they made tabs here is different from in People.vue -->
   <v-container>
     <v-tabs color="primary" slider-color="accent">
+      <!-- Address Tab -->
       <v-tab ripple data-cy="places-table-tab">
         {{ $t("places.address.address") }}
       </v-tab>
@@ -13,6 +15,7 @@
           v-on:fetchPlacesList="fetchPlacesList"
         ></PlacesTable>
       </v-tab-item>
+      <!-- Area Tab -->
       <v-tab ripple data-cy="area-table-tab">
         {{ $t("places.area.area") }}
       </v-tab>
@@ -30,10 +33,20 @@
 </template>
 
 <script>
+/**
+ * @file
+ * @name Places.vue
+ */
 import PlacesTable from "../components/places/PlacesTable";
 import AreaTable from "../components/places/AreaTable";
 import { isEmpty } from "lodash";
 
+/**
+ * @module
+ * @name Places
+ * @exports ../router.js
+ * Draws the webpage for /places. Tables found in ui/src/components/places.
+ */
 export default {
   name: "Places",
   components: { PlacesTable, AreaTable },

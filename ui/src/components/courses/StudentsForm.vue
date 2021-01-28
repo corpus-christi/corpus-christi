@@ -20,7 +20,7 @@
         data-cy="studentform-cancel"
         >{{ $t("actions.cancel") }}
       </v-btn>
-      <v-spacer></v-spacer>
+      <v-spacer />
       <v-btn
         color="primary"
         raised

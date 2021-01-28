@@ -9,11 +9,11 @@
         <v-form>
           <ValidationProvider name="select" rules="required">
             <v-select
-              slot-scope="{ errors, valid }"
+              slot-scope="{ valid }"
               v-model="diploma.id"
               :items="items"
               v-bind:label="$t('diplomas.diploma')"
-              outline
+              outlined
               item-value="id"
               item-text="name"
               :success="valid"
@@ -27,7 +27,7 @@
         <v-btn color="secondary" text :disabled="saving" v-on:click="cancel">{{
           $t("actions.cancel")
         }}</v-btn>
-        <v-spacer></v-spacer>
+        <v-spacer />
         <v-btn
           color="primary"
           raised

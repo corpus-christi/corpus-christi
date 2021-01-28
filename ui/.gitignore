@@ -1,5 +1,6 @@
 node_modules/
 screenshots/
+videos/
 dist/
 
 yarn-error.log

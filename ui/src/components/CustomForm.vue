@@ -144,7 +144,7 @@
                 :max="startDate == endDate ? endTime : null"
                 data-cy="start-time-picker"
               >
-                <v-spacer></v-spacer>
+                <v-spacer />
                 <v-btn
                   text
                   color="primary"
@@ -280,7 +280,7 @@
         data-cy="form-cancel"
         >{{ $t("actions.cancel") }}
       </v-btn>
-      <v-spacer></v-spacer>
+      <v-spacer />
       <v-btn
         color="primary"
         outlined

@@ -6,7 +6,7 @@
         <v-flex md2>
           <v-toolbar-title>{{ $t("transcripts.transcript") }}</v-toolbar-title>
         </v-flex>
-        <v-spacer></v-spacer>
+        <v-spacer />
         <v-flex md3>
           <v-text-field
             v-model="search"
@@ -19,7 +19,7 @@
         </v-flex>
         <!--
               possibly filter by active/inactive flag on students...but not for now
-            <v-spacer></v-spacer>
+            <v-spacer />
             <v-flex md3>
               <v-select
                 v-model="viewStatus"
@@ -33,7 +33,7 @@
       </v-layout>
     </v-toolbar>
 
-    <!-- Table of existing students -->
+    <!-- Table of existing transcripts -->
     <v-data-table
       :headers="headers"
       :items="showStudents"
@@ -41,6 +41,10 @@
       :search="search"
       class="elevation-1"
       data-cy="transcripts-table"
+      v-on:click:row="goToTranscript"
+      hide-default-footer
+      @page-count="pageCount = $event"
+      :page.sync="page"
     >
       <template slot="items" slot-scope="props">
         <tr>
@@ -53,6 +57,9 @@
         </tr>
       </template>
     </v-data-table>
+    <div>
+      <v-pagination v-model="page" :length="pageCount"></v-pagination>
+    </div>
   </div>
 </template>
 
@@ -62,6 +69,9 @@ export default {
   components: {},
   data() {
     return {
+      page: 1,
+      pageCount: 0,
+
       tableLoaded: false,
       selected: [],
       students: [],
@@ -109,6 +119,13 @@ export default {
     },
   },
   methods: {
+    goToTranscript(transcript) {
+      this.$router.push({
+        name: "transcript-details",
+        params: { studentId: transcript.id },
+      });
+    },
+
     clickThrough(transcript) {
       console.log(transcript);
       this.$router.push({

@@ -152,7 +152,7 @@
       @click:row="handleRowClick"
       class="elevation-1"
     >
-      <template v-slot:header.data-table-select>
+      <template v-slot:[`header.data-table-select`]>
         <v-simple-checkbox
           :ripple="false"
           color="primary"
@@ -162,7 +162,7 @@
           @click.stop="toggleAll"
         />
       </template>
-      <template v-slot:item.data-table-select="props">
+      <template v-slot:[`item.data-table-select`]="props">
         <v-tooltip :disabled="!props.item.disabled" right>
           <!-- show tooltip when the item is disabled -->
           <template v-slot:activator="{ on }">
@@ -179,7 +179,7 @@
           {{ props.item.disabledText }}
         </v-tooltip>
       </template>
-      <template v-slot:item.actions="{ item }">
+      <template v-slot:[`item.actions`]="{ item }">
         <v-tooltip v-for="action in actions" :key="action.key" bottom>
           <template v-slot:activator="{ on }"
             ><v-btn
@@ -337,18 +337,19 @@
 import EntitySearch from "../EntitySearch";
 import EmailForm from "../EmailForm";
 import EntityTypeForm from "./EntityTypeForm";
-import { eventBus } from "../../plugins/event-bus.js";
+import { eventBus } from "@/plugins/event-bus";
 import { isEmpty } from "lodash";
 import {
-  Group,
-  Participant,
   checkConnection,
-  HierarchyCycleError,
   convertToGroupMap,
-  isOverseer,
   getParticipantById,
-} from "../../models/GroupHierarchyNode.ts";
+  Group,
+  HierarchyCycleError,
+  isOverseer,
+  Participant,
+} from "@/models/GroupHierarchyNode";
 import { mapState } from "vuex";
+
 export default {
   components: { EntitySearch, EmailForm, EntityTypeForm },
   name: "GroupParticipants",
@@ -622,7 +623,7 @@ export default {
       let destinationGroupPersonIds = this.moveDialog.destinationGroup[
         this.isManagerMode ? "managers" : "members"
       ].map((p) => p.person.id);
-      let movableParticipants = this.activeParticipants.map((p) => {
+      return this.activeParticipants.map((p) => {
         let participant = { ...p };
         if (destinationGroupPersonIds.includes(p.person.id)) {
           participant.disabled = true;
@@ -659,7 +660,6 @@ export default {
         }
         return participant;
       });
-      return movableParticipants;
     },
     selectionEditParticipants() {
       return this.activeParticipants;
@@ -758,7 +758,7 @@ export default {
       ];
       for (let i in localParticipants) {
         let participants = localParticipants[i];
-        if (participants == undefined) {
+        if (participants === undefined) {
           continue;
         }
         if (action === "post") {
@@ -965,11 +965,12 @@ export default {
         });
     },
     showEmailDialog(participants) {
-      let recipients = participants.map((participant) => ({
-        email: participant.person.email,
-        name: `${participant.person.firstName} ${participant.person.lastName}`,
-      }));
-      this.emailDialog.initialData.recipients = recipients;
+      this.emailDialog.initialData.recipients = participants.map(
+        (participant) => ({
+          email: participant.person.email,
+          name: `${participant.person.firstName} ${participant.person.lastName}`,
+        })
+      );
       this.emailDialog.initialData.recipientList = this.emailRecipientList;
       this.emailDialog.show = true;
     },
@@ -1058,7 +1059,7 @@ export default {
     archiveParticipants(participants, unarchive = false) {
       this.archiveDialog.loading = true;
       let persons = participants.map((p) => p.person);
-      let payload = { active: unarchive ? true : false };
+      let payload = { active: unarchive };
       return this.saveParticipants(persons, "patch", payload)
         .then(() => {
           persons.forEach((person) => {
@@ -1133,9 +1134,3 @@ export default {
   },
 };
 </script>
-
-<style>
-.v-icon {
-  display: inline-flex !important;
-}
-</style>

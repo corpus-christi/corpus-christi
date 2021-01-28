@@ -1,7 +1,13 @@
 <template>
   <div>
-    <!-- Interior node -->
+    <!-- Functionality if the Item contains an expanding list of links -->
     <v-list-group v-if="isInterior">
+      <!--
+        Slot syntax in vue is a little confusing. In this instance,
+        the <v-list-group> component from Vuetify has a built-in activator
+        slot that enables an expansion list. Read more here:
+        https://vuetifyjs.com/en/components/lists/#slots
+      -->
       <template v-slot:activator>
         <v-list-item-icon>
           <v-icon>{{ item.icon }}</v-icon>
@@ -17,23 +23,38 @@
       />
     </v-list-group>
 
-    <!-- Leaf node   -->
+    <!-- Actually place the Item in the NavDrawer -->
     <v-list-item
+      exact
       v-else-if="isLeaf"
       :to="{ name: item.route }"
       :data-cy="item.route"
     >
-      <v-list-item-action v-if="item.icon">
+      <v-list-item-action v-if="item.icon && !item.isDropdown">
         <v-icon>{{ item.icon }}</v-icon>
       </v-list-item-action>
       <v-list-item-title>
         {{ item.title }}
       </v-list-item-title>
+      <v-list-item-action v-if="item.icon && item.isDropdown">
+        <v-icon>{{ item.icon }}</v-icon>
+      </v-list-item-action>
     </v-list-item>
   </div>
 </template>
 
 <script>
+/**
+ * @file
+ * @name NavItem.vue
+ */
+
+/**
+ * @module
+ * @name NavItem
+ * @exports ./NavDrawer.vue
+ * Creates an individual Item in the NavDrawer.
+ */
 export default {
   name: "NavItem",
   props: {
@@ -47,13 +68,13 @@ export default {
     },
   },
   computed: {
+    isInterior() {
+      return !this.isLeaf;
+    },
     isLeaf() {
       return (
         this.item.children === undefined || this.item.children.length === 0
       );
-    },
-    isInterior() {
-      return !this.isLeaf;
     },
   },
 };

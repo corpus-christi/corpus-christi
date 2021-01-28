@@ -1,12 +1,9 @@
 <template>
   <div>
     <v-card class="mb-1">
-      <v-card-title>{{ $t('translation.tags.top') }}</v-card-title>
+      <v-card-title>{{ $t("translation.tags.top") }}</v-card-title>
     </v-card>
-    <v-card
-      class="overflow-y-auto"
-      :height="portionOfScreenHeight"
-    >
+    <v-card class="overflow-y-auto" :height="portionOfScreenHeight">
       <v-list>
         <v-list-item-group class="ml-3" color="grey darken-4" multiple>
           <v-tooltip right v-for="(tag, index) in topLevelTags" :key="index">
@@ -16,12 +13,8 @@
                 <v-checkbox
                   v-model="selectedTags"
                   :label="`${tag}
-                (${
-                  incompleteCounts[tag] ? incompleteCounts[tag].untranslated : 0
-                } | 
-                ${
-                  incompleteCounts[tag] ? incompleteCounts[tag].unverified : 0
-                })`"
+                    (${qtysNotDone[tag] ? qtysNotDone[tag].untranslated : 0} |
+                    ${qtysNotDone[tag] ? qtysNotDone[tag].unverified : 0})`"
                   :value="tag"
                   @click="onTagsChanged"
                 />
@@ -30,10 +23,8 @@
             <span>
               {{
                 $t("translation.tags.tooltip", [
-                  incompleteCounts[tag]
-                    ? incompleteCounts[tag].untranslated
-                    : 0,
-                  incompleteCounts[tag] ? incompleteCounts[tag].unverified : 0,
+                  qtysNotDone[tag] ? qtysNotDone[tag].untranslated : 0,
+                  qtysNotDone[tag] ? qtysNotDone[tag].unverified : 0,
                 ])
               }}
             </span>
@@ -48,14 +39,14 @@
 export default {
   name: "TopLevelTagChooser",
   props: {
-    topLevelTags: { type: Array, required: true, },
-    allTranslations: { type: Array, required: true, },
-    portionOfScreenHeight: { type: Number, required: true, },
+    topLevelTags: { type: Array, required: true },
+    allTranslations: { type: Array, required: true },
+    portionOfScreenHeight: { type: Number, required: true },
   },
   data() {
     return {
       selectedTags: [],
-      incompleteCounts: [],
+      qtysNotDone: [],
     };
   },
   watch: {
@@ -68,10 +59,10 @@ export default {
       this.$emit("tagsUpdated", this.selectedTags);
     },
     populateIncompleteCounts() {
-      this.incompleteCounts = [];
+      this.qtysNotDone = [];
 
       this.topLevelTags.forEach((topLevelTag) => {
-        this.incompleteCounts[topLevelTag] = {
+        this.qtysNotDone[topLevelTag] = {
           untranslated: this.numUntranslated(topLevelTag),
           unverified: this.numUnverified(topLevelTag),
         };

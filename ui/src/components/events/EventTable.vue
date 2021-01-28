@@ -8,11 +8,11 @@
     <v-toolbar class="pa-1" extension-height="64px">
       <v-layout justify-space-between>
         <v-flex shrink align-self-center>
-          <v-toolbar-title class="hidden-xs-only">{{
-            $t("events.header")
-          }}</v-toolbar-title>
+          <v-toolbar-title class="hidden-xs-only">
+            {{ $t("events.header") }}
+          </v-toolbar-title>
         </v-flex>
-        <v-spacer></v-spacer>
+        <v-spacer />
         <v-text-field
           class="max-width-250 mr-2"
           v-model="search"
@@ -21,7 +21,7 @@
           single-line
           hide-details
           data-cy="form-search"
-        ></v-text-field>
+        />
         <v-flex shrink justify-self-end>
           <v-btn
             class="hidden-xs-only mr-2"
@@ -59,7 +59,7 @@
           </v-select>
         </v-flex>
         <v-flex shrink>
-          <!-- TODO: What is suppsoed to show? Get error message after click the switch-->
+          <!-- TODO: What is supposed to show? Get error message after click the switch -->
           <v-switch
             hide-details
             v-model="viewPast"
@@ -70,6 +70,8 @@
         </v-flex>
       </v-layout>
     </v-toolbar>
+
+    <!-- Table of existing events -->
     <v-data-table
       :headers="headers"
       :items-per-page-options="rowsPerPageItem"
@@ -78,7 +80,9 @@
       :loading="tableLoading"
       must-sort
       class="elevation-1"
-      :options.sync="paginationInfo"
+      hide-default-footer
+      @page-count="pageCount = $event"
+      :page.sync="page"
     >
       <template v-slot:item="props">
         <!-- TODO: Add icons for past, upcoming, etc. -->
@@ -90,8 +94,8 @@
               small
               justify-space-around
               color="secondary"
-              >autorenew</v-icon
-            >
+              >autorenew
+            </v-icon>
           </td>
           <td class="hover-hand" v-on:click="navigateToEvent(props.item.id)">
             <span> {{ props.item.title }}</span>
@@ -180,6 +184,9 @@
         </tr>
       </template>
     </v-data-table>
+    <div class="text-center pt-2">
+      <v-pagination v-model="page" :length="pageCount"></v-pagination>
+    </div>
 
     <v-snackbar v-model="snackbar.show">
       {{ snackbar.text }}
@@ -217,17 +224,17 @@
             color="secondary"
             text
             data-cy="cancel-archive"
-            >{{ $t("actions.cancel") }}</v-btn
-          >
-          <v-spacer></v-spacer>
+            >{{ $t("actions.cancel") }}
+          </v-btn>
+          <v-spacer />
           <v-btn
             v-on:click="archiveEvent"
             color="primary"
             raised
             :loading="archiveDialog.loading"
             data-cy="confirm-archive"
-            >{{ $t("actions.confirm") }}</v-btn
-          >
+            >{{ $t("actions.confirm") }}
+          </v-btn>
         </v-card-actions>
       </v-card>
     </v-dialog>
@@ -237,24 +244,23 @@
 <script>
 import CustomForm from "../CustomForm";
 import { mapGetters } from "vuex";
+
 export default {
   name: "EventTable",
   components: { "event-form": CustomForm },
   data() {
     return {
       active: 0,
+
+      page: 1,
+      pageCount: 0,
+
       rowsPerPageItem: [
         10,
         15,
         25,
         { text: "$vuetify.dataIterator.rowsPerPageAll", value: -1 },
       ],
-      paginationInfo: {
-        sortBy: ["start"], //default sorted column
-        rowsPerPage: 10,
-        page: 1,
-        sortDesc: [true],
-      },
       tableLoading: true,
       events: [],
       eventDialog: {
@@ -568,6 +574,7 @@ export default {
         delete newEvent.persons;
         let newAssets = newEvent.assets;
         delete newEvent.assets;
+        console.log(newEvent);
         this.$http
           .post("/api/v1/events/", newEvent)
           .then((resp) => {
@@ -716,7 +723,7 @@ export default {
           return name;
         }
       }
-      return location.address.address;
+      return location?.address?.address || this.$t("location.missing");
     },
 
     navigateToEvent(id) {

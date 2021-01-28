@@ -114,7 +114,7 @@ def read_one_person(person_id):
     return jsonify(person_schema.dump(result))
 
 
-@people.route('/persons/<person_id>', methods=['PATCH'])
+@people.route('/persons/<person_id>', methods=['PATCH', 'PUT'])
 @jwt_required
 def update_person(person_id):
     try:

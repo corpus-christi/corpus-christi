@@ -45,9 +45,9 @@
           <v-btn fab x-small @click="prev">
             <v-icon small>navigate_before</v-icon>
           </v-btn>
-          <v-spacer></v-spacer>
+          <v-spacer />
           <v-toolbar-title>{{ $refs.calendar.title }}</v-toolbar-title>
-          <v-spacer></v-spacer>
+          <v-spacer />
           <v-btn fab small @click="next">
             <v-icon small>navigate_next</v-icon>
           </v-btn>

@@ -11,7 +11,7 @@
         </v-col>
 
         <v-col cols="1">
-        <v-icon>keyboard_arrow_right</v-icon>
+          <v-icon>keyboard_arrow_right</v-icon>
         </v-col>
 
         <v-col>
@@ -44,7 +44,7 @@
 </template>
 
 <script>
-import { eventBus } from '../../plugins/event-bus';
+import { eventBus } from "../../plugins/event-bus";
 export default {
   name: "TranslationCard",
   props: {
@@ -83,11 +83,15 @@ export default {
       return `${this.topLevelTag}.${this.restOfTag}`;
     },
     isHiddenByFilters() {
-      if (this.currentVerified && this.filters.includes("translation.filters.unverified")) {
+      if (
+        this.currentVerified &&
+        this.filters.includes("translation.filters.unverified")
+      ) {
         return true;
       }
       return (
-        this.currentGloss.length !== 0 && this.filters.includes("translation.filters.untranslated")
+        this.currentGloss.length !== 0 &&
+        this.filters.includes("translation.filters.untranslated")
       );
     },
   },
@@ -114,8 +118,8 @@ export default {
         })
         .catch((err) => {
           eventBus.$emit("message", {
-            content: (err.response.data),
-          })
+            content: err.response.data,
+          });
         })
         .finally(() => {
           this.submissionInProgress = false;

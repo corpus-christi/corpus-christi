@@ -99,7 +99,7 @@
           ref="map"
           v-bind:center="center"
           v-bind:zoom="10"
-          style="width: 400px; height: 250px;"
+          style="width: 400px; height: 250px"
           data-cy="gmap"
           @click="markLocation"
           :disabled="formDisabled"
@@ -156,7 +156,7 @@
       </v-layout>
     </v-card-text>
     <v-card-actions>
-      <v-spacer></v-spacer>
+      <v-spacer />
       <v-btn
         text
         color="secondary"
