@@ -375,6 +375,12 @@
       "verified": false
     }
   },
+  "collections": {
+    "title": {
+      "gloss": "Colecciones",
+      "verified": false
+    }
+  },
   "country": {
     "name": {
       "AD": {
@@ -1721,6 +1727,12 @@
     "all-events": {
       "gloss": "Todos Eventos",
       "verified": false
+    },
+    "assets": {
+      "confirm-remove": {
+        "gloss": "¿Estás seguro de que quieres eliminar a este insumo?",
+        "verified": false
+      }
     },
     "attendance": {
       "gloss": "Concurrencia",

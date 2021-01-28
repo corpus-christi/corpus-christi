@@ -25,6 +25,7 @@
 
     <!-- Actually place the Item in the NavDrawer -->
     <v-list-item
+      exact
       v-else-if="isLeaf"
       :to="{ name: item.route }"
       :data-cy="item.route"

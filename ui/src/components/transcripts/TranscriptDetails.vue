@@ -85,16 +85,47 @@
                 </v-subheader>
                 <v-layout row>
                   <v-flex xs12 sm10 offset-sm1>
+                     <h3>Diplomas In Progress</h3>
                     <div
-                      v-for="diploma in transcript.diplomaList"
+                      v-for="diploma in diplomasInProgress"
+                      :key="`diploma-` + `${diploma.id}`"
+                    >
+                      <!-- making a composite key to avoid duplicate key issue: https://github.com/vuejs/vue/issues/7323 -->
+                      <h3>{{ diploma.name }}:</h3>
+                      <v-btn
+                      color="primary"
+                    
+                      v-on:click.stop="completedDiploma"
+                      >
+                        Complete Diploma
+                     </v-btn>
+                      <ul class="mb-2">
+                        <li
+                          v-for="(diplomaCourse,
+                          diplomaCourseIndex) in diploma.courses"
+                          :key="`diplomaCourse-` + `${diplomaCourseIndex}`"
+                        >
+                          {{ diplomaCourse.name }}
+                          <span
+                            v-if="diplomaCourse.courseCompleted"
+                            class="green--text"
+                            >{{ $t("transcripts.course-completed") }}</span
+                          >
+                        </li>
+                      </ul>
+                    </div>
+                    <h3>Diplomas Completed</h3>
+                    <div
+                      v-for="diploma in diplomasCompleted"
                       :key="`diploma-` + `${diploma.id}`"
                     >
                       <!-- making a composite key to avoid duplicate key issue: https://github.com/vuejs/vue/issues/7323 -->
                       <h3>{{ diploma.name }}:</h3>
                       <ul class="mb-2">
                         <li
-                          v-for="(diplomaCourse,
-                          diplomaCourseIndex) in diploma.courses"
+                          v-for="(
+                            diplomaCourse, diplomaCourseIndex
+                          ) in diploma.courses"
                           :key="`diplomaCourse-` + `${diplomaCourseIndex}`"
                         >
                           {{ diplomaCourse.name }}
@@ -130,8 +161,9 @@
                       </h3>
                       <ul class="mb-2">
                         <li
-                          v-for="(courseOffering,
-                          index) in course.courseOfferings"
+                          v-for="(
+                            courseOffering, index
+                          ) in course.courseOfferings"
                           :key="`courseOffering-` + `${index}`"
                         >
                           {{ courseOffering.description }}
@@ -180,6 +212,8 @@ export default {
       diplomasThisStudent: [],
       transcript: {},
       personalInformation: [],
+      diplomasInProgress: [],
+      diplomasCompleted: [],
       loading: true,
       loadingFailed: false,
     };
@@ -198,6 +232,7 @@ export default {
         .get(`/api/v1/courses/students/${this.studentId}`)
         .then((resp) => {
           this.transcript = resp.data;
+          this.sortedDimploma();
           console.log("transcript for this student: ", this.transcript);
         })
         .catch(() => {
@@ -212,6 +247,11 @@ export default {
         this.diplomasThisStudent.push(diploma.id);
       });
       this.diplomaDialog.show = true;
+    },
+    sortedDimploma(){
+      this.diplomasInProgress = this.transcript.diplomaList.filter((diploma) => diploma.diplomaIsActive);
+      this.diplomasCompleted = this.transcript.diplomaList.filter((diploma) => !diploma.diplomaIsActive);
+      console.log("Happ!");
     },
     newDiploma() {
       this.activateDiplomaDialog();

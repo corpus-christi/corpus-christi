@@ -172,7 +172,7 @@ export default {
     },
 
     deleteAsset() {
-      let id =  this.deleteAssetDialog.assetId;
+      let id = this.deleteAssetDialog.assetId;
       this.deleteAssetDialog.loading = true;
       // Emit asset-deleted event
       this.$emit("asset-deleted", { assetId: id });
