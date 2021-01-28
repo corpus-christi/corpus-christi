@@ -3,6 +3,12 @@
 </template>
 
 <script>
+/**
+ * @file
+ * @name App.vue
+ * @exports main.ts
+ * Main App. Does Initialization.
+ */
 import { mapMutations, mapState } from "vuex";
 import { setJWT } from "./plugins/axios";
 import { Locale } from "./models/Locale";
@@ -21,9 +27,11 @@ export default {
   },
   methods: mapMutations(["setLocaleModels", "setCurrentLocale"]),
 
+  /**
+   * @function
+   * Initialize early application stuff
+   */
   created: function () {
-    // Initialize early application stuff
-
     // Locales
     this.$http.get("/api/v1/i18n/locales").then((response) => {
       const localeData = response.data;

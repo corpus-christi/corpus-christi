@@ -1,6 +1,7 @@
 <template>
   <v-container>
     <v-layout row>
+      <!-- A link to see Courses -->
       <v-flex xs12 sm6 md5>
         <v-toolbar color="cyan" dark style="z-index: 1">
           <v-toolbar-title>
@@ -66,6 +67,7 @@
         </v-btn>
       </v-snackbar>
 
+      <!-- A link to see Events -->
       <v-flex xs12 sm6 md5 offset-md2>
         <v-toolbar color="blue" dark style="z-index: 1">
           <v-toolbar-title>
@@ -115,6 +117,7 @@
       </v-flex>
     </v-layout>
 
+    <!-- Google Maps on the main page -->
     <v-layout class="mt-3">
       <v-flex>
         <v-toolbar color="blue" dark>
@@ -129,11 +132,22 @@
 </template>
 
 <script>
+/**
+ * @file
+ * @name Public.vue
+ * @todo You can't see this page while logged in. This is a problem, since some people might still want to use the map.
+ */
 import GoogleMap from "../components/GoogleMap";
 import { isEmpty } from "lodash";
 import { mapGetters } from "vuex";
 import CourseRegistrationForm from "../components/public/CourseRegistrationForm";
 
+/**
+ * @module
+ * @name Public
+ * @exports ../router.js
+ * The main Arco Page.
+ */
 export default {
   name: "Public",
   components: { GoogleMap, CourseRegistrationForm },

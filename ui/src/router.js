@@ -1,4 +1,9 @@
-// Vue Router configuration
+/**
+ * @file
+ * @name router.js
+ * @exports main.ts
+ * Vue Router Configuration. This file is responsible for telling the webpage which URLs correspond to which files.
+ */
 
 import Vue from "vue";
 import VueRouter from "vue-router";

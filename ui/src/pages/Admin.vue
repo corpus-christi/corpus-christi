@@ -3,6 +3,17 @@
 </template>
 
 <script>
+/**
+ * @file
+ * @name Admin.vue
+ */
+
+/**
+ * @module
+ * @name Admin
+ * @exports ???
+ * Unused File.
+ */
 export default {
   name: "Admin",
 };

@@ -1,4 +1,13 @@
- /**
+/**
+ * @file
+ * @name Account.js
+ * @exports ../../tests/e2e/support/commands.js
+ * @exports ../pages/Login.vue
+ * @exports ../plugins/vuex-persistedstate.js
+ * Creates object for preserving the Account state.
+ */
+
+/**
  * Prefix in the I18N database for roles.
  * @type {string}
  */

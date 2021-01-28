@@ -1,3 +1,9 @@
+/**
+ * @file
+ * @name vuetify.js
+ * @exports ../main.ts
+ * Creates the Vuetify object which runs the site's asthetics.
+ */
 import Vue from "vue";
 import Vuetify from "vuetify/lib";
 import i18n from "./vue-i18n";

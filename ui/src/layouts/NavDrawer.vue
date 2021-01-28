@@ -1,4 +1,5 @@
 <template>
+  <!-- Draw the Navigation Bar -->
   <v-navigation-drawer
     app
     clipped
@@ -12,9 +13,19 @@
 </template>
 
 <script>
+/**
+ * @file
+ * @name NavDrawer.vue
+ */
 import NavItem from "./NavItem";
 import { mapState } from "vuex";
 
+/**
+ * @module
+ * @name NavDrawer
+ * @exports ./app-bars/StandardAppBar.vue
+ * Creates the Navigation Menu accessed by the hamburger button on the App Bar.
+ */
 export default {
   name: "NavDrawer",
   components: {

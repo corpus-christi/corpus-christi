@@ -1,3 +1,9 @@
+/**
+ * @file
+ * @name filters.js
+ * @exports main.ts
+ * Filters.
+ */
 import Vue from "vue";
 import moment from "moment";
 

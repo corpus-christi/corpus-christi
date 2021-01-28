@@ -16,8 +16,18 @@
 </template>
 
 <script>
+/**
+ * @file
+ * @name Signup.vue
+ */
 import PersonForm from "../components/people/PersonStepper";
 
+/**
+ * @module
+ * @name Signup
+ * @exports ../router.js
+ * Allows a person to signup for an account. Form found in ../components/people/PersonForm.vue
+ */
 export default {
   name: "Signup",
   components: { PersonForm },
