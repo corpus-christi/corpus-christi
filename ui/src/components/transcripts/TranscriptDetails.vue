@@ -31,7 +31,7 @@
                     }}</span>
                   </v-toolbar-title>
                 </v-toolbar>
-
+​
                 <v-subheader>
                   <h2>{{ $t("transcripts.student-information") }}:</h2>
                 </v-subheader>
@@ -94,8 +94,7 @@
                       <h3>{{ diploma.name }}:</h3>
                       <v-btn
                       color="primary"
-                    
-                      v-on:click.stop="completedDiploma"
+                      v-on:click="completeDiploma(diploma.id)"
                       >
                         Complete Diploma
                      </v-btn>
@@ -123,9 +122,8 @@
                       <h3>{{ diploma.name }}:</h3>
                       <ul class="mb-2">
                         <li
-                          v-for="(
-                            diplomaCourse, diplomaCourseIndex
-                          ) in diploma.courses"
+                          v-for="(diplomaCourse,
+                          diplomaCourseIndex) in diploma.courses"
                           :key="`diplomaCourse-` + `${diplomaCourseIndex}`"
                         >
                           {{ diplomaCourse.name }}
@@ -161,9 +159,8 @@
                       </h3>
                       <ul class="mb-2">
                         <li
-                          v-for="(
-                            courseOffering, index
-                          ) in course.courseOfferings"
+                          v-for="(courseOffering,
+                          index) in course.courseOfferings"
                           :key="`courseOffering-` + `${index}`"
                         >
                           {{ courseOffering.description }}
@@ -189,7 +186,7 @@
     </v-dialog>
   </v-layout>
 </template>
-
+​
 <script>
 import AddDiplomaEditor from "./AddDiplomaEditor";
 export default {
@@ -225,6 +222,20 @@ export default {
     $route: "loadTranscript",
   },
   methods: {
+    completeDiploma(diplomaId) {
+      console.log("Diagnostic 1:", this.studentId, diplomaId);
+      this.$http.post(`/api/v1/courses/diplomas_awarded`, {personID: this.studentId, diplomaId: diplomaId})
+      .then((resp) => {
+        console.log("A most successful post!");
+        console.log(resp);
+      })
+      .catch(() => {
+        console.log("A less successful post.");
+      })
+      .finally(() => {
+        console.log("Ending post nonsense.");
+      })
+    },
     loadTranscript() {
       this.loading = true;
       this.loadingFailed = false;
@@ -241,6 +252,8 @@ export default {
         .finally(() => {
           this.loading = false;
         });
+        console.log("Diagnostic 2");
+        console.log(this.transcript);
     },
     activateDiplomaDialog() {
       this.transcript.diplomaList.forEach((diploma) => {
@@ -249,6 +262,11 @@ export default {
       this.diplomaDialog.show = true;
     },
     sortedDimploma(){
+      /**
+       * @todo This functionality sorts Diplomas by whether or not they are actice, not whether or not they are in progress.
+       * The Database does not currently have funcitonality for determining if a diploma is complete or in progress. 
+       * Also need to move diploma to diploma awarded once completed.
+       */
       this.diplomasInProgress = this.transcript.diplomaList.filter((diploma) => diploma.diplomaIsActive);
       this.diplomasCompleted = this.transcript.diplomaList.filter((diploma) => !diploma.diplomaIsActive);
       console.log("Happ!");
@@ -286,5 +304,5 @@ export default {
   },
 };
 </script>
-
+​
 <style></style>
