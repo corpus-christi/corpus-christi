@@ -91,14 +91,14 @@
       v-model="newCourseDialog.show"
       max-width="500px"
     >
-    <!---->
+      <!---->
       <DiplomaNewCourseForm
         v-bind:editMode="newCourseDialog.editMode"
         v-bind:initialData="newCourseDialog.course"
         v-on:cancel="cancelNewCourse"
         v-on:save="saveNewCourse"
       />
-    <!---->
+      <!---->
     </v-dialog>
 
     <!-- Deactivate/archive confirmation -->
@@ -260,7 +260,7 @@ export default {
     addCourse() {
       this.activateNewCourseDialog();
     },
-    
+
     cancelNewCourse() {
       this.newCourseDialog.show = false;
     },
@@ -326,9 +326,7 @@ export default {
       }
       if (this.newCourseDialog.editMode) {
         // Locate the record we're updating in the table.
-        const idx = this.course.findIndex(
-          (c) => c.id === course.id
-        );
+        const idx = this.course.findIndex((c) => c.id === course.id);
         Object.assign(this.course[idx], course);
         this.snackbar.text = this.$t("courses.updated");
       } else {

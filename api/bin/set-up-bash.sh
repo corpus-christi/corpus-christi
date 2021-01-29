@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-source ./venv/Scripts/activate
+source ./venv/bin/activate
 
 export FLASK_APP=cc-api.py
 export FLASK_ENV=development

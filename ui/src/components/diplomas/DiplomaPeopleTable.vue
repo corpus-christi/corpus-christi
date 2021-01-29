@@ -341,16 +341,14 @@ export default {
 
       if (this.newPersonDialog.editMode) {
         // Locate the record we're updating in the table.
-        const idx = this.students.findIndex(
-          (c) => c.id === person.id
-        );
+        const idx = this.students.findIndex((c) => c.id === person.id);
         Object.assign(this.students[idx], person);
         this.snackbar.text = this.$t("courses.updated");
       } else {
         this.students.push(person);
         this.snackbar.text = this.$t("courses.added");
       }
-      
+
       this.snackbar.show = true;
 
       this.newPersonDialog.show = false;
