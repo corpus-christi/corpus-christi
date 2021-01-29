@@ -87,6 +87,7 @@ class Person(Base):
         'Attendance',
         back_populates='person',
         lazy=True)
+    emails = relationship('Recipient', back_populates='person', lazy=True)
 
     def __repr__(self):
         return f"<Person(id={self.id},name='{self.first_name} {self.last_name}')>"
