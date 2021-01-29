@@ -12,8 +12,8 @@
         v-model="email.recipients"
         :label="$t('groups.members.email.to')"
         :items="initialData.recipientList"
-        item-text="name"
-        item-value="email"
+        item-text="person.firstName"
+        item-value="person.email"
         multiple
         chips
         deletable-chips
@@ -22,45 +22,7 @@
         :no-data-text="$t('groups.messages.no-remaining-members')"
       >
         <template v-slot:item="{ item }">
-          {{ `${item.name} (${item.email})` }}
-        </template>
-      </v-select>
-    </v-card-text>
-    <v-card-text>
-      <v-select
-        v-model="email.cc"
-        :label="$t('groups.members.email.cc')"
-        :items="initialData.recipientList"
-        item-text="name"
-        item-value="email"
-        multiple
-        chips
-        deletable-chips
-        hide-selected
-        return-object
-        :no-data-text="$t('groups.messages.no-remaining-members')"
-      >
-        <template v-slot:item="{ item }">
-          {{ `${item.name} (${item.email})` }}
-        </template>
-      </v-select>
-    </v-card-text>
-    <v-card-text>
-      <v-select
-        v-model="email.bcc"
-        :label="$t('groups.members.email.bcc')"
-        :items="initialData.recipientList"
-        item-text="name"
-        item-value="email"
-        multiple
-        chips
-        deletable-chips
-        hide-selected
-        return-object
-        :no-data-text="$t('groups.messages.no-remaining-members')"
-      >
-        <template v-slot:item="{ item }">
-          {{ `${item.name} (${item.email})` }}
+          {{ `${item.person.firstName + " " + item.person.lastName} (${item.person.email})` }}
         </template>
       </v-select>
     </v-card-text>
@@ -71,10 +33,17 @@
       >
       </v-text-field>
     </v-card-text>
-    <v-card-text>
+    <span class="outlined">
+    <tip-tap-entry
+    @sending="updateBody"
+    @clearing="updateBody"
+    >
+    </tip-tap-entry>
+    </span>
+    <!--<v-card-text>
       <v-textarea :label="$t('groups.members.email.body')" v-model="email.body">
       </v-textarea>
-    </v-card-text>
+    </v-card-text>-->
     <v-flex class="text-xs-center">
       <v-btn
         class="ma-2"
@@ -92,10 +61,6 @@
       <v-expand-transition>
         <v-card v-if="entityTypePanel.show" color="teal lighten-3">
           <v-radio-group v-model="radioGroup">
-            <v-card-title
-              >{{ $t("groups.members.email-reply-to") }} :
-              {{ replyToOtherEmail || "null" }}</v-card-title
-            >
             <v-card-title text color="green"></v-card-title>
             <v-radio
               :label="$t('groups.title')"
@@ -122,9 +87,6 @@
                 </v-card-text>
                 <v-btn v-on:click="hideManagerPanel" color="light-blue" text>{{
                   $t("actions.cancel")
-                }}</v-btn>
-                <v-btn v-on:click="setReplyTo" color="primary" text>{{
-                  $t("actions.confirm")
                 }}</v-btn>
               </v-card>
             </v-expand-transition>
@@ -155,7 +117,6 @@
         $t("actions.cancel")
       }}</v-btn>
       <v-spacer> </v-spacer>
-      <v-footer>{{ replyToOtherEmail }}</v-footer>
       <v-spacer />
       <v-btn
         v-on:click="sendEmail"
@@ -173,9 +134,11 @@
 import { mapState } from "vuex";
 import { eventBus } from "../plugins/event-bus.js";
 import EntitySearch from "./EntitySearch";
+import TipTapEntry from "./TipTapEntry";
+
 
 export default {
-  components: { EntitySearch },
+  components: { EntitySearch, TipTapEntry },
   props: {
     initialData: {
       /* contains the following
@@ -184,11 +147,15 @@ export default {
       */
       type: Object,
       required: true,
+      default: function() {
+        return {}
+      },
+      
     },
   },
   computed: {
     hasValidRecipients() {
-      return this.email.recipients.some((recipient) => recipient.email);
+      return this.email.recipients.some((recipient) => recipient.person.email);
     },
     ...mapState(["currentAccount"]),
   },
@@ -196,20 +163,24 @@ export default {
     "initialData.recipients": function () {
       this.syncInitialData();
     },
+
   },
   methods: {
+
+    updateBody(data){ 
+      this.email.body = data;
+    },
+    
     syncInitialData() {
       this.email.recipients = this.initialData.recipients;
+      console.log("SYNCING", this.email);
     },
     resetEmail() {
       this.email.subject = "";
       this.email.body = "";
       this.email.recipients = [];
-      this.email.cc = [];
-      this.email.bcc = [];
-      this.email.managerName = "";
-      this.email.managerEmail = "sender@xx.com";
-      this.email.reply_to = "";
+      //this.email.managerName = ""
+      this.email.managerEmail = "corpus.christi.test@gmail.com";
     },
     cancel() {
       this.resetEmail();
@@ -218,18 +189,13 @@ export default {
     },
     sendEmail() {
       this.sendLoading = true;
-      if (this.replyToOtherEmail === null) {
-        eventBus.$emit("error", {
-          content: "groups.messages.error-sending-email",
-        });
-      }
+      console.log("pre-EMAIL", this.email);
       let email = {
         ...this.email,
-        recipients: this.email.recipients.map((p) => p.email),
-        cc: this.email.cc.map((p) => p.email),
-        bcc: this.email.bcc.map((p) => p.email),
-        reply_to: this.replyToOtherEmail,
+        recipients: this.email.recipients.map((p) => p.person.email),
+        recipientIds: this.email.recipients.map((p) => p.person.id)
       };
+      console.log("SENDING", email);
       this.$http
         .post(`/api/v1/emails/`, email, { noErrorSnackBar: true })
         .then(() => {
@@ -254,21 +220,9 @@ export default {
     },
     hideEntityTypePanel() {
       this.entityTypePanel.show = false;
-      this.replyToOtherEmail = this.radioGroup;
     },
     showManagerPanel() {
       this.managerPanel.show = true;
-    },
-    setReplyTo() {
-      if (this.selectedPerson != null && this.selectedPerson[1] === undefined) {
-        this.replyToOtherEmail = this.selectedPerson[0].email;
-        this.managerPanel.show = false;
-        this.radioGroup = this.replyToOtherEmail;
-      } else {
-        eventBus.$emit("error", {
-          content: "Select one email",
-        });
-      }
     },
     hideManagerPanel() {
       this.managerPanel.show = false;
@@ -289,11 +243,9 @@ export default {
       }
     },
     setToChurch() {
-      this.replyToOtherEmail = this.radioGroup;
       this.radioGroup = this.homeChurchEmail;
     },
     setToDefault() {
-      this.replyToOtherEmail = this.radioGroup;
       this.radioGroup = this.myEmail;
     },
   },
@@ -304,11 +256,9 @@ export default {
         subject: "",
         body: "",
         recipients: [],
-        cc: [],
-        bcc: [],
         managerName: "",
-        managerEmail: "manager@xx.com",
-        reply_to: "",
+        senderId:-1,
+        managerEmail: "corpus.christi.test@gmail.com",
       },
       expand: false,
       entityTypePanel: {
@@ -322,7 +272,6 @@ export default {
       },
       notSelected: " ",
       radioGroup: "default@email.com",
-      replyToOtherEmail: "reply@thisPerson.com",
       homeChurchEmail: "homeChurh@email.com",
       myEmail: "qiang_wang@taylor.edu",
       managers: null,
@@ -335,6 +284,8 @@ export default {
   mounted: function () {
     this.AllGroupManagers();
     this.myEmail = this.currentAccount.email;
+    this.email.managerName = this.currentAccount.firstName + " " + this.currentAccount.lastName;
+    this.email.senderId = this.currentAccount.id;
   },
 };
 </script>

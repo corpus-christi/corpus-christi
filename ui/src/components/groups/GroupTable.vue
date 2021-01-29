@@ -168,6 +168,22 @@
                 outlined
                 small
                 color="primary"
+                v-on:click.stop="sendEmail(props.item)"
+                data-cy="email"
+              >
+                <v-icon small>email</v-icon>
+              </v-btn></template
+            >
+            <span>{{ $t("groups.batch-actions.email") }}</span>
+          </v-tooltip>
+          <v-tooltip bottom>
+            <template v-slot:activator="{ on }"
+              ><v-btn
+                v-on="on"
+                icon
+                outlined
+                small
+                color="primary"
                 v-on:click.stop="confirmArchive(props.item)"
                 data-cy="archive"
               >
@@ -262,6 +278,17 @@
         :initial-data="splitGroupDialog.parentGroup"
       />
     </v-dialog>
+
+    <!-- Email Dialog -->
+    <v-dialog eager v-model="emailDialog.show" max-width="1300px" persistent>
+      <email-form
+        v-bind:initialData="emailDialog.recipientData"
+        v-on:cancel="cancelEmail"
+        v-on:sent="cancelEmail"
+      ></email-form>
+
+
+    </v-dialog>
   </div>
 </template>
 
@@ -270,6 +297,7 @@ import GroupForm from "./GroupForm";
 import SplitGroupForm from "./SplitGroupForm";
 import { eventBus } from "@/plugins/event-bus";
 import { pick } from "lodash";
+import EmailForm from "../EmailForm"
 import {
   convertToGroupMap,
   Group,
@@ -279,7 +307,7 @@ import {
 import { mapState } from "vuex";
 
 export default {
-  components: { GroupForm, SplitGroupForm },
+  components: { GroupForm, SplitGroupForm, "email-form": EmailForm },
   name: "GroupTable",
   mounted() {
     this.fetchGroups();
@@ -312,6 +340,12 @@ export default {
         addMoreLoading: false,
         editingGroupId: null,
         group: {},
+      },
+      emailDialog: {
+        show: false,
+        saveLoading: false,
+        group: {},
+        recipientData: {},
       },
       archiveDialog: {
         show: false,
@@ -414,6 +448,21 @@ export default {
   },
 
   methods: {
+
+    sendEmail(group){
+      let recipientList = group.members;
+      this.emailDialog.group = group;
+      this.emailDialog.recipientData = {
+        recipientList,
+        recipients: []
+      }
+      this.emailDialog.show = true
+    },
+
+    cancelEmail(){
+      this.emailDialog.show = false;
+    },
+
     itemClass() {
       return "hover-hand";
     },

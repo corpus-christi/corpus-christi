@@ -93,12 +93,12 @@
                       {{ $t("groups.batch-actions.unarchive") }}
                     </v-list-item-content>
                   </v-list-item>
-                  <v-list-item @click.stop="selectionMode = 'email'">
+                  <!--<v-list-item @click.stop="selectionMode = 'email'">
                     <v-icon color="primary">email</v-icon>
                     <v-list-item-content>
                       {{ $t("groups.batch-actions.email") }}
                     </v-list-item-content>
-                  </v-list-item>
+                  </v-list-item>-->
                   <v-list-item @click.stop="showMoveDialog()">
                     <v-icon color="primary">low_priority</v-icon>
                     <v-list-item-content>
@@ -478,13 +478,13 @@ export default {
           show: (item) => item.active,
           clickHandler: (item) => this.showMoveDialog(item),
         },
-        {
+        /*{
           key: "email",
           icon: "email",
           tooltipText: this.$t("actions.tooltips.email"),
           show: (item) => item.active && item.person.email,
           clickHandler: (item) => this.showEmailDialog([item]),
-        },
+        },*/
         {
           key: "unarchive",
           icon: "undo",
@@ -553,10 +553,10 @@ export default {
           title: this.$t("groups.batch-actions.unarchive"),
           callback: this.unarchiveParticipants,
         },
-        email: {
+        /*email: {
           title: this.$t("groups.batch-actions.email"),
           callback: this.showEmailDialog,
-        },
+        },*/
         move: {
           title: this.$t("groups.batch-actions.move"),
           callback: this.batchMoveParticipants,
