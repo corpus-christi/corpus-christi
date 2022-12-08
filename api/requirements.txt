@@ -7,7 +7,7 @@ autopep8==1.5.4
 backcall==0.2.0
 banal==1.0.1
 blinker==1.4
-certifi==2020.12.5
+certifi==2022.12.7
 chardet==3.0.4
 click==7.1.2
 coverage==5.3.1
