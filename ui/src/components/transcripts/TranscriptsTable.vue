@@ -2,35 +2,22 @@
   <div>
     <!-- Header -->
     <v-toolbar>
-      <v-layout align-center justify-space-between fill-height>
-        <v-flex md2>
-          <v-toolbar-title>{{ $t("transcripts.transcript") }}</v-toolbar-title>
-        </v-flex>
+      <v-row align="center" justify="space-between">
+        <v-col md="2">
+          <v-toolbar-title>{{ t("transcripts.transcript") }}</v-toolbar-title>
+        </v-col>
         <v-spacer></v-spacer>
-        <v-flex md3>
+        <v-col md="3">
           <v-text-field
             v-model="search"
             append-icon="search"
-            v-bind:label="$t('actions.search')"
+            v-bind:label="t('actions.search')"
             single-line
             hide-details
             data-cy="transcripts-table-search"
           ></v-text-field>
-        </v-flex>
-        <!--
-              possibly filter by active/inactive flag on students...but not for now
-            <v-spacer></v-spacer>
-            <v-flex md3>
-              <v-select
-                v-model="viewStatus"
-                :items="options"
-                solo
-                hide-details
-                data-cy="transcripts-table-viewstatus"
-              ></v-select>
-            </v-flex>
-            -->
-      </v-layout>
+        </v-col>
+      </v-row>
     </v-toolbar>
 
     <!-- Table of existing students -->
@@ -42,13 +29,13 @@
       class="elevation-1"
       data-cy="transcripts-table"
     >
-      <template slot="items" slot-scope="props">
+      <template #item="{ item }">
         <tr>
-          <td class="hover-hand" @click="clickThrough(props.item)">
-            {{ props.item.lastName }}
+          <td class="hover-hand" @click="clickThrough(item)">
+            {{ item.lastName }}
           </td>
-          <td class="hover-hand" @click="clickThrough(props.item)">
-            {{ props.item.firstName }}
+          <td class="hover-hand" @click="clickThrough(item)">
+            {{ item.firstName }}
           </td>
         </tr>
       </template>
@@ -56,72 +43,48 @@
   </div>
 </template>
 
-<script>
-export default {
-  name: "TranscriptsTable",
-  components: {},
-  data() {
-    return {
-      tableLoaded: false,
-      selected: [],
-      students: [],
-      search: "",
-      viewStatus: "active"
-    };
-  },
-  computed: {
-    // Put here so that the headers are reactive.
-    headers() {
-      return [
-        { text: this.$t("person.name.last"), value: "lastName", width: "40%" },
-        { text: this.$t("person.name.first"), value: "firstName", width: "60%" } //,
-        //{ text: this.$t("actions.header"), sortable: false }
-      ];
-    },
-    /*
-    // possibly filter by active/inactive flag on students...but not for now
-    options() {
-      return [
-        { text: this.$t("actions.view-active"), value: "active" },
-        { text: this.$t("actions.view-archived"), value: "archived" },
-        { text: this.$t("actions.view-all"), value: "all" }
-      ];
-    },
-    */
-    showStudents() {
-      return this.students;
-      /*
-      // possibly filter by active/inactive flag on students...but not for now
-      switch (this.viewStatus) {
-        case "active":
-          return this.students.filter(student => student.active);
-        case "archived":
-          return this.students.filter(student => !student.active);
-        case "all":
-        default:
-          return this.students;
-      }
-      */
-    }
-  },
-  methods: {
-    clickThrough(transcript) {
-      console.log(transcript);
-      this.$router.push({
-        name: "transcript-details",
-        params: { studentId: transcript.id }
-      });
-    }
-  },
-  mounted: function() {
-    console.log("about to fetch students....");
-    this.$http.get("/api/v1/courses/students").then(resp => {
-      this.students = resp.data;
-      console.log("student list received: ", this.students);
-      this.tableLoaded = true;
-    });
-  }
-};
+<script setup lang="ts">
+import { ref, computed, onMounted } from "vue";
+import { useI18n } from "vue-i18n";
+import { useRouter } from "vue-router";
+import { inject } from "vue";
+import type { AxiosInstance } from "axios";
+
+const { t } = useI18n();
+const http = inject<AxiosInstance>("$http")!;
+const router = useRouter();
+
+const tableLoaded = ref(false);
+const selected = ref<any[]>([]);
+const students = ref<any[]>([]);
+const search = ref("");
+const viewStatus = ref("active");
+
+const headers = computed(() => [
+  { title: t("person.name.last"), value: "lastName", width: "40%" },
+  { title: t("person.name.first"), value: "firstName", width: "60%" }
+]);
+
+const showStudents = computed(() => {
+  return students.value;
+});
+
+function clickThrough(transcript: any) {
+  console.log(transcript);
+  router.push({
+    name: "transcript-details",
+    params: { studentId: transcript.id }
+  });
+}
+
+onMounted(() => {
+  console.log("about to fetch students....");
+  http.get("/api/v1/courses/students").then(resp => {
+    students.value = resp.data;
+    console.log("student list received: ", students.value);
+    tableLoaded.value = true;
+  });
+});
 </script>
 
 <style scoped>

@@ -1,53 +1,53 @@
 <template>
   <div>
     <v-toolbar>
-      <v-layout align-center justify-space-between fill-height>
-        <v-flex md3 class="text-no-wrap">
+      <v-row align="center" justify="space-between">
+        <v-col md="3" class="text-no-wrap">
           <v-toolbar-title v-if="!select">{{
-            $t("events.participants.title")
+            t("events.participants.title")
           }}</v-toolbar-title>
           <v-btn
             color="primary"
-            raised
+            variant="elevated"
             v-on:click="toggleEmailDialog"
             v-if="select"
-            fab
-            small
+            icon
+            size="small"
           >
-            <v-icon dark>email</v-icon>
+            <v-icon>email</v-icon>
           </v-btn>
           <v-btn
             color="primary"
-            raised
+            variant="elevated"
             v-on:click="activateSelectArchiveDialog"
             data-cy="archive"
             v-if="select"
-            fab
-            small
+            icon
+            size="small"
           >
-            <v-icon dark>archive</v-icon>
+            <v-icon>archive</v-icon>
           </v-btn>
           <v-btn
             color="primary"
-            raised
+            variant="elevated"
             v-on:click="unarchiveFab"
             v-if="select"
-            fab
-            small
+            icon
+            size="small"
           >
-            <v-icon dark>undo</v-icon>
+            <v-icon>undo</v-icon>
           </v-btn>
-        </v-flex>
-        <v-flex md2>
+        </v-col>
+        <v-col md="2">
           <v-text-field
             v-model="search"
             append-icon="search"
-            v-bind:label="$t('actions.search')"
+            v-bind:label="t('actions.search')"
             single-line
             hide-details
           />
-        </v-flex>
-        <v-flex md1>
+        </v-col>
+        <v-col md="1">
           <v-select
             hide-details
             solo
@@ -57,87 +57,95 @@
             data-cy="view-status-select"
           >
           </v-select>
-        </v-flex>
-        <v-flex shrink justify-self-end>
+        </v-col>
+        <v-col shrink>
           <v-btn
             color="primary"
-            raised
+            variant="elevated"
             v-on:click="openParticipantDialog"
             data-cy="add-participant"
           >
             <v-icon dark left>add</v-icon>
-            {{ $t("actions.add-person") }}
+            {{ t("actions.add-person") }}
           </v-btn>
-        </v-flex>
-      </v-layout>
+        </v-col>
+      </v-row>
     </v-toolbar>
     <v-data-table
-      select-all
+      show-select
       v-model="selected"
-      :rows-per-page-items="rowsPerPageItem"
+      :items-per-page-options="rowsPerPageItem"
       :headers="headers"
       :items="visibleMembers"
       :search="search"
       :loading="tableLoading"
       class="elevation-1"
     >
-      <template slot="items" slot-scope="props">
-        <td><v-checkbox v-model="props.selected" primary hide-details /></td>
-        <td>{{ props.item.person.firstName }}</td>
-        <td>{{ props.item.person.lastName }}</td>
-        <td>{{ props.item.person.email }}</td>
-        <td>{{ props.item.person.phone }}</td>
-        <td class="text-no-wrap">
-          <template v-if="props.item.active">
-            <v-tooltip bottom>
-              <v-btn
-                icon
-                outline
-                small
-                color="primary"
-                slot="activator"
-                v-on:click="editPerson(props.item.person)"
-                data-cy="edit"
-              >
-                <v-icon small>edit</v-icon>
-              </v-btn>
-              <span>{{ $t("actions.edit") }}</span>
-            </v-tooltip>
-          </template>
-          <template v-if="props.item.active">
-            <v-tooltip bottom>
-              <v-btn
-                icon
-                outline
-                small
-                color="primary"
-                slot="activator"
-                v-on:click="confirmArchive(props.item)"
-                data-cy="archive"
-              >
-                <v-icon small>archive</v-icon>
-              </v-btn>
-              <span>{{ $t("actions.tooltips.archive") }}</span>
-            </v-tooltip>
-          </template>
-          <template v-else>
-            <v-tooltip bottom v-if="!props.item.active">
-              <v-btn
-                icon
-                outline
-                small
-                color="primary"
-                slot="activator"
-                v-on:click="massUnarchive(props.item)"
-                :loading="props.item.id < 0"
-                data-cy="unarchive"
-              >
-                <v-icon small>undo</v-icon>
-              </v-btn>
-              <span>{{ $t("actions.tooltips.activate") }}</span>
-            </v-tooltip>
-          </template>
-        </td>
+      <template #item="{ item, isSelected, toggleSelect }">
+        <tr>
+          <td><v-checkbox :model-value="isSelected({ value: item })" @change="toggleSelect({ value: item })" hide-details /></td>
+          <td>{{ item.person.firstName }}</td>
+          <td>{{ item.person.lastName }}</td>
+          <td>{{ item.person.email }}</td>
+          <td>{{ item.person.phone }}</td>
+          <td class="text-no-wrap">
+            <template v-if="item.active">
+              <v-tooltip bottom>
+                <template #activator="{ props: tooltipProps }">
+                  <v-btn
+                    icon
+                    variant="outlined"
+                    size="small"
+                    color="primary"
+                    v-bind="tooltipProps"
+                    v-on:click="editPerson(item.person)"
+                    data-cy="edit"
+                  >
+                    <v-icon size="small">edit</v-icon>
+                  </v-btn>
+                </template>
+                <span>{{ t("actions.edit") }}</span>
+              </v-tooltip>
+            </template>
+            <template v-if="item.active">
+              <v-tooltip bottom>
+                <template #activator="{ props: tooltipProps }">
+                  <v-btn
+                    icon
+                    variant="outlined"
+                    size="small"
+                    color="primary"
+                    v-bind="tooltipProps"
+                    v-on:click="confirmArchive(item)"
+                    data-cy="archive"
+                  >
+                    <v-icon size="small">archive</v-icon>
+                  </v-btn>
+                </template>
+                <span>{{ t("actions.tooltips.archive") }}</span>
+              </v-tooltip>
+            </template>
+            <template v-else>
+              <v-tooltip bottom v-if="!item.active">
+                <template #activator="{ props: tooltipProps }">
+                  <v-btn
+                    icon
+                    variant="outlined"
+                    size="small"
+                    color="primary"
+                    v-bind="tooltipProps"
+                    v-on:click="massUnarchive(item)"
+                    :loading="item.id < 0"
+                    data-cy="unarchive"
+                  >
+                    <v-icon size="small">undo</v-icon>
+                  </v-btn>
+                </template>
+                <span>{{ t("actions.tooltips.activate") }}</span>
+              </v-tooltip>
+            </template>
+          </td>
+        </tr>
       </template>
     </v-data-table>
 
@@ -145,24 +153,24 @@
     <v-dialog v-model="archiveDialog.show" max-width="350px">
       <v-card>
         <v-card-text>{{
-          $t("groups.messages.confirm-member-archive")
+          t("groups.messages.confirm-member-archive")
         }}</v-card-text>
         <v-card-actions>
           <v-btn
             v-on:click="cancelArchive"
             color="secondary"
-            flat
+            variant="text"
             data-cy="cancel-archive"
-            >{{ $t("actions.cancel") }}</v-btn
+            >{{ t("actions.cancel") }}</v-btn
           >
           <v-spacer />
           <v-btn
             v-on:click="massArchive"
             color="primary"
-            raised
+            variant="elevated"
             :loading="archiveDialog.loading"
             data-cy="confirm-archive"
-            >{{ $t("actions.confirm") }}</v-btn
+            >{{ t("actions.confirm") }}</v-btn
           >
         </v-card-actions>
       </v-card>
@@ -171,15 +179,15 @@
     <!-- Add Participant Dialog -->
     <v-dialog v-model="addParticipantDialog.show" max-width="350px">
       <v-card>
-        <v-card-title primary-title>
+        <v-card-title>
           <div>
             <h3 class="headline mb-0">
-              {{ $t("person.actions.add-participant") }}
+              {{ t("person.actions.add-participant") }}
             </h3>
           </div>
         </v-card-title>
         <v-card-text>
-          <entity-search
+          <EntitySearch
             multiple
             person
             v-model="addParticipantDialog.newParticipants"
@@ -189,16 +197,16 @@
           <v-btn
             v-on:click="cancelNewParticipantDialog"
             color="secondary"
-            flat
+            variant="text"
             data-cy=""
-            >{{ $t("actions.cancel") }}</v-btn
+            >{{ t("actions.cancel") }}</v-btn
           >
           <v-spacer />
           <v-btn
             v-on:click="addParticipants"
             :disabled="addParticipantDialog.newParticipants.length === 0"
             color="primary"
-            raised
+            variant="elevated"
             :loading="addParticipantDialog.loading"
             data-cy="confirm-participant"
             >Add Participants</v-btn
@@ -208,7 +216,7 @@
     </v-dialog>
 
     <!-- New/Edit dialog -->
-    <person-dialog
+    <PersonDialog
       @snack="showSnackbar"
       @cancel="cancelPerson"
       @refreshPeople="getMembers"
@@ -221,24 +229,24 @@
     <v-dialog v-model="deleteDialog.show" max-width="350px">
       <v-card>
         <v-card-text>{{
-          $t("events.participants.confirm-remove")
+          t("events.participants.confirm-remove")
         }}</v-card-text>
         <v-card-actions>
           <v-btn
             v-on:click="cancelDelete"
             color="secondary"
-            flat
+            variant="text"
             data-cy="cancel-delete"
-            >{{ $t("actions.cancel") }}</v-btn
+            >{{ t("actions.cancel") }}</v-btn
           >
           <v-spacer></v-spacer>
           <v-btn
             v-on:click="deleteParticipant"
             color="primary"
-            raised
+            variant="elevated"
             :loading="deleteDialog.loading"
             data-cy="confirm-delete"
-            >{{ $t("actions.confirm") }}</v-btn
+            >{{ t("actions.confirm") }}</v-btn
           >
         </v-card-actions>
       </v-card>
@@ -247,61 +255,61 @@
     <!-- Email dialog -->
     <v-dialog v-model="emailDialog.show" max-width="700px">
       <v-card>
-        <v-card-title primary-title>
+        <v-card-title>
           <div>
             <h3 class="headline mb-0">
-              {{ $t("groups.members.email.compose") }}
+              {{ t("groups.members.email.compose") }}
             </h3>
           </div>
         </v-card-title>
         <v-card-text>
           <v-select
             v-model="email.recipients"
-            :label="$t('groups.members.email.to')"
+            :label="t('groups.members.email.to')"
             :items="parsedMembers"
             multiple
             chips
             deletable-chips
             hide-selected
-            :no-data-text="$t('groups.messages.no-remaining-members')"
+            :no-data-text="t('groups.messages.no-remaining-members')"
           >
           </v-select>
         </v-card-text>
         <v-card-text>
           <v-select
             v-model="email.cc"
-            :label="$t('groups.members.email.cc')"
+            :label="t('groups.members.email.cc')"
             :items="parsedMembers"
             multiple
             chips
             deletable-chips
             hide-selected
-            :no-data-text="$t('groups.messages.no-remaining-members')"
+            :no-data-text="t('groups.messages.no-remaining-members')"
           >
           </v-select>
         </v-card-text>
         <v-card-text>
           <v-select
             v-model="email.bcc"
-            :label="$t('groups.members.email.bcc')"
+            :label="t('groups.members.email.bcc')"
             :items="parsedMembers"
             multiple
             chips
             deletable-chips
-            :no-data-text="$t('groups.messages.no-remaining-members')"
+            :no-data-text="t('groups.messages.no-remaining-members')"
           >
           </v-select>
         </v-card-text>
         <v-card-text>
           <v-text-field
-            :label="$t('groups.members.email.subject')"
+            :label="t('groups.members.email.subject')"
             v-model="email.subject"
           >
           </v-text-field>
         </v-card-text>
         <v-card-text>
           <v-textarea
-            :label="$t('groups.members.email.body')"
+            :label="t('groups.members.email.body')"
             v-model="email.body"
           >
           </v-textarea>
@@ -310,19 +318,18 @@
           <v-btn
             v-on:click="toggleEmailDialog"
             color="secondary"
-            flat
+            variant="text"
             data-cy=""
-            >{{ $t("actions.cancel") }}</v-btn
+            >{{ t("actions.cancel") }}</v-btn
           >
           <v-spacer></v-spacer>
           <v-btn
             v-on:click="sendEmail"
             :disabled="email.recipients.length == 0"
             color="primary"
-            raised
-            :loading="sendEmail.loading"
+            variant="elevated"
             data-cy="confirm-email"
-            >{{ $t("groups.members.email.send") }}</v-btn
+            >{{ t("groups.members.email.send") }}</v-btn
           >
         </v-card-actions>
       </v-card>
@@ -330,418 +337,358 @@
 
     <v-snackbar v-model="snackbar.show">
       {{ snackbar.text }}
-      <v-btn flat @click="snackbar.show = false">
-        {{ $t("actions.close") }}
-      </v-btn>
+      <template #actions>
+        <v-btn variant="text" @click="snackbar.show = false">
+          {{ t("actions.close") }}
+        </v-btn>
+      </template>
     </v-snackbar>
   </div>
 </template>
 
-<script>
-import EntitySearch from "../../EntitySearch";
-import PersonDialog from "../../PersonDialog";
-export default {
-  components: { EntitySearch, PersonDialog },
-  name: "GroupMembers",
-  data() {
-    return {
-      rowsPerPageItem: [
-        10,
-        15,
-        25,
-        { text: "$vuetify.dataIterator.rowsPerPageAll", value: -1 }
-      ],
-      tableLoading: false,
-      dialogState: "",
-      search: "",
-      members: [],
-      people: [],
-      person: {},
-      parsedMembers: [],
-      selected: [],
-      select: false,
-      archiveSelect: false,
-      unarchiveSelect: false,
-      email: {
-        subject: "",
-        body: "",
-        recipients: [],
-        cc: [],
-        bcc: [],
-        managerName: "",
-        managerEmail: ""
-      },
-      emailDialog: {
-        show: false,
-        loading: false
-      },
-      addParticipantDialog: {
-        show: false,
-        newParticipants: [],
-        loading: false
-      },
-      personDialog: {
-        show: false,
-        title: "",
-        person: {},
-        addAnotherEnabled: false,
-        saveButtonText: "actions.save"
-      },
-      deleteDialog: {
-        show: false,
-        participantId: -1,
-        loading: false
-      },
-      archiveDialog: {
-        show: false,
-        memberId: -1,
-        loading: false
-      },
-      snackbar: {
-        show: false,
-        text: ""
-      },
-      viewStatus: "viewActive"
-    };
-  },
+<script setup lang="ts">
+import { ref, computed, watch, onMounted } from "vue";
+import { useI18n } from "vue-i18n";
+import { useRoute } from "vue-router";
+import { inject } from "vue";
+import type { AxiosInstance } from "axios";
+import EntitySearch from "../../EntitySearch.vue";
+import PersonDialog from "../../PersonDialog.vue";
 
-  watch: {
-    selected() {
-      if (this.selected.length > 0) {
-        console.log(this.selected);
-        this.select = true;
-      } else this.select = false;
+const { t } = useI18n();
+const http = inject<AxiosInstance>("$http")!;
+const route = useRoute();
 
-      this.email.recipients = this.getEmailRecipients();
-    }
-  },
+const rowsPerPageItem = [10, 15, 25, { title: "All", value: -1 }];
+const tableLoading = ref(false);
+const dialogState = ref("");
+const search = ref("");
+const members = ref<any[]>([]);
+const people = ref<any[]>([]);
+const person = ref<any>({});
+const parsedMembers = ref<any[]>([]);
+const selected = ref<any[]>([]);
+const select = ref(false);
+const archiveSelect = ref(false);
+const unarchiveSelect = ref(false);
+const viewStatus = ref("viewActive");
 
-  computed: {
-    viewOptions() {
-      return [
-        { text: this.$t("actions.view-active"), value: "viewActive" },
-        { text: this.$t("actions.view-archived"), value: "viewArchived" },
-        { text: this.$t("actions.view-all"), value: "viewAll" }
-      ];
-    },
+const email = ref({
+  subject: "",
+  body: "",
+  recipients: [] as string[],
+  cc: [] as string[],
+  bcc: [] as string[],
+  managerName: "",
+  managerEmail: ""
+});
 
-    headers() {
-      return [
-        {
-          text: this.$t("person.name.first"),
-          value: "person.firstName",
-          width: "20%"
-        },
-        {
-          text: this.$t("person.name.last"),
-          value: "person.lastName",
-          width: "20%"
-        },
-        {
-          text: this.$t("person.email"),
-          value: "person.email",
-          width: "22.5%"
-        },
-        {
-          text: this.$t("person.phone"),
-          value: "person.phone",
-          width: "22.5%"
-        },
-        {
-          text: this.$t("actions.header"),
-          sortable: false
-        }
-      ];
-    },
+const emailDialog = ref({ show: false, loading: false });
+const addParticipantDialog = ref({
+  show: false,
+  newParticipants: [] as any[],
+  loading: false
+});
+const deleteDialog = ref({ show: false, participantId: -1, loading: false });
+const archiveDialog = ref({ show: false, memberId: -1, loading: false });
+const snackbar = ref({ show: false, text: "" });
 
-    visibleMembers() {
-      let list = this.members;
+const viewOptions = computed(() => [
+  { title: t("actions.view-active"), value: "viewActive" },
+  { title: t("actions.view-archived"), value: "viewArchived" },
+  { title: t("actions.view-all"), value: "viewAll" }
+]);
 
-      if (this.viewStatus === "viewActive") {
-        return list.filter(ev => ev.active);
-      } else if (this.viewStatus === "viewArchived") {
-        return list.filter(ev => !ev.active);
-      } else {
-        return list;
-      }
-    }
-  },
+const headers = computed(() => [
+  { title: t("person.name.first"), value: "person.firstName", width: "20%" },
+  { title: t("person.name.last"), value: "person.lastName", width: "20%" },
+  { title: t("person.email"), value: "person.email", width: "22.5%" },
+  { title: t("person.phone"), value: "person.phone", width: "22.5%" },
+  { title: t("actions.header"), sortable: false }
+]);
 
-  methods: {
-    parseMembers() {
-      this.members.map(e => {
-        if (e.person.email) {
-          this.parsedMembers.push({
-            text: e.person.firstName + " " + e.person.lastName,
-            value: e.person.email
-          });
-        }
-      });
-      //console.log(this.parsedMembers);
-    },
-
-    activateNewParticipantDialog() {
-      this.addParticipantDialog.show = true;
-    },
-
-    openParticipantDialog() {
-      this.activateNewParticipantDialog();
-    },
-
-    cancelNewParticipantDialog() {
-      this.addParticipantDialog.show = false;
-    },
-
-    editPerson(person) {
-      this.dialogState = "edit";
-      this.person = person;
-    },
-
-    cancelPerson() {
-      this.dialogState = "";
-    },
-
-    addParticipants() {
-      this.addParticipantDialog.loading = true;
-      let promises = [];
-
-      for (let person of this.addParticipantDialog.newParticipants) {
-        const idx = this.members.findIndex(
-          gr_pe => gr_pe.person.person_id === person.id
-        );
-        if (idx === -1) {
-          promises.push(this.addParticipant(person.id));
-        }
-      }
-
-      Promise.all(promises)
-        .then(() => {
-          this.showSnackbar(this.$t("groups.messages.members-added"));
-          this.addParticipantDialog.loading = false;
-          this.addParticipantDialog.show = false;
-          this.addParticipantDialog.newParticipants = [];
-          this.getMembers();
-        })
-        .catch(err => {
-          console.log(err);
-          this.addParticipantDialog.loading = false;
-          this.showSnackbar(this.$t("groups.messages.error-adding-members"));
-        });
-    },
-
-    getEmailRecipients() {
-      return this.selected
-        .map(e => e.person.email)
-        .filter(function(e) {
-          return e != null;
-        });
-    },
-
-    sendEmail() {
-      this.$http
-        .post(`/api/v1/emails/`, this.email)
-        .then(() => {
-          this.toggleEmailDialog();
-          this.selected = [];
-          this.email.subject = "";
-          this.email.body = "";
-          this.email.cc = "";
-          this.email.bcc = "";
-          this.showSnackbar(this.$t("groups.messages.email-sent"));
-        })
-        .catch(err => {
-          this.showSnackbar(this.$t("groups.messages.error-no-manager-email"));
-          console.log(this.email);
-          console.log(err);
-        });
-    },
-
-    toggleEmailDialog() {
-      if (this.selected.length > 0) {
-        this.email.recipients = this.getEmailRecipients();
-        this.emailDialog.show = !this.emailDialog.show;
-      } else this.showSnackbar("No valid email addresses are selected");
-    },
-
-    addParticipant(id) {
-      const groupId = this.$route.params.group;
-      for (var member of this.members) {
-        if (id == member.person.id) {
-          return true;
-        }
-      }
-      return this.$http.post(`/api/v1/groups/members`, {
-        group_id: groupId,
-        person_id: id,
-        joined: "2018-12-25"
-      });
-    },
-
-    confirmDelete(event) {
-      this.activateDeleteDialog(event.person_id);
-    },
-
-    deleteParticipant() {
-      this.deleteDialog.loading = true;
-      const participantId = this.deleteDialog.participantId;
-      const idx = this.people.findIndex(ev => ev.person.id === participantId);
-      const id = this.$route.params.event;
-      this.$http
-        .delete(`/api/v1/events/${id}/participants/${participantId}`)
-        .then(() => {
-          this.deleteDialog.loading = false;
-          this.deleteDialog.show = false;
-          this.people.splice(idx, 1);
-          this.showSnackbar(this.$t("events.participants.removed"));
-        })
-        .catch(err => {
-          console.log(err);
-          this.deleteDialog.loading = false;
-          this.deleteDialog.show = false;
-          this.showSnackbar(this.$t("events.participants.error-removing"));
-        });
-    },
-    cancelDelete() {
-      this.deleteDialog.show = false;
-    },
-
-    activateDeleteDialog(participantId) {
-      this.deleteDialog.show = true;
-      this.deleteDialog.participantId = participantId;
-    },
-
-    showSnackbar(message) {
-      this.snackbar.text = message;
-      this.snackbar.show = true;
-    },
-
-    containsActive() {
-      let isActive = false;
-      this.selected.map(e => {
-        if (e.active) isActive = true;
-      });
-      return isActive;
-    },
-
-    massArchive() {
-      if (this.archiveSelect) {
-        this.selected.map(e => {
-          this.archiveDialog.memberId = e.id;
-          this.archiveGroup();
-        });
-        this.archiveSelect = false;
-      } else this.archiveGroup();
-    },
-
-    activateSelectArchiveDialog() {
-      if (this.containsActive()) {
-        if (this.selected.length == 1) {
-          this.activateArchiveDialog(this.selected[0].person.id);
-        } else this.archiveDialog.show = true;
-        this.archiveSelect = true;
-      } else
-        this.showSnackbar(this.$t("groups.messages.error-active-not-selected"));
-    },
-
-    activateArchiveDialog(memberId) {
-      this.archiveDialog.show = true;
-      this.archiveDialog.memberId = memberId;
-    },
-
-    confirmArchive(event) {
-      console.log(event);
-      this.activateArchiveDialog(event.id);
-    },
-
-    cancelArchive() {
-      this.archiveDialog.show = false;
-      this.archiveSelect = false;
-    },
-
-    archiveGroup() {
-      console.log("Archived member");
-      this.archiveDialog.loading = true;
-      const memberId = this.archiveDialog.memberId;
-      console.log(this.archiveDialog.memberId);
-      const idx = this.members.findIndex(ev => ev.id === memberId);
-      this.$http
-        .put(`/api/v1/groups/members/deactivate/${memberId}`)
-        .then(resp => {
-          console.log("ARCHIVE", resp);
-          this.members[idx].active = false;
-          this.archiveDialog.loading = false;
-          this.archiveDialog.show = false;
-          this.showSnackbar(this.$t("groups.messages.member-archived"));
-        })
-        .catch(err => {
-          console.error("ARCHIVE FALURE", err.response);
-          this.archiveDialog.loading = false;
-          this.archiveDialog.show = false;
-          this.showSnackbar(this.$t("groups.messages.error-archiving-member"));
-        });
-    },
-
-    unarchiveFab() {
-      if (!this.containsActive()) {
-        this.unarchiveSelect = true;
-        this.massUnarchive();
-      } else
-        this.showSnackbar(
-          this.$t("groups.messages.error-archived-not-selected")
-        );
-    },
-
-    massUnarchive(member) {
-      if (this.unarchiveSelect) {
-        this.selected.map(e => {
-          this.unarchive(e);
-        });
-        this.unarchiveSelect = false;
-      } else this.unarchive(member);
-    },
-
-    unarchive(member) {
-      const idx = this.members.findIndex(ev => ev.id === member.id);
-      const memberId = member.id;
-      member.id *= -1; // to show loading spinner
-      this.$http
-        .put(`/api/v1/groups/members/activate/${memberId}`)
-        .then(resp => {
-          console.log("UNARCHIVED", resp);
-          Object.assign(this.members[idx], resp.data);
-          this.showSnackbar(this.$t("groups.messages.member-unarchived"));
-        })
-        .catch(err => {
-          console.error("UNARCHIVE FALURE", err.response);
-          this.showSnackbar(
-            this.$t("groups.messages.error-unarchiving-member")
-          );
-        });
-    },
-
-    getMembers() {
-      this.tableLoading = true;
-      const id = this.$route.params.group;
-      this.$http.get(`/api/v1/groups/groups/${id}`).then(resp => {
-        this.email.managerName =
-          resp.data.managerInfo.person.firstName +
-          " " +
-          resp.data.managerInfo.person.lastName +
-          " " +
-          resp.data.managerInfo.person.secondLastName;
-        this.email.managerEmail = resp.data.managerInfo.person.email;
-        this.members = resp.data.memberList;
-        this.people = this.members.map(e => e.person);
-        this.parseMembers();
-        this.tableLoading = false;
-      });
-    }
-  },
-
-  mounted: function() {
-    this.getMembers();
+const visibleMembers = computed(() => {
+  let list = members.value;
+  if (viewStatus.value === "viewActive") {
+    return list.filter((ev: any) => ev.active);
+  } else if (viewStatus.value === "viewArchived") {
+    return list.filter((ev: any) => !ev.active);
+  } else {
+    return list;
   }
-};
+});
+
+watch(selected, () => {
+  if (selected.value.length > 0) {
+    select.value = true;
+  } else {
+    select.value = false;
+  }
+  email.value.recipients = getEmailRecipients();
+});
+
+function parseMembers() {
+  members.value.map((e: any) => {
+    if (e.person.email) {
+      parsedMembers.value.push({
+        title: e.person.firstName + " " + e.person.lastName,
+        value: e.person.email
+      });
+    }
+  });
+}
+
+function openParticipantDialog() {
+  addParticipantDialog.value.show = true;
+}
+
+function cancelNewParticipantDialog() {
+  addParticipantDialog.value.show = false;
+}
+
+function editPerson(p: any) {
+  dialogState.value = "edit";
+  person.value = p;
+}
+
+function cancelPerson() {
+  dialogState.value = "";
+}
+
+function addParticipants() {
+  addParticipantDialog.value.loading = true;
+  let promises: Promise<any>[] = [];
+
+  for (let p of addParticipantDialog.value.newParticipants) {
+    const idx = members.value.findIndex(
+      (gr_pe: any) => gr_pe.person.person_id === p.id
+    );
+    if (idx === -1) {
+      promises.push(addParticipant(p.id));
+    }
+  }
+
+  Promise.all(promises)
+    .then(() => {
+      showSnackbar(t("groups.messages.members-added"));
+      addParticipantDialog.value.loading = false;
+      addParticipantDialog.value.show = false;
+      addParticipantDialog.value.newParticipants = [];
+      getMembers();
+    })
+    .catch(err => {
+      console.log(err);
+      addParticipantDialog.value.loading = false;
+      showSnackbar(t("groups.messages.error-adding-members"));
+    });
+}
+
+function getEmailRecipients() {
+  return selected.value
+    .map((e: any) => e.person.email)
+    .filter(function(e: any) {
+      return e != null;
+    });
+}
+
+function sendEmail() {
+  http
+    .post(`/api/v1/emails/`, email.value)
+    .then(() => {
+      toggleEmailDialog();
+      selected.value = [];
+      email.value.subject = "";
+      email.value.body = "";
+      email.value.cc = [];
+      email.value.bcc = [];
+      showSnackbar(t("groups.messages.email-sent"));
+    })
+    .catch(err => {
+      showSnackbar(t("groups.messages.error-no-manager-email"));
+      console.log(email.value);
+      console.log(err);
+    });
+}
+
+function toggleEmailDialog() {
+  if (selected.value.length > 0) {
+    email.value.recipients = getEmailRecipients();
+    emailDialog.value.show = !emailDialog.value.show;
+  } else {
+    showSnackbar("No valid email addresses are selected");
+  }
+}
+
+function addParticipant(id: number) {
+  const groupId = route.params.group;
+  for (var member of members.value) {
+    if (id == member.person.id) {
+      return Promise.resolve(true);
+    }
+  }
+  return http.post(`/api/v1/groups/members`, {
+    group_id: groupId,
+    person_id: id,
+    joined: "2018-12-25"
+  });
+}
+
+function deleteParticipant() {
+  deleteDialog.value.loading = true;
+  const participantId = deleteDialog.value.participantId;
+  const id = route.params.event;
+  http
+    .delete(`/api/v1/events/${id}/participants/${participantId}`)
+    .then(() => {
+      deleteDialog.value.loading = false;
+      deleteDialog.value.show = false;
+      showSnackbar(t("events.participants.removed"));
+    })
+    .catch(err => {
+      console.log(err);
+      deleteDialog.value.loading = false;
+      deleteDialog.value.show = false;
+      showSnackbar(t("events.participants.error-removing"));
+    });
+}
+
+function cancelDelete() {
+  deleteDialog.value.show = false;
+}
+
+function showSnackbar(message: string) {
+  snackbar.value.text = message;
+  snackbar.value.show = true;
+}
+
+function containsActive() {
+  let isActive = false;
+  selected.value.map((e: any) => {
+    if (e.active) isActive = true;
+  });
+  return isActive;
+}
+
+function massArchive() {
+  if (archiveSelect.value) {
+    selected.value.map((e: any) => {
+      archiveDialog.value.memberId = e.id;
+      archiveGroup();
+    });
+    archiveSelect.value = false;
+  } else {
+    archiveGroup();
+  }
+}
+
+function activateSelectArchiveDialog() {
+  if (containsActive()) {
+    if (selected.value.length == 1) {
+      activateArchiveDialog(selected.value[0].person.id);
+    } else {
+      archiveDialog.value.show = true;
+    }
+    archiveSelect.value = true;
+  } else {
+    showSnackbar(t("groups.messages.error-active-not-selected"));
+  }
+}
+
+function activateArchiveDialog(memberId: number) {
+  archiveDialog.value.show = true;
+  archiveDialog.value.memberId = memberId;
+}
+
+function confirmArchive(event: any) {
+  console.log(event);
+  activateArchiveDialog(event.id);
+}
+
+function cancelArchive() {
+  archiveDialog.value.show = false;
+  archiveSelect.value = false;
+}
+
+function archiveGroup() {
+  console.log("Archived member");
+  archiveDialog.value.loading = true;
+  const memberId = archiveDialog.value.memberId;
+  const idx = members.value.findIndex((ev: any) => ev.id === memberId);
+  http
+    .put(`/api/v1/groups/members/deactivate/${memberId}`)
+    .then(resp => {
+      console.log("ARCHIVE", resp);
+      members.value[idx].active = false;
+      archiveDialog.value.loading = false;
+      archiveDialog.value.show = false;
+      showSnackbar(t("groups.messages.member-archived"));
+    })
+    .catch(err => {
+      console.error("ARCHIVE FALURE", err.response);
+      archiveDialog.value.loading = false;
+      archiveDialog.value.show = false;
+      showSnackbar(t("groups.messages.error-archiving-member"));
+    });
+}
+
+function unarchiveFab() {
+  if (!containsActive()) {
+    unarchiveSelect.value = true;
+    massUnarchive(null);
+  } else {
+    showSnackbar(t("groups.messages.error-archived-not-selected"));
+  }
+}
+
+function massUnarchive(member: any) {
+  if (unarchiveSelect.value) {
+    selected.value.map((e: any) => {
+      unarchive(e);
+    });
+    unarchiveSelect.value = false;
+  } else {
+    unarchive(member);
+  }
+}
+
+function unarchive(member: any) {
+  const idx = members.value.findIndex((ev: any) => ev.id === member.id);
+  const memberId = member.id;
+  member.id *= -1;
+  http
+    .put(`/api/v1/groups/members/activate/${memberId}`)
+    .then(resp => {
+      console.log("UNARCHIVED", resp);
+      Object.assign(members.value[idx], resp.data);
+      showSnackbar(t("groups.messages.member-unarchived"));
+    })
+    .catch(err => {
+      console.error("UNARCHIVE FALURE", err.response);
+      showSnackbar(t("groups.messages.error-unarchiving-member"));
+    });
+}
+
+function getMembers() {
+  tableLoading.value = true;
+  const id = route.params.group;
+  http.get(`/api/v1/groups/groups/${id}`).then(resp => {
+    email.value.managerName =
+      resp.data.managerInfo.person.firstName +
+      " " +
+      resp.data.managerInfo.person.lastName +
+      " " +
+      resp.data.managerInfo.person.secondLastName;
+    email.value.managerEmail = resp.data.managerInfo.person.email;
+    members.value = resp.data.memberList;
+    people.value = members.value.map((e: any) => e.person);
+    parseMembers();
+    tableLoading.value = false;
+  });
+}
+
+onMounted(() => {
+  getMembers();
+});
 </script>
 
 <style>

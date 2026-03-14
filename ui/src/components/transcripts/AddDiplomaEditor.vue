@@ -1,112 +1,86 @@
 <template>
-  <!-- https://codesandbox.io/s/mjy97x85py?from-embed -->
-  <ValidationObserver ref="obs">
-    <v-card slot-scope="{ invalid, validated }">
-      <v-card-title>
-        <span class="headline">{{ name }}</span>
-      </v-card-title>
-      <v-card-text>
-        <v-form>
-          <ValidationProvider name="select" rules="required">
-            <v-select
-              slot-scope="{ errors, valid }"
-              v-model="diploma.id"
-              :items="items"
-              v-bind:label="$t('diplomas.diploma')"
-              outline
-              item-value="id"
-              item-text="name"
-              :success="valid"
-              :menu-props="{ closeOnContentClick: true }"
-              required
-            ></v-select>
-          </ValidationProvider>
-        </v-form>
-      </v-card-text>
-      <v-card-actions>
-        <v-btn color="secondary" flat :disabled="saving" v-on:click="cancel">{{
-          $t("actions.cancel")
-        }}</v-btn>
-        <v-spacer></v-spacer>
-        <v-btn
-          color="primary"
-          raised
-          :disabled="saving || invalid || !validated"
-          :loading="saving"
-          v-on:click="save"
-          >{{ $t("actions.save") }}</v-btn
-        >
-      </v-card-actions>
-    </v-card>
-  </ValidationObserver>
+  <v-card>
+    <v-card-title>
+      <span class="headline">{{ name }}</span>
+    </v-card-title>
+    <v-card-text>
+      <v-form>
+        <v-select
+          v-model="diploma.id"
+          :items="items"
+          v-bind:label="t('diplomas.diploma')"
+          variant="outlined"
+          item-value="id"
+          item-title="name"
+          :menu-props="{ closeOnContentClick: true }"
+          required
+        ></v-select>
+      </v-form>
+    </v-card-text>
+    <v-card-actions>
+      <v-btn color="secondary" variant="text" :disabled="saving" v-on:click="cancel">{{
+        t("actions.cancel")
+      }}</v-btn>
+      <v-spacer></v-spacer>
+      <v-btn
+        color="primary"
+        variant="elevated"
+        :disabled="saving || !diploma.id"
+        :loading="saving"
+        v-on:click="save"
+        >{{ t("actions.save") }}</v-btn
+      >
+    </v-card-actions>
+  </v-card>
 </template>
 
-<script>
-import { ValidationObserver, ValidationProvider } from "vee-validate";
+<script setup lang="ts">
+import { ref, computed, onMounted } from "vue";
+import { useI18n } from "vue-i18n";
+import { inject } from "vue";
+import type { AxiosInstance } from "axios";
 
-export default {
-  name: "AddDiplomaEditor",
+const { t } = useI18n();
+const http = inject<AxiosInstance>("$http")!;
 
-  components: {
-    ValidationProvider,
-    ValidationObserver
-  },
+const props = defineProps<{
+  diplomasThisStudent: any[];
+  saving?: boolean;
+}>();
 
-  props: {
-    diplomasThisStudent: Array,
-    saving: {
-      type: Boolean,
-      default: false
-    }
-  },
+const emit = defineEmits(["cancel", "save"]);
 
-  data: function() {
-    return {
-      diploma: {},
-      diplomasPool: [] // courses for this diploma (the list of courses for this diploma)
-    };
-  },
+const diploma = ref<any>({});
+const diplomasPool = ref<any[]>([]);
 
-  computed: {
-    name() {
-      return this.$t("diplomas.new");
-    },
-    items() {
-      return this.diplomasPool.filter(
-        diploma => !this.diplomasThisStudent.includes(diploma.id)
-      );
-    }
-  },
+const name = computed(() => t("diplomas.new"));
 
-  methods: {
-    cancel() {
-      //this.clear();
-      this.diploma = {};
-      this.$emit("cancel");
-    },
-    async save() {
-      const result = await this.$refs.obs.validate();
-      //console.log("result: ", result);
-      if (result) {
-        this.$refs.obs.reset();
-        this.$emit("save", this.diploma);
-      }
-    }
-  },
+const items = computed(() => {
+  return diplomasPool.value.filter(
+    d => !props.diplomasThisStudent.includes(d.id)
+  );
+});
 
-  mounted() {
-    this.$http.get("/api/v1/courses/diplomas").then(resp => {
-      this.diplomasPool = [];
-      //console.log('diplomas fetched: ', resp);
-      resp.data.forEach(diploma => {
-        this.diplomasPool.push({
-          name: diploma.name,
-          id: diploma.id
-        });
-      });
-      //console.log('diplomasPool: ', this.diplomasPool);
-      this.$refs.obs.validate();
-    });
+function cancel() {
+  diploma.value = {};
+  emit("cancel");
+}
+
+function save() {
+  if (diploma.value.id) {
+    emit("save", diploma.value);
   }
-};
+}
+
+onMounted(() => {
+  http.get("/api/v1/courses/diplomas").then(resp => {
+    diplomasPool.value = [];
+    resp.data.forEach((d: any) => {
+      diplomasPool.value.push({
+        name: d.name,
+        id: d.id
+      });
+    });
+  });
+});
 </script>

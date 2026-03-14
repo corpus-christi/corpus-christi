@@ -4,36 +4,36 @@
       <div class="body">
         <!-- Display course title, description and register button -->
         <v-card-title style="text-align: center" class="title">
-          <v-layout row align-center justify-center>
-            <v-flex shrink>
+          <v-row align="center" justify="center">
+            <v-col shrink>
               <span class="headline mb-3">{{ course.name }}</span>
-            </v-flex>
-          </v-layout>
+            </v-col>
+          </v-row>
         </v-card-title>
-        <v-layout>
+        <v-row>
           <v-card-text class="text" style="text-align: center">
-            <v-flex>
-              <b>{{ $t("courses.description") }}: </b>
+            <v-col>
+              <b>{{ t("courses.description") }}: </b>
               <div class="mb-3">{{ course.description }}</div>
-            </v-flex>
+            </v-col>
           </v-card-text>
-        </v-layout>
-        <v-layout>
-          <v-flex align-self-baseline>
+        </v-row>
+        <v-row>
+          <v-col>
             <v-card-actions>
               <v-spacer></v-spacer>
               <v-btn
-                round
-                raised
+                rounded
+                variant="elevated"
                 color="primary"
                 @click="registerClicked(course)"
               >
-                {{ $t("courses.register") }}
+                {{ t("courses.register") }}
               </v-btn>
               <v-spacer></v-spacer>
             </v-card-actions>
-          </v-flex>
-        </v-layout>
+          </v-col>
+        </v-row>
       </div>
     </v-card>
     <v-dialog v-model="registrationFormDialog.show" max-width="500px">
@@ -46,63 +46,59 @@
     </v-dialog>
     <v-snackbar v-model="snackbar.show">
       {{ snackbar.text }}
-      <v-btn flat @click="snackbar.show = false">
-        {{ $t("actions.close") }}
-      </v-btn>
+      <template #actions>
+        <v-btn variant="text" @click="snackbar.show = false">
+          {{ t("actions.close") }}
+        </v-btn>
+      </template>
     </v-snackbar>
   </div>
 </template>
 
-<script>
-import CourseRegistrationForm from "./CourseRegistrationForm";
+<script setup lang="ts">
+import { ref } from "vue";
+import { useI18n } from "vue-i18n";
+import CourseRegistrationForm from "./CourseRegistrationForm.vue";
 
-export default {
-  name: "CourseCard",
-  props: {
-    course: {}
-  },
-  components: {
-    CourseRegistrationForm
-  },
-  data() {
-    return {
-      registrationFormDialog: {
-        show: false,
-        editMode: false,
-        saving: false,
-        courseOffering: {}
-      },
-      snackbar: {
-        show: false,
-        message: ""
-      },
+const { t } = useI18n();
 
-      activeOfferings: null
-    };
-  },
+const props = defineProps<{
+  course: any;
+}>();
 
-  methods: {
-    cancel() {
-      this.registrationFormDialog.show = false;
-    },
-    registeredPerson() {
-      this.registrationFormDialog.show = false;
-    },
+const registrationFormDialog = ref({
+  show: false,
+  editMode: false,
+  saving: false,
+  courseOffering: {} as any
+});
 
-    showSnackbar(message) {
-      this.snackbar.text = message;
-      this.snackbar.show = true;
-    },
+const snackbar = ref({
+  show: false,
+  text: ""
+});
 
-    registerClicked(course) {
-      this.activeOfferings = course.course_offerings.filter(
-        courseOffering => courseOffering.active
-      );
+const activeOfferings = ref<any>(null);
 
-      this.registrationFormDialog.show = true;
-    }
-  }
-};
+function cancel() {
+  registrationFormDialog.value.show = false;
+}
+
+function registeredPerson() {
+  registrationFormDialog.value.show = false;
+}
+
+function showSnackbar(message: string) {
+  snackbar.value.text = message;
+  snackbar.value.show = true;
+}
+
+function registerClicked(course: any) {
+  activeOfferings.value = course.course_offerings.filter(
+    (courseOffering: any) => courseOffering.active
+  );
+  registrationFormDialog.value.show = true;
+}
 </script>
 
 <style scoped>

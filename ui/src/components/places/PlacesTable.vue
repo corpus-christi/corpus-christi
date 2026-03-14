@@ -1,29 +1,29 @@
 <template>
   <div>
     <v-toolbar class="pa-1">
-      <v-layout align-center justify-space-between fill-height>
-        <v-flex md2>
-          <v-toolbar-title>{{ $t("places.address.address") }}</v-toolbar-title>
-        </v-flex>
-        <v-flex md2>
+      <v-row align="center" justify="space-between">
+        <v-col md="2">
+          <v-toolbar-title>{{ t("places.address.address") }}</v-toolbar-title>
+        </v-col>
+        <v-col md="2">
           <v-text-field
             v-model="search"
             append-icon="search"
-            v-bind:label="$t('actions.search')"
+            v-bind:label="t('actions.search')"
             single-line
             hide-details
             data-cy="form-search"
             ref="addressTable"
           ></v-text-field>
-        </v-flex>
+        </v-col>
 
-        <v-flex md2>
-          <v-btn color="primary" raised v-on:click.stop="activateFilterDialog">
+        <v-col md="2">
+          <v-btn color="primary" variant="elevated" v-on:click.stop="activateFilterDialog">
             <v-icon dark left>sort</v-icon>
-            {{ $t("places.address.filters.address_filters") }}
+            {{ t("places.address.filters.address_filters") }}
           </v-btn>
-        </v-flex>
-        <v-flex md3>
+        </v-col>
+        <v-col md="3">
           <div data-cy="view-dropdown">
             <v-select
               hide-details
@@ -33,211 +33,202 @@
               v-model="viewStatus"
             ></v-select>
           </div>
-        </v-flex>
-        <v-flex shrink justify-self-end>
+        </v-col>
+        <v-col shrink>
           <v-btn
             color="primary"
-            raised
+            variant="elevated"
             v-on:click.stop="newPlace"
             data-cy="add-place"
           >
             <v-icon dark left>add</v-icon>
-            {{ $t("places.address.new") }}
+            {{ t("places.address.new") }}
           </v-btn>
-        </v-flex>
-      </v-layout>
+        </v-col>
+      </v-row>
     </v-toolbar>
 
     <v-data-table
       :headers="headers"
       :items="addressesToDisplay"
       :search="search"
-      expand
       item-key="id"
       class="elevation-1"
     >
-      <template slot="items" slot-scope="props">
+      <template #item="{ item }">
         <tr>
-          <td>{{ props.item.name }}</td>
-          <td>{{ props.item.address }}</td>
-          <td>{{ props.item.city }}</td>
-          <td>{{ props.item.latitude }}</td>
-          <td>{{ props.item.longitude }}</td>
-          <v-tooltip bottom>
-            <v-btn
-              icon
-              outline
-              small
-              color="primary"
-              slot="activator"
-              v-on:click="editPlace(props.item)"
-              data-cy="edit-place"
-            >
-              <v-icon small>edit</v-icon>
-            </v-btn>
-            <span>{{ $t("actions.edit") }}</span>
-          </v-tooltip>
-          <v-tooltip bottom>
-            <v-btn
-              icon
-              outline
-              small
-              color="primary"
-              slot="activator"
-              v-on:click="duplicate(props.item)"
-              data-cy="duplicate-place"
-            >
-              <v-icon small>filter_none</v-icon>
-            </v-btn>
-            <span>{{ $t("actions.duplicate") }}</span>
-          </v-tooltip>
-          <v-tooltip bottom>
-            <v-btn
-              v-if="props.item.active === true"
-              icon
-              outline
-              small
-              color="primary"
-              slot="activator"
-              v-on:click="showConfirmDialog('deactivate', props.item)"
-              data-cy="deactivate-person"
-            >
-              <v-icon small>archive</v-icon>
-            </v-btn>
-            <span>{{ $t("actions.tooltips.archive") }}</span>
-          </v-tooltip>
-          <v-tooltip bottom>
-            <v-btn
-              v-if="props.item.active === false"
-              icon
-              outline
-              small
-              color="primary"
-              slot="activator"
-              v-on:click="showConfirmDialog('activate', props.item)"
-              data-cy="reactivate-person"
-            >
-              <v-icon small>undo</v-icon>
-            </v-btn>
-            <span>{{ $t("actions.tooltips.activate") }}</span>
-          </v-tooltip>
-          <td v-if="!props.expanded">
+          <td>{{ item.name }}</td>
+          <td>{{ item.address }}</td>
+          <td>{{ item.city }}</td>
+          <td>{{ item.latitude }}</td>
+          <td>{{ item.longitude }}</td>
+          <td>
             <v-tooltip bottom>
-              <v-btn
-                icon
-                slot="activator"
-                @click="props.expanded = !props.expanded"
-              >
-                <v-icon medium>expand_more</v-icon>
-              </v-btn>
-              <span>{{ $t("places.expand") }}</span>
+              <template #activator="{ props: tooltipProps }">
+                <v-btn
+                  icon
+                  variant="outlined"
+                  size="small"
+                  color="primary"
+                  v-bind="tooltipProps"
+                  v-on:click="editPlace(item)"
+                  data-cy="edit-place"
+                >
+                  <v-icon size="small">edit</v-icon>
+                </v-btn>
+              </template>
+              <span>{{ t("actions.edit") }}</span>
+            </v-tooltip>
+            <v-tooltip bottom>
+              <template #activator="{ props: tooltipProps }">
+                <v-btn
+                  icon
+                  variant="outlined"
+                  size="small"
+                  color="primary"
+                  v-bind="tooltipProps"
+                  v-on:click="duplicate(item)"
+                  data-cy="duplicate-place"
+                >
+                  <v-icon size="small">filter_none</v-icon>
+                </v-btn>
+              </template>
+              <span>{{ t("actions.duplicate") }}</span>
+            </v-tooltip>
+            <v-tooltip bottom v-if="item.active === true">
+              <template #activator="{ props: tooltipProps }">
+                <v-btn
+                  icon
+                  variant="outlined"
+                  size="small"
+                  color="primary"
+                  v-bind="tooltipProps"
+                  v-on:click="showConfirmDialog('deactivate', item)"
+                  data-cy="deactivate-person"
+                >
+                  <v-icon size="small">archive</v-icon>
+                </v-btn>
+              </template>
+              <span>{{ t("actions.tooltips.archive") }}</span>
+            </v-tooltip>
+            <v-tooltip bottom v-if="item.active === false">
+              <template #activator="{ props: tooltipProps }">
+                <v-btn
+                  icon
+                  variant="outlined"
+                  size="small"
+                  color="primary"
+                  v-bind="tooltipProps"
+                  v-on:click="showConfirmDialog('activate', item)"
+                  data-cy="reactivate-person"
+                >
+                  <v-icon size="small">undo</v-icon>
+                </v-btn>
+              </template>
+              <span>{{ t("actions.tooltips.activate") }}</span>
             </v-tooltip>
           </td>
-          <td v-else>
+          <td>
             <v-tooltip bottom>
-              <v-btn
-                icon
-                slot="activator"
-                @click="props.expanded = !props.expanded"
-              >
-                <v-icon medium>expand_less</v-icon>
-              </v-btn>
-              <span>{{ $t("places.close") }}</span>
+              <template #activator="{ props: tooltipProps }">
+                <v-btn
+                  icon
+                  variant="text"
+                  v-bind="tooltipProps"
+                  @click="toggleExpand(item)"
+                >
+                  <v-icon>{{ expandedItems.includes(item.id) ? 'expand_less' : 'expand_more' }}</v-icon>
+                </v-btn>
+              </template>
+              <span>{{ expandedItems.includes(item.id) ? t("places.close") : t("places.expand") }}</span>
             </v-tooltip>
           </td>
         </tr>
-      </template>
-      <template slot="expand" slot-scope="props" class="grey lighten-3">
-        <v-container class="grey lighten-3">
-          <v-layout>
-            <v-flex md2>{{ $t("places.location.location") }}: </v-flex>
-            <v-flex>
-              <v-chip
-                v-for="l in locationsToDisplay(
-                  'deactivate',
-                  props.item.locations
-                )"
-                :key="l.value"
-                small
-                color="white"
-                >{{ l.text }}
-              </v-chip>
-            </v-flex>
-            <v-flex md2>
-              <v-tooltip bottom>
-                <v-btn
-                  icon
-                  outline
-                  small
-                  color="primary"
-                  slot="activator"
-                  v-on:click="
-                    editLocation({
-                      address_id: props.item.id,
-                      allLocations: props.item.locations,
-                      editMode: true
-                    })
-                  "
-                  data-cy="edit-locations"
-                  :disabled="!props.item.locations.length"
-                >
-                  <v-icon small>edit</v-icon>
-                </v-btn>
-                <span>{{ $t("places.edit") }}</span>
-              </v-tooltip>
-              <v-tooltip bottom>
-                <v-btn
-                  icon
-                  outline
-                  small
-                  color="primary"
-                  slot="activator"
-                  v-on:click="
-                    newLocation({
-                      address_id: props.item.id,
-                      allLocations: [],
-                      editMode: false
-                    })
-                  "
-                  data-cy="add-location"
-                >
-                  <v-icon small>add</v-icon>
-                </v-btn>
-                <span>{{ $t("places.location.new") }}</span>
-              </v-tooltip>
-              <v-tooltip bottom>
-                <v-btn
-                  icon
-                  outline
-                  small
-                  color="primary"
-                  slot="activator"
-                  data-cy="deactivate-person"
-                  v-on:click="
-                    showLocationConfirmDialog('deactivate', props.item)
-                  "
-                >
-                  <v-icon small>archive</v-icon>
-                </v-btn>
-                <span>{{ $t("actions.tooltips.archive") }}</span>
-              </v-tooltip>
-              <v-tooltip bottom>
-                <v-btn
-                  icon
-                  outline
-                  small
-                  color="primary"
-                  slot="activator"
-                  data-cy="reactivate-person"
-                  v-on:click="showLocationConfirmDialog('activate', props.item)"
-                >
-                  <v-icon small>undo</v-icon>
-                </v-btn>
-                <span>{{ $t("actions.tooltips.activate") }}</span>
-              </v-tooltip>
-            </v-flex>
-          </v-layout>
-        </v-container>
+        <tr v-if="expandedItems.includes(item.id)">
+          <td colspan="7" class="grey lighten-3">
+            <v-container class="grey lighten-3">
+              <v-row>
+                <v-col md="2">{{ t("places.location.location") }}: </v-col>
+                <v-col>
+                  <v-chip
+                    v-for="l in locationsToDisplay('deactivate', item.locations)"
+                    :key="l.value"
+                    size="small"
+                    color="white"
+                    >{{ l.title }}
+                  </v-chip>
+                </v-col>
+                <v-col md="2">
+                  <v-tooltip bottom>
+                    <template #activator="{ props: tooltipProps }">
+                      <v-btn
+                        icon
+                        variant="outlined"
+                        size="small"
+                        color="primary"
+                        v-bind="tooltipProps"
+                        v-on:click="editLocation({ address_id: item.id, allLocations: item.locations, editMode: true })"
+                        data-cy="edit-locations"
+                        :disabled="!item.locations.length"
+                      >
+                        <v-icon size="small">edit</v-icon>
+                      </v-btn>
+                    </template>
+                    <span>{{ t("places.edit") }}</span>
+                  </v-tooltip>
+                  <v-tooltip bottom>
+                    <template #activator="{ props: tooltipProps }">
+                      <v-btn
+                        icon
+                        variant="outlined"
+                        size="small"
+                        color="primary"
+                        v-bind="tooltipProps"
+                        v-on:click="newLocation({ address_id: item.id, allLocations: [], editMode: false })"
+                        data-cy="add-location"
+                      >
+                        <v-icon size="small">add</v-icon>
+                      </v-btn>
+                    </template>
+                    <span>{{ t("places.location.new") }}</span>
+                  </v-tooltip>
+                  <v-tooltip bottom>
+                    <template #activator="{ props: tooltipProps }">
+                      <v-btn
+                        icon
+                        variant="outlined"
+                        size="small"
+                        color="primary"
+                        v-bind="tooltipProps"
+                        data-cy="deactivate-person"
+                        v-on:click="showLocationConfirmDialog('deactivate', item)"
+                      >
+                        <v-icon size="small">archive</v-icon>
+                      </v-btn>
+                    </template>
+                    <span>{{ t("actions.tooltips.archive") }}</span>
+                  </v-tooltip>
+                  <v-tooltip bottom>
+                    <template #activator="{ props: tooltipProps }">
+                      <v-btn
+                        icon
+                        variant="outlined"
+                        size="small"
+                        color="primary"
+                        v-bind="tooltipProps"
+                        data-cy="reactivate-person"
+                        v-on:click="showLocationConfirmDialog('activate', item)"
+                      >
+                        <v-icon size="small">undo</v-icon>
+                      </v-btn>
+                    </template>
+                    <span>{{ t("actions.tooltips.activate") }}</span>
+                  </v-tooltip>
+                </v-col>
+              </v-row>
+            </v-container>
+          </td>
+        </tr>
       </template>
     </v-data-table>
     <v-dialog
@@ -246,13 +237,13 @@
       v-model="placeDialog.show"
       max-width="1000px"
     >
-      <v-layout column>
+      <v-col>
         <v-card>
-          <v-layout align-center justify-center row fill-height>
+          <v-row align="center" justify="center">
             <v-card-title class="headline">
-              {{ $t(placeDialog.title) }}
+              {{ t(placeDialog.title) }}
             </v-card-title>
-          </v-layout>
+          </v-row>
         </v-card>
         <PlaceForm
           v-bind:initialData="placeDialog.places"
@@ -262,7 +253,7 @@
           v-on:saved="refreshPlacesList"
           v-on:subFormSaved="refreshPlacesList"
         />
-      </v-layout>
+      </v-col>
     </v-dialog>
     <v-dialog
       scrollable
@@ -270,13 +261,13 @@
       v-model="locationDialog.show"
       max-width="1000px"
     >
-      <v-layout column>
+      <v-col>
         <v-card>
-          <v-layout align-center justify-center row fill-height>
+          <v-row align="center" justify="center">
             <v-card-title class="headline">
-              {{ $t(locationDialog.title) }}
+              {{ t(locationDialog.title) }}
             </v-card-title>
-          </v-layout>
+          </v-row>
         </v-card>
         <LocationsForm
           v-bind:initialData="locationDialog.locationsInfo"
@@ -284,201 +275,187 @@
           v-on:saved="refreshPlacesList"
           v-on:subFormSaved="refreshPlacesList"
         />
-      </v-layout>
+      </v-col>
     </v-dialog>
 
     <v-dialog persistent v-model="filterDialog" max-width="800px">
-      <v-container grid-list-md>
-        <v-layout column>
+      <v-container>
+        <v-col>
           <v-card>
-            <v-layout align-center justify-center row fill-height>
+            <v-row align="center" justify="center">
               <v-card-title class="headline">
-                {{ $t("places.address.filters.address_filters") }}
+                {{ t("places.address.filters.address_filters") }}
               </v-card-title>
-            </v-layout>
+            </v-row>
           </v-card>
           <v-card>
             <v-card-text>
-              <v-layout column>
-                <div>{{ $t("places.address.filters.range") }}</div>
-                <v-layout row>
-                  <v-flex md6>
+              <v-col>
+                <div>{{ t("places.address.filters.range") }}</div>
+                <v-row>
+                  <v-col md="6">
                     <v-text-field
                       name="startLatitude"
                       v-model="filters.startLatitude"
-                      :label="$t('places.address.filters.startLat')"
+                      :label="t('places.address.filters.startLat')"
                     ></v-text-field>
-                  </v-flex>
+                  </v-col>
 
-                  <v-flex md6>
+                  <v-col md="6">
                     <v-text-field
                       name="endLatitude"
                       v-model="filters.endLatitude"
-                      :label="$t('places.address.filters.endLat')"
+                      :label="t('places.address.filters.endLat')"
                     ></v-text-field>
-                  </v-flex>
-                </v-layout>
+                  </v-col>
+                </v-row>
 
-                <v-layout row>
-                  <v-flex md6>
+                <v-row>
+                  <v-col md="6">
                     <v-text-field
                       name="startLongitude"
                       v-model="filters.startLongitude"
-                      :label="$t('places.address.filters.startLng')"
+                      :label="t('places.address.filters.startLng')"
                     ></v-text-field>
-                  </v-flex>
-                  <v-flex md6>
+                  </v-col>
+                  <v-col md="6">
                     <v-text-field
                       name="endLongitude"
                       v-model="filters.endLongitude"
-                      :label="$t('places.address.filters.endLng')"
+                      :label="t('places.address.filters.endLng')"
                     ></v-text-field>
-                  </v-flex>
-                </v-layout>
+                  </v-col>
+                </v-row>
                 <v-divider></v-divider>
-                <div>{{ $t("places.address.filters.distance-ll") }}</div>
-                <v-layout row>
-                  <v-flex md6>
+                <div>{{ t("places.address.filters.distance-ll") }}</div>
+                <v-row>
+                  <v-col md="6">
                     <v-text-field
                       name="specificLatitude"
                       v-model="filters.specificLatitude"
-                      :label="$t('places.address.latitude')"
+                      :label="t('places.address.latitude')"
                     ></v-text-field>
-                  </v-flex>
+                  </v-col>
 
-                  <v-flex md6>
+                  <v-col md="6">
                     <v-text-field
                       name="specificLongitude"
                       v-model="filters.specificLongitude"
-                      :label="$t('places.address.longitude')"
+                      :label="t('places.address.longitude')"
                     ></v-text-field>
-                  </v-flex>
-                </v-layout>
+                  </v-col>
+                </v-row>
 
-                <v-layout row>
-                  <v-flex>
+                <v-row>
+                  <v-col>
                     <v-text-field
                       name="distance"
                       v-model="filters.distance"
-                      :label="$t('places.address.filters.distanceFromLatLng')"
+                      :label="t('places.address.filters.distanceFromLatLng')"
                     ></v-text-field>
-                  </v-flex>
-                </v-layout>
+                  </v-col>
+                </v-row>
                 <v-divider></v-divider>
-                <div>{{ $t("places.address.filters.distance-addr") }}</div>
-                <v-layout row>
-                  <v-flex md6>
+                <div>{{ t("places.address.filters.distance-addr") }}</div>
+                <v-row>
+                  <v-col md="6">
                     <v-autocomplete
                       name="addressDropdown"
-                      :label="$t('places.address.address')"
+                      :label="t('places.address.address')"
                       v-model="filters.address"
                       :items="dropdownList"
                     ></v-autocomplete>
-                  </v-flex>
+                  </v-col>
 
-                  <v-flex md6>
+                  <v-col md="6">
                     <v-text-field
                       name="addressDistance"
                       v-model="filters.addressDistance"
-                      :label="$t('places.address.filters.distanceFromAddress')"
+                      :label="t('places.address.filters.distanceFromAddress')"
                     ></v-text-field>
-                  </v-flex>
-                </v-layout>
-              </v-layout>
+                  </v-col>
+                </v-row>
+              </v-col>
             </v-card-text>
             <v-card-actions>
               <v-spacer></v-spacer>
-              <v-btn flat color="secondary" @click="cancelFilterDialog">{{
-                $t("actions.cancel")
+              <v-btn variant="text" color="secondary" @click="cancelFilterDialog">{{
+                t("actions.cancel")
               }}</v-btn>
 
-              <v-btn flat color="primary" @click="applyFilters">{{
-                $t("places.address.filters.apply")
+              <v-btn variant="text" color="primary" @click="applyFilters">{{
+                t("places.address.filters.apply")
               }}</v-btn>
             </v-card-actions>
           </v-card>
-        </v-layout>
+        </v-col>
       </v-container>
     </v-dialog>
-    <v-layout class="mt-3">
-      <v-flex>
+    <v-row class="mt-3">
+      <v-col>
         <v-toolbar color="blue" dark>
           <v-toolbar-title data-cy="church-sentence">
-            {{ $t("places.address.address") }}
+            {{ t("places.address.address") }}
           </v-toolbar-title>
         </v-toolbar>
         <GoogleMap v-bind:markers="markers" />
-      </v-flex>
-    </v-layout>
+      </v-col>
+    </v-row>
     <v-dialog
       v-model="confirmDialog.show"
       max-width="350px"
       data-cy="place-table-confirmation"
     >
       <v-card>
-        <v-card-text>{{ $t(confirmDialog.title) }}</v-card-text>
+        <v-card-text>{{ t(confirmDialog.title) }}</v-card-text>
         <v-card-actions>
           <v-btn
             v-on:click="cancelAction"
             color="secondary"
-            flat
+            variant="text"
             :disabled="confirmDialog.loading"
-            >{{ $t("actions.cancel") }}</v-btn
+            >{{ t("actions.cancel") }}</v-btn
           >
           <v-spacer></v-spacer>
           <v-btn
-            v-on:click="
-              confirmAction(confirmDialog.action, confirmDialog.place)
-            "
+            v-on:click="confirmAction(confirmDialog.action, confirmDialog.place)"
             color="primary"
-            raised
+            variant="elevated"
             :disabled="confirmDialog.loading"
             :loading="confirmDialog.loading"
-            >{{ $t("actions.confirm") }}</v-btn
+            >{{ t("actions.confirm") }}</v-btn
           >
         </v-card-actions>
       </v-card>
     </v-dialog>
     <v-dialog v-model="confirmLocationDialog.show" max-width="350px">
       <v-card>
-        <v-card-text>{{ $t(confirmLocationDialog.title) }}</v-card-text>
+        <v-card-text>{{ t(confirmLocationDialog.title) }}</v-card-text>
         <v-autocomplete
           name="location"
           hide-details
           solo
           single-line
-          :label="$t('places.location.location')"
-          :items="
-            locationsToDisplay(
-              confirmLocationDialog.action,
-              confirmLocationDialog.locationInfo.allLocations
-            )
-          "
+          :label="t('places.location.location')"
+          :items="locationsToDisplay(confirmLocationDialog.action, confirmLocationDialog.locationInfo.allLocations)"
           v-model="confirmLocationDialog.selectedLocation"
-          v-validate="'required'"
-          :error-messages="errors.collect('location')"
         ></v-autocomplete>
         <v-card-actions>
           <v-btn
             v-on:click="cancelAction"
             color="secondary"
-            flat
+            variant="text"
             :disabled="confirmLocationDialog.loading"
-            >{{ $t("actions.cancel") }}</v-btn
+            >{{ t("actions.cancel") }}</v-btn
           >
           <v-spacer></v-spacer>
           <v-btn
-            v-on:click="
-              confirmActionLocation(
-                confirmLocationDialog.action,
-                confirmLocationDialog.selectedLocation
-              )
-            "
+            v-on:click="confirmActionLocation(confirmLocationDialog.action, confirmLocationDialog.selectedLocation)"
             color="primary"
-            raised
+            variant="elevated"
             :disabled="confirmLocationDialog.loading"
             :loading="confirmLocationDialog.loading"
-            >{{ $t("actions.confirm") }}</v-btn
+            >{{ t("actions.confirm") }}</v-btn
           >
         </v-card-actions>
       </v-card>
@@ -486,394 +463,401 @@
   </div>
 </template>
 
-<script>
-import PlaceForm from "./PlacesForm";
-import LocationsForm from "./LocationsForm";
-import GoogleMap from "../../components/GoogleMap";
+<script setup lang="ts">
+import { ref, computed, watch } from "vue";
+import { useI18n } from "vue-i18n";
+import { inject } from "vue";
+import type { AxiosInstance } from "axios";
 import { isEmpty } from "lodash";
+import PlaceForm from "./PlacesForm.vue";
+import LocationsForm from "./LocationsForm.vue";
+import GoogleMap from "../../components/GoogleMap.vue";
 
-export default {
-  name: "PlacesTable",
-  components: { PlaceForm, LocationsForm, GoogleMap },
-  props: {
-    addresses: Array,
-    areas: Array,
-    locations: Array,
-    countries: Array
+const { t } = useI18n();
+const http = inject<AxiosInstance>("$http")!;
+
+const props = defineProps<{
+  addresses?: any[];
+  areas?: any[];
+  locations?: any[];
+  countries?: any[];
+}>();
+
+const emit = defineEmits(["fetchPlacesList"]);
+
+const expandedItems = ref<number[]>([]);
+const placeDialog = ref({
+  title: "",
+  show: false,
+  editMode: false,
+  saveLoading: false,
+  addMoreLoading: false,
+  places: {} as any
+});
+
+const locationDialog = ref({
+  title: "",
+  show: false,
+  editMode: false,
+  saveLoading: false,
+  addMoreLoading: false,
+  locationsInfo: {} as any
+});
+
+const filters = ref({
+  startLatitude: "",
+  endLatitude: "",
+  startLongitude: "",
+  endLongitude: "",
+  specificLatitude: "",
+  specificLongitude: "",
+  distance: "",
+  addressDistance: "",
+  address: {} as any
+});
+
+const confirmDialog = ref({
+  show: false,
+  action: "",
+  place: {} as any,
+  title: "",
+  loading: false
+});
+
+const confirmLocationDialog = ref({
+  show: false,
+  action: "",
+  title: "",
+  locationInfo: {
+    address_id: 0,
+    allLocations: [] as any[]
   },
-  data() {
-    return {
-      expanded: [],
-      placeDialog: {
-        title: "",
-        show: false,
-        editMode: false,
-        saveLoading: false,
-        addMoreLoading: false,
-        places: {}
-      },
-      locationDialog: {
-        title: "",
-        show: false,
-        editMode: false,
-        saveLoading: false,
-        addMoreLoading: false,
-        locationsInfo: {}
-      },
-      filters: {
-        startLatitude: "",
-        endLatitude: "",
-        startLongitude: "",
-        endLongitude: "",
-        specificLatitude: "",
-        specificLongitude: "",
-        distance: "",
-        addressDistance: "",
-        address: {}
-      },
-      confirmDialog: {
-        show: false,
-        action: "",
-        place: {},
-        title: "",
-        loading: false
-      },
-      confirmLocationDialog: {
-        show: false,
-        action: "",
-        locationInfo: {
-          address_id: 0,
-          allLocations: []
-        },
-        selectedLocation: 0
-      },
-      search: "",
-      groupLocations: [],
-      opened: [],
-      filterDialog: false,
-      viewStatus: "viewActive",
-      allAddresses: [],
-      activeAddresses: [],
-      archivedAddresses: []
-    };
-  },
-  computed: {
-    headers() {
-      return [
-        {
-          text: this.$t("places.address.name"),
-          value: "name",
-          width: "20%"
-        },
-        {
-          text: this.$t("places.address.address"),
-          value: "address",
-          width: "25%"
-        },
-        {
-          text: this.$t("places.address.city"),
-          value: "city",
-          width: "20%"
-        },
-        {
-          text: this.$t("places.address.latitude"),
-          width: "6%",
-          value: "latitude"
-        },
-        {
-          text: this.$t("places.address.longitude"),
-          width: "6%",
-          value: "longitude"
-        },
-        { text: this.$t("actions.header"), width: "5%", sortable: false },
-        { text: "", width: "5%", sortable: false }
-      ];
+  selectedLocation: 0,
+  loading: false
+});
+
+const search = ref("");
+const filterDialog = ref(false);
+const viewStatus = ref("viewActive");
+const allAddresses = ref<any[]>([]);
+const activeAddresses = ref<any[]>([]);
+const archivedAddresses = ref<any[]>([]);
+
+const headers = computed(() => [
+  { title: t("places.address.name"), value: "name", width: "20%" },
+  { title: t("places.address.address"), value: "address", width: "25%" },
+  { title: t("places.address.city"), value: "city", width: "20%" },
+  { title: t("places.address.latitude"), width: "6%", value: "latitude" },
+  { title: t("places.address.longitude"), width: "6%", value: "longitude" },
+  { title: t("actions.header"), width: "5%", sortable: false },
+  { title: "", width: "5%", sortable: false }
+]);
+
+const viewOptions = computed(() => [
+  { title: t("actions.view-active"), value: "viewActive", class: "view-active" },
+  { title: t("actions.view-archived"), value: "viewArchived", class: "view-archived" },
+  { title: t("actions.view-all"), value: "viewAll" }
+]);
+
+const addressesToDisplay = computed(() => {
+  switch (viewStatus.value) {
+    case "viewActive":
+      return activeAddresses.value;
+    case "viewArchived":
+      return archivedAddresses.value;
+    case "viewAll":
+      return allAddresses.value;
+    default:
+      return activeAddresses.value;
+  }
+});
+
+const markers = computed(() => {
+  return addressesToDisplay.value.map(element => ({
+    position: {
+      lat: element.latitude,
+      lng: element.longitude
     },
-    visiblePlaces() {
-      return this.assets;
+    data: {
+      name: element.name,
+      address: element.address
     },
-    viewOptions() {
-      return [
-        {
-          text: this.$t("actions.view-active"),
-          value: "viewActive",
-          class: "view-active"
-        },
-        {
-          text: this.$t("actions.view-archived"),
-          value: "viewArchived",
-          class: "view-archived"
-        },
-        { text: this.$t("actions.view-all"), value: "viewAll" }
-      ];
-    },
-    addressesToDisplay() {
-      switch (this.viewStatus) {
-        case "viewActive":
-          return this.activeAddresses;
-        case "viewArchived":
-          return this.archivedAddresses;
-        case "viewAll":
-          return this.allAddresses;
-        default:
-          return this.activeAddresses;
-      }
-    },
-    markers() {
-      return this.addressesToDisplay.map(element => {
-        return {
-          position: {
-            lat: element.latitude,
-            lng: element.longitude
-          },
-          data: {
-            name: element.name,
-            address: element.address
-          },
-          opened: false
-        };
-      });
-    },
-    dropdownList() {
-      return this.addresses.map(element => {
-        return {
-          text: element.address,
-          value: element
-        };
-      });
-    }
-  },
-  watch: {
-    addresses(all_addresses) {
-      this.makeAddressLists(all_addresses);
-    },
-    locations() {
-      this.makeAddressLists(this.addresses);
-    }
-  },
-  methods: {
-    activatePlaceDialog(places = {}, editMode = false) {
-      this.placeDialog.title = editMode
-        ? this.$t("places.edit")
-        : this.$t("places.new");
-      this.placeDialog.places = places;
-      this.placeDialog.show = true;
-    },
-    activateFilterDialog() {
-      this.filterDialog = true;
-    },
-    isFilterEmpty() {
-      return (
-        this.filters.startLatitude === "" &&
-        this.filters.endLatitude === "" &&
-        this.filters.startLongitude === "" &&
-        this.filters.endLongitude === "" &&
-        this.filters.specificLatitude === "" &&
-        this.filters.specificLongitude === "" &&
-        this.filters.distance === "" &&
-        this.filters.addressDistance === "" &&
-        isEmpty(this.filters.address)
-      );
-    },
-    applyFilters() {
-      // console.log(this.filters);
-      if (this.isFilterEmpty()) {
-        this.$emit("fetchPlacesList");
-      } else {
-        // console.log(parseFloat(this.filters.startLongitude));
-        // console.log(parseFloat(this.filters.endLongitude));
-        // console.log(parseFloat(this.filters.startLatitude));
-        // console.log(parseFloat(this.filters.endLatitude));
-        this.$emit("fetchPlacesList", this.filters);
-      }
-      this.filterDialog = false;
-    },
-    editPlace(place) {
-      this.activatePlaceDialog({ ...place }, true);
-    },
-    newPlace() {
-      this.activatePlaceDialog();
-    },
-    cancelFilterDialog() {
-      this.filterDialog = false;
-    },
-    cancelPlace() {
-      this.placeDialog.show = false;
-    },
-    refreshPlacesList() {
-      this.$emit("fetchPlacesList");
-    },
-    activateLocationDialog(locationInfo = {}, editMode = false) {
-      this.locationDialog.title = editMode
-        ? this.$t("places.edit")
-        : this.$t("places.location.new");
-      this.locationDialog.locationsInfo = locationInfo;
-      this.locationDialog.show = true;
-    },
-    editLocation(location) {
-      this.activateLocationDialog({ ...location }, true);
-    },
-    newLocation(location) {
-      this.activateLocationDialog({ ...location }, false);
-    },
-    cancelLocation() {
-      this.locationDialog.show = false;
-    },
-    makeAddressLists(all_addresses) {
-      this.allAddresses = this.AddressesLocationsData(all_addresses);
-      this.activeAddresses = this.AddressesLocationsData(
-        this.allAddresses.filter(person => person.active)
-      );
-      this.archivedAddresses = this.AddressesLocationsData(
-        this.allAddresses.filter(person => !person.active)
-      );
-    },
-    AddressesLocationsData(addArr) {
-      let c = [];
-      for (let i = 0; i < addArr.length; i++) {
-        c.push(addArr[i]);
-        c[i]["locations"] = [];
-        for (let j = 0; j < this.locations.length; j++)
-          if (c[i].id === this.locations[j].address_id) {
-            c[i].locations.push({
-              id: this.locations[j].id,
-              description: this.locations[j].description,
-              active: this.locations[j].active
-            });
-          }
-      }
-      return c;
-    },
-    locationsToDisplay(action, locationsList) {
-      if (action === "deactivate") {
-        return locationsList
-          .filter(location => location.active)
-          .map(element => {
-            return {
-              text: this.$t(element.description),
-              value: element.id
-            };
-          });
-      } else {
-        return locationsList
-          .filter(location => !location.active)
-          .map(element => {
-            return {
-              text: this.$t(element.description),
-              value: element.id
-            };
-          });
-      }
-    },
-    showConfirmDialog(action, place) {
-      this.confirmDialog.title = "places.messages.confirm." + action;
-      this.confirmDialog.action = action;
-      this.confirmDialog.place = place;
-      this.confirmDialog.show = true;
-    },
-    showLocationConfirmDialog(action, place) {
-      this.confirmLocationDialog.title = "places.messages.confirm." + action;
-      this.confirmLocationDialog.action = action;
-      this.confirmLocationDialog.selectedLocation = 0;
-      this.confirmLocationDialog.locationInfo = {
-        address_id: place.id,
-        allLocations: place.locations
-      };
-      this.confirmLocationDialog.show = true;
-    },
-    confirmAction(action, place) {
-      if (action === "deactivate") {
-        this.deactivateAddress(place);
-      } else if (action === "activate") {
-        this.activateAddress(place);
-      }
-    },
-    confirmActionLocation(action, location) {
-      if (action === "deactivate") {
-        this.deactivateLocation(location);
-      } else if (action === "activate") {
-        this.activateLocation(location);
-      }
-    },
-    cancelAction() {
-      this.confirmDialog.show = false;
-      this.confirmLocationDialog.show = false;
-    },
-    deactivateAddress(place) {
-      this.$http
-        .patch(`/api/v1/places/addresses/${place.id}`, { active: false })
-        .then(resp => {
-          console.log("DEACTIVATED ADDRESS", resp);
-        })
-        .then(() => {
-          this.refreshPlacesList();
-        })
-        .then(() => {
-          for (let loc = 0; loc < place.locations.length; loc++) {
-            if (place.locations[loc].active) {
-              this.deactivateLocation(place.locations[loc].id);
-            }
-          }
-        })
-        .catch(err => {
-          console.log("FAILED", err);
-        })
-        .finally(() => {
-          this.confirmDialog.loading = false;
-          this.confirmDialog.show = false;
-        });
-    },
-    activateAddress(place) {
-      this.$http
-        .patch(`/api/v1/places/addresses/${place.id}`, { active: true })
-        .then(resp => {
-          console.log("ACTIVATED ADDRESS", resp);
-        })
-        .then(() => {
-          this.refreshPlacesList();
-        })
-        .catch(err => {
-          console.log("FAILED", err);
-        })
-        .finally(() => {
-          this.confirmDialog.loading = false;
-          this.confirmDialog.show = false;
-        });
-    },
-    deactivateLocation(location) {
-      this.$http
-        .patch(`/api/v1/places/locations/${location}`, { active: false })
-        .then(resp => {
-          console.log("DEACTIVATED LOCATION", resp);
-        })
-        .then(() => {
-          this.refreshPlacesList();
-        })
-        .catch(err => {
-          console.log("FAILED", err);
-        })
-        .finally(() => {
-          this.confirmLocationDialog.loading = false;
-          this.confirmLocationDialog.show = false;
-        });
-    },
-    activateLocation(location) {
-      this.$http
-        .patch(`/api/v1/places/locations/${location}`, { active: true })
-        .then(resp => {
-          console.log("ACTIVATED LOCATION", resp);
-        })
-        .then(() => {
-          this.refreshPlacesList();
-        })
-        .catch(err => {
-          console.log("FAILED", err);
-        })
-        .finally(() => {
-          this.confirmLocationDialog.loading = false;
-          this.confirmLocationDialog.show = false;
-        });
+    opened: false
+  }));
+});
+
+const dropdownList = computed(() => {
+  if (!props.addresses) return [];
+  return props.addresses.map(element => ({
+    title: element.address,
+    value: element
+  }));
+});
+
+watch(
+  () => props.addresses,
+  (all_addresses) => {
+    if (all_addresses) {
+      makeAddressLists(all_addresses);
     }
   }
-};
+);
+
+watch(
+  () => props.locations,
+  () => {
+    if (props.addresses) {
+      makeAddressLists(props.addresses);
+    }
+  }
+);
+
+function toggleExpand(item: any) {
+  const idx = expandedItems.value.indexOf(item.id);
+  if (idx >= 0) {
+    expandedItems.value.splice(idx, 1);
+  } else {
+    expandedItems.value.push(item.id);
+  }
+}
+
+function makeAddressLists(all_addresses: any[]) {
+  allAddresses.value = addressesLocationsData(all_addresses);
+  activeAddresses.value = addressesLocationsData(allAddresses.value.filter(a => a.active));
+  archivedAddresses.value = addressesLocationsData(allAddresses.value.filter(a => !a.active));
+}
+
+function addressesLocationsData(addArr: any[]) {
+  let c: any[] = [];
+  for (let i = 0; i < addArr.length; i++) {
+    c.push({ ...addArr[i] });
+    c[i]["locations"] = [];
+    if (props.locations) {
+      for (let j = 0; j < props.locations.length; j++) {
+        if (c[i].id === props.locations[j].address_id) {
+          c[i].locations.push({
+            id: props.locations[j].id,
+            description: props.locations[j].description,
+            active: props.locations[j].active
+          });
+        }
+      }
+    }
+  }
+  return c;
+}
+
+function locationsToDisplay(action: string, locationsList: any[]) {
+  if (!locationsList) return [];
+  if (action === "deactivate") {
+    return locationsList
+      .filter(location => location.active)
+      .map(element => ({
+        title: t(element.description),
+        value: element.id
+      }));
+  } else {
+    return locationsList
+      .filter(location => !location.active)
+      .map(element => ({
+        title: t(element.description),
+        value: element.id
+      }));
+  }
+}
+
+function activatePlaceDialog(places: any = {}, editMode = false) {
+  placeDialog.value.title = editMode ? t("places.edit") : t("places.new");
+  placeDialog.value.places = places;
+  placeDialog.value.show = true;
+}
+
+function activateFilterDialog() {
+  filterDialog.value = true;
+}
+
+function isFilterEmpty() {
+  return (
+    filters.value.startLatitude === "" &&
+    filters.value.endLatitude === "" &&
+    filters.value.startLongitude === "" &&
+    filters.value.endLongitude === "" &&
+    filters.value.specificLatitude === "" &&
+    filters.value.specificLongitude === "" &&
+    filters.value.distance === "" &&
+    filters.value.addressDistance === "" &&
+    isEmpty(filters.value.address)
+  );
+}
+
+function applyFilters() {
+  if (isFilterEmpty()) {
+    emit("fetchPlacesList");
+  } else {
+    emit("fetchPlacesList", filters.value);
+  }
+  filterDialog.value = false;
+}
+
+function editPlace(place: any) {
+  activatePlaceDialog({ ...place }, true);
+}
+
+function duplicate(place: any) {
+  const copyPlace = JSON.parse(JSON.stringify(place));
+  delete copyPlace.id;
+  activatePlaceDialog(copyPlace);
+}
+
+function newPlace() {
+  activatePlaceDialog();
+}
+
+function cancelFilterDialog() {
+  filterDialog.value = false;
+}
+
+function cancelPlace() {
+  placeDialog.value.show = false;
+}
+
+function refreshPlacesList() {
+  emit("fetchPlacesList");
+}
+
+function activateLocationDialog(locationInfo: any = {}, editMode = false) {
+  locationDialog.value.title = editMode ? t("places.edit") : t("places.location.new");
+  locationDialog.value.locationsInfo = locationInfo;
+  locationDialog.value.show = true;
+}
+
+function editLocation(location: any) {
+  activateLocationDialog({ ...location }, true);
+}
+
+function newLocation(location: any) {
+  activateLocationDialog({ ...location }, false);
+}
+
+function cancelLocation() {
+  locationDialog.value.show = false;
+}
+
+function showConfirmDialog(action: string, place: any) {
+  confirmDialog.value.title = "places.messages.confirm." + action;
+  confirmDialog.value.action = action;
+  confirmDialog.value.place = place;
+  confirmDialog.value.show = true;
+}
+
+function showLocationConfirmDialog(action: string, place: any) {
+  confirmLocationDialog.value.title = "places.messages.confirm." + action;
+  confirmLocationDialog.value.action = action;
+  confirmLocationDialog.value.selectedLocation = 0;
+  confirmLocationDialog.value.locationInfo = {
+    address_id: place.id,
+    allLocations: place.locations
+  };
+  confirmLocationDialog.value.show = true;
+}
+
+function confirmAction(action: string, place: any) {
+  if (action === "deactivate") {
+    deactivateAddress(place);
+  } else if (action === "activate") {
+    activateAddress(place);
+  }
+}
+
+function confirmActionLocation(action: string, location: number) {
+  if (action === "deactivate") {
+    deactivateLocation(location);
+  } else if (action === "activate") {
+    activateLocation(location);
+  }
+}
+
+function cancelAction() {
+  confirmDialog.value.show = false;
+  confirmLocationDialog.value.show = false;
+}
+
+function deactivateAddress(place: any) {
+  http
+    .patch(`/api/v1/places/addresses/${place.id}`, { active: false })
+    .then(resp => {
+      console.log("DEACTIVATED ADDRESS", resp);
+    })
+    .then(() => {
+      refreshPlacesList();
+    })
+    .then(() => {
+      for (let loc = 0; loc < place.locations.length; loc++) {
+        if (place.locations[loc].active) {
+          deactivateLocation(place.locations[loc].id);
+        }
+      }
+    })
+    .catch(err => {
+      console.log("FAILED", err);
+    })
+    .finally(() => {
+      confirmDialog.value.loading = false;
+      confirmDialog.value.show = false;
+    });
+}
+
+function activateAddress(place: any) {
+  http
+    .patch(`/api/v1/places/addresses/${place.id}`, { active: true })
+    .then(resp => {
+      console.log("ACTIVATED ADDRESS", resp);
+    })
+    .then(() => {
+      refreshPlacesList();
+    })
+    .catch(err => {
+      console.log("FAILED", err);
+    })
+    .finally(() => {
+      confirmDialog.value.loading = false;
+      confirmDialog.value.show = false;
+    });
+}
+
+function deactivateLocation(location: number) {
+  http
+    .patch(`/api/v1/places/locations/${location}`, { active: false })
+    .then(resp => {
+      console.log("DEACTIVATED LOCATION", resp);
+    })
+    .then(() => {
+      refreshPlacesList();
+    })
+    .catch(err => {
+      console.log("FAILED", err);
+    })
+    .finally(() => {
+      confirmLocationDialog.value.loading = false;
+      confirmLocationDialog.value.show = false;
+    });
+}
+
+function activateLocation(location: number) {
+  http
+    .patch(`/api/v1/places/locations/${location}`, { active: true })
+    .then(resp => {
+      console.log("ACTIVATED LOCATION", resp);
+    })
+    .then(() => {
+      refreshPlacesList();
+    })
+    .catch(err => {
+      console.log("FAILED", err);
+    })
+    .finally(() => {
+      confirmLocationDialog.value.loading = false;
+      confirmLocationDialog.value.show = false;
+    });
+}
 </script>

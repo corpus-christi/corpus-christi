@@ -1,18 +1,13 @@
 <template>
   <v-card>
     <v-card-title>
-      <span class="headline">{{ $t("courses.register-for-course") }}</span>
+      <span class="headline">{{ t("courses.register-for-course") }}</span>
     </v-card-title>
     <v-card-text>
       <v-form>
         <v-spacer></v-spacer>
-        <v-radio-group
-          v-model="selectedOffering"
-          v-validate="'required'"
-          name="offering"
-          v-bind:error-messages="errors.first('offering')"
-        >
-          <span>{{ $t("courses.choose-offering") }}</span>
+        <v-radio-group v-model="selectedOffering" name="offering">
+          <span>{{ t("courses.choose-offering") }}</span>
           <v-radio
             v-for="offering in activeOfferings"
             :key="offering.id"
@@ -33,100 +28,91 @@
         v-on:click="cancel"
         data-cy="cancel"
         :disabled="loading"
-        >{{ $t("actions.cancel") }}</v-btn
+        >{{ t("actions.cancel") }}</v-btn
       >
       <v-btn
         color="primary"
         v-on:click="registerPerson"
         data-cy="register"
         :loading="loading"
-        >{{ $t("courses.register") }}</v-btn
+        >{{ t("courses.register") }}</v-btn
       >
     </v-card-actions>
   </v-card>
 </template>
 
-<script>
-import { mapGetters } from "vuex";
+<script setup lang="ts">
+import { ref } from "vue";
+import { useI18n } from "vue-i18n";
+import { inject } from "vue";
+import type { AxiosInstance } from "axios";
+import { useAuthStore } from "@/stores/auth";
 
-export default {
-  name: "CourseRegistrationForm",
-  data() {
-    return {
-      username: "",
-      password: "",
-      loading: false,
-      selectedOffering: null,
-      newStudent: {},
-      showExpansion: [false]
-    };
-  },
+const { t } = useI18n();
+const http = inject<AxiosInstance>("$http")!;
+const authStore = useAuthStore();
 
-  props: {
-    activeOfferings: null
-  },
+const props = defineProps<{
+  activeOfferings: any;
+}>();
 
-  computed: mapGetters(["isLoggedIn", "currentAccount"]),
+const emit = defineEmits(["cancel", "snackbar", "registered"]);
 
-  methods: {
-    cancel() {
-      this.clear();
-      this.$validator.reset();
-      this.$emit("cancel");
-    },
-    register() {
-      // TODO: course-offering-students
-    },
-    clear() {
-      this.selectedOffering = null;
-    },
-    cancelNewPerson() {
-      this.showExpansion = [false];
-    },
+const loading = ref(false);
+const selectedOffering = ref<any>(null);
+const newStudent = ref<any>({});
+const showExpansion = ref([false]);
 
-    savedNewPerson(person) {
-      this.newStudent = person;
-      this.showExpansion = [false];
-    },
+function cancel() {
+  clear();
+  emit("cancel");
+}
 
-    registerPerson() {
-      //temporary for presentation! fix me later!!
-      this.$validator.validateAll().then(() => {
-        if (!this.errors.any()) {
-          this.loading = true;
-          let my_username = this.currentAccount.username;
-          this.$http
-            .get(`/api/v1/people/accounts/username/${my_username}`)
-            .then(resp => {
-              let id = resp.data.personId;
-              let newStudent = {};
-              newStudent.confirmed = false;
-              newStudent.offeringId = this.selectedOffering;
-              newStudent.studentId = id;
-              newStudent.active = true;
-              return newStudent;
-            })
-            .then(student => {
-              return this.$http.post(
-                `/api/v1/courses/course_offerings/${student.studentId}`,
-                student
-              );
-            })
-            .then(resp => {
-              this.loading = false;
-              console.log("ADDED", resp);
-              this.$emit("snackbar", this.$t("courses.register-success"));
-              this.cancel();
-            })
-            .catch(err => {
-              this.loading = false;
-              console.log(err);
-            });
-        }
-      });
-    }
-  }
-};
+function clear() {
+  selectedOffering.value = null;
+}
+
+function cancelNewPerson() {
+  showExpansion.value = [false];
+}
+
+function savedNewPerson(person: any) {
+  newStudent.value = person;
+  showExpansion.value = [false];
+}
+
+function registerPerson() {
+  if (!selectedOffering.value) return;
+  loading.value = true;
+  let my_username = authStore.currentAccount.username;
+  http
+    .get(`/api/v1/people/accounts/username/${my_username}`)
+    .then(resp => {
+      let id = resp.data.personId;
+      let student: any = {};
+      student.confirmed = false;
+      student.offeringId = selectedOffering.value;
+      student.studentId = id;
+      student.active = true;
+      return student;
+    })
+    .then(student => {
+      return http.post(
+        `/api/v1/courses/course_offerings/${student.studentId}`,
+        student
+      );
+    })
+    .then(resp => {
+      loading.value = false;
+      console.log("ADDED", resp);
+      emit("snackbar", t("courses.register-success"));
+      cancel();
+    })
+    .catch(err => {
+      loading.value = false;
+      console.log(err);
+    });
+}
 </script>
 
 <style></style>

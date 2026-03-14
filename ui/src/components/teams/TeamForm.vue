@@ -8,10 +8,8 @@
         <v-textarea
           rows="3"
           v-model="team.description"
-          v-bind:label="$t('teams.description')"
+          v-bind:label="t('teams.description')"
           name="team-description"
-          v-validate="'required'"
-          v-bind:error-messages="errors.collect('team-description')"
           data-cy="description"
         ></v-textarea>
       </form>
@@ -19,121 +17,96 @@
     <v-card-actions>
       <v-btn
         color="secondary"
-        flat
+        variant="text"
         v-on:click="cancel"
         :disabled="formDisabled"
         data-cy="form-cancel"
-        >{{ $t("actions.cancel") }}</v-btn
+        >{{ t("actions.cancel") }}</v-btn
       >
       <v-spacer></v-spacer>
       <v-btn
         color="primary"
-        outline
+        variant="outlined"
         v-on:click="addAnother"
-        v-if="!editMode"
-        :loading="addMoreLoading"
+        v-if="!props.editMode"
+        :loading="props.addMoreLoading"
         :disabled="formDisabled"
         data-cy="form-addanother"
-        >{{ $t("actions.add-another") }}</v-btn
+        >{{ t("actions.add-another") }}</v-btn
       >
       <v-btn
         color="primary"
-        raised
+        variant="elevated"
         v-on:click="save"
-        :loading="saveLoading"
+        :loading="props.saveLoading"
         :disabled="formDisabled"
         data-cy="form-save"
-        >{{ $t("actions.save") }}</v-btn
+        >{{ t("actions.save") }}</v-btn
       >
     </v-card-actions>
   </v-card>
 </template>
 
-<script>
+<script setup lang="ts">
+import { ref, computed, watch } from "vue";
+import { useI18n } from "vue-i18n";
 import { isEmpty } from "lodash";
-// import { mapGetters } from "vuex";
-export default {
-  name: "TeamForm",
-  props: {
-    editMode: {
-      type: Boolean,
-      required: true
-    },
-    initialData: {
-      type: Object,
-      required: true
-    },
-    saveLoading: {
-      type: Boolean
-    },
-    addMoreLoading: {
-      type: Boolean
-    }
-  },
-  data: function() {
-    return {
-      team: {},
-      addMore: false
-    };
-  },
 
-  watch: {
-    // Make sure data stays in sync with any changes to `initialData` from parent.
-    initialData(teamProp) {
-      if (isEmpty(teamProp)) {
-        this.clear();
-      } else {
-        this.team = teamProp;
-      }
-    }
-  },
-  computed: {
-    // List the keys in an Team record.
-    teamKeys() {
-      return Object.keys(this.team);
-    },
-    title() {
-      return this.editMode
-        ? this.$t("teams.edit-team")
-        : this.$t("teams.create-team");
-    },
+const { t } = useI18n();
 
-    formDisabled() {
-      return this.saveLoading || this.addMoreLoading;
-    }
+const props = defineProps<{
+  editMode: boolean;
+  initialData: Record<string, any>;
+  saveLoading?: boolean;
+  addMoreLoading?: boolean;
+}>();
 
-    // ...mapGetters(["currentLanguageCode"])
-  },
+const emit = defineEmits(["cancel", "save", "addAnother"]);
 
-  methods: {
-    cancel() {
-      this.$emit("cancel");
-    },
+const team = ref<Record<string, any>>({});
+const addMore = ref(false);
 
-    // Clear the form and the validators.
-    clear() {
-      for (let key of this.teamKeys) {
-        this.team[key] = "";
-      }
+const title = computed(() => {
+  return props.editMode ? t("teams.edit-team") : t("teams.create-team");
+});
 
-      this.$validator.reset();
-    },
+const formDisabled = computed(() => {
+  return props.saveLoading || props.addMoreLoading;
+});
 
-    addAnother() {
-      this.addMore = true;
-      this.save();
-    },
-
-    save() {
-      this.$validator.validateAll().then(() => {
-        if (!this.errors.any()) {
-          this.team.active = true;
-          if (this.addMore) this.$emit("addAnother", this.team);
-          else this.$emit("save", this.team);
-        }
-        this.addMore = false;
-      });
+watch(
+  () => props.initialData,
+  (teamProp) => {
+    if (isEmpty(teamProp)) {
+      clear();
+    } else {
+      team.value = teamProp;
     }
   }
-};
+);
+
+function cancel() {
+  emit("cancel");
+}
+
+function clear() {
+  for (let key of Object.keys(team.value)) {
+    team.value[key] = "";
+  }
+}
+
+function addAnother() {
+  addMore.value = true;
+  save();
+}
+
+function save() {
+  team.value.active = true;
+  if (addMore.value) {
+    emit("addAnother", team.value);
+  } else {
+    emit("save", team.value);
+  }
+  addMore.value = false;
+}
 </script>

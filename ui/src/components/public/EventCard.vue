@@ -16,37 +16,37 @@
     <v-divider></v-divider>
     <div class="body">
       <v-card-title>
-        <v-layout row align-center justify-center>
-          <v-flex shrink>
+        <v-row align="center" justify="center">
+          <v-col shrink>
             <span class="headline mb-3">{{ event.title }}</span>
-          </v-flex>
-        </v-layout>
+          </v-col>
+        </v-row>
       </v-card-title>
 
       <v-card-text class="text">
-        <v-layout>
-          <v-flex>
+        <v-row>
+          <v-col>
             <div v-if="event.location">
-              <b>{{ $t("events.location") }}: </b
+              <b>{{ t("events.location") }}: </b
               >{{ event.location.description }}
             </div>
             <div>
-              <b>{{ $t("events.start-time") }}: </b
+              <b>{{ t("events.start-time") }}: </b
               >{{ getDisplayDate(event.start) }}
             </div>
             <div class="mb-3">
-              <b>{{ $t("events.end-time") }}: </b
+              <b>{{ t("events.end-time") }}: </b
               >{{ getDisplayDate(event.end) }}
             </div>
             <div class="mb-3">{{ event.description }}</div>
-          </v-flex>
-        </v-layout>
+          </v-col>
+        </v-row>
       </v-card-text>
 
       <v-card-actions>
         <v-spacer></v-spacer>
-        <v-btn raised round color="primary">{{
-          $t("public.events.join")
+        <v-btn variant="elevated" rounded color="primary">{{
+          t("public.events.join")
         }}</v-btn>
         <v-spacer></v-spacer>
       </v-card-actions>
@@ -54,34 +54,28 @@
   </v-card>
 </template>
 
-<script>
-import "viewerjs/dist/viewer.css";
+<script setup lang="ts">
+import { useI18n } from "vue-i18n";
+import { useAuthStore } from "@/stores/auth";
 import arcoPlaceholder from "../../../assets/arco-placeholder.jpg";
 
-export default {
-  name: "EventCard",
-  props: {
-    event: {}
-  },
-  data() {
-    return {
-      arcoPlaceholder
-    };
-  },
+const { t } = useI18n();
+const authStore = useAuthStore();
 
-  methods: {
-    getDisplayDate(ts) {
-      let date = new Date(ts);
-      return date.toLocaleTimeString(this.currentLanguageCode, {
-        year: "numeric",
-        month: "numeric",
-        day: "numeric",
-        hour: "2-digit",
-        minute: "2-digit"
-      });
-    }
-  }
-};
+const props = defineProps<{
+  event: any;
+}>();
+
+function getDisplayDate(ts: string) {
+  let date = new Date(ts);
+  return date.toLocaleTimeString(authStore.currentLanguageCode, {
+    year: "numeric",
+    month: "numeric",
+    day: "numeric",
+    hour: "2-digit",
+    minute: "2-digit"
+  });
+}
 </script>
 
 <style scoped>

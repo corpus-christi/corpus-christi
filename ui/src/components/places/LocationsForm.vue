@@ -1,172 +1,163 @@
 <template>
   <v-card>
     <v-card-text>
-      <span class="heading" v-if="this.locationInfo.editMode">{{
-        $t("places.location.location")
+      <span class="heading" v-if="locationInfo.editMode">{{
+        t("places.location.location")
       }}</span>
-      <span class="heading" v-else>{{ $t("places.location.new") }}</span>
-      <v-flex>
+      <span class="heading" v-else>{{ t("places.location.new") }}</span>
+      <v-col>
         <div>
           <v-autocomplete
-            v-if="this.locationInfo.editMode"
+            v-if="locationInfo.editMode"
             name="area"
             hide-details
             solo
             single-line
-            :label="$t('places.location.location')"
+            :label="t('places.location.location')"
             :items="dropDownList"
             v-model="selectedLocation"
-            v-validate="'required'"
-            :error-messages="errors.collect('location')"
             :disabled="formDisabled"
-            v-on:change="updateDescription() + isDisabled()"
+            v-on:update:model-value="updateDescription(); isDisabled();"
           />
         </div>
-      </v-flex>
+      </v-col>
       <v-text-field
         name="description"
-        v-bind:label="$t('places.location.description')"
+        v-bind:label="t('places.location.description')"
         v-model="location.description"
         clearable
-        v-validate="'max:100'"
         :disabled="formDisabled"
       ></v-text-field>
-      <font color="red">{{ errors.first("description") }}</font>
     </v-card-text>
     <v-card-actions>
       <v-spacer />
       <v-btn
-        flat
+        variant="text"
         color="secondary"
         @click="cancelLocationForm"
         :disabled="formDisabled"
-        >{{ $t("actions.cancel") }}</v-btn
+        >{{ t("actions.cancel") }}</v-btn
       >
       <v-btn
-        raised
+        variant="elevated"
         color="primary"
         @click="saveLocationForm"
         :loading="formDisabled"
-        :disabled="subDisabled || errors.first()"
-        >{{ $t("actions.save") }}</v-btn
+        :disabled="subDisabled"
+        >{{ t("actions.save") }}</v-btn
       >
     </v-card-actions>
   </v-card>
 </template>
 
-<script>
-export default {
-  name: "LocationsForm",
-  editMode: false,
-  props: {
-    initialData: {
-      type: Object,
-      required: true
-    }
-  },
-  data: function() {
-    return {
-      selectedLocation: 0,
-      locationInfo: {
-        address_id: 0,
-        allLocations: [],
-        editMode: Boolean
-      },
-      location: {
-        id: 0,
-        description: "",
-        address_id: 0
-      },
-      formDisabled: false,
-      saveIsLoading: false,
-      subDisabled: false,
-      dropList: {}
-    };
-  },
-  computed: {
-    dropDownList() {
-      return this.locationInfo.allLocations.map(element => {
-        return {
-          text: this.$t(element.description),
-          value: element.id
-        };
-      });
-    }
-  },
-  watch: {
-    initialData(locationProp) {
-      this.locationInfo = locationProp;
-      this.editMode = this.locationInfo.editMode;
-      this.selectedLocation = 0;
-      this.subDisabled =
-        this.formDisabled || !(!this.editMode || this.selectedLocation);
-    }
-  },
-  methods: {
-    isDisabled() {
-      this.subDisabled =
-        this.formDisabled || !(!this.editMode || this.selectedLocation);
-    },
-    updateDescription() {
-      for (let i = 0; i < this.locationInfo.allLocations.length; i++) {
-        if (this.locationInfo.allLocations[i].id === this.selectedLocation) {
-          this.location.description = this.locationInfo.allLocations[
-            i
-          ].description;
-        }
-      }
-    },
-    cancelLocationForm() {
-      this.location.description = "";
-      this.selectedLocation = 0;
-      this.$emit("cancel", false);
-    },
-    saveLocationForm() {
-      this.saveLocation("saved");
-    },
-    saveLocation(emitMessage) {
-      let locationId = this.selectedLocation;
-      let locationData = {
-        description: this.location.description,
-        address_id: this.locationInfo.address_id
-      };
-      if (locationId) {
-        this.updateLocation(locationData, locationId, emitMessage);
-      } else {
-        this.addLocation(locationData, emitMessage);
-      }
-      this.selectedLocation = 0;
-    },
-    addLocation(locationData, emitMessage) {
-      this.$http
-        .post("/api/v1/places/locations", locationData)
-        .then(resp => {
-          this.$emit(emitMessage, resp.data);
-        })
-        .then(() => {
-          this.formDisabled = false;
-          this.cancelLocationForm();
-        })
-        .catch(err => {
-          console.log("FAILED", err);
-          this.formDisabled = false;
-        });
-    },
-    updateLocation(locationData, locationId, emitMessage) {
-      this.$http
-        .put(`api/v1/places/locations/${locationId}`, locationData)
-        .then(resp => {
-          this.$emit(emitMessage, resp.data);
-        })
-        .then(() => {
-          this.formDisabled = false;
-          this.cancelLocationForm();
-        })
-        .catch(err => {
-          console.log("FAILED", err);
-          this.formDisabled = false;
-        });
+<script setup lang="ts">
+import { ref, computed, watch } from "vue";
+import { useI18n } from "vue-i18n";
+import { inject } from "vue";
+import type { AxiosInstance } from "axios";
+
+const { t } = useI18n();
+const http = inject<AxiosInstance>("$http")!;
+
+const props = defineProps<{
+  initialData: Record<string, any>;
+}>();
+
+const emit = defineEmits(["cancel", "saved"]);
+
+const selectedLocation = ref(0);
+const locationInfo = ref<any>({
+  address_id: 0,
+  allLocations: [],
+  editMode: false
+});
+const location = ref<any>({ id: 0, description: "", address_id: 0 });
+const formDisabled = ref(false);
+const subDisabled = ref(false);
+
+const dropDownList = computed(() => {
+  return locationInfo.value.allLocations.map((element: any) => ({
+    title: t(element.description),
+    value: element.id
+  }));
+});
+
+watch(
+  () => props.initialData,
+  (locationProp) => {
+    locationInfo.value = locationProp;
+    selectedLocation.value = 0;
+    subDisabled.value =
+      formDisabled.value || !(!locationInfo.value.editMode || selectedLocation.value);
+  }
+);
+
+function isDisabled() {
+  subDisabled.value =
+    formDisabled.value || !(!locationInfo.value.editMode || selectedLocation.value);
+}
+
+function updateDescription() {
+  for (let i = 0; i < locationInfo.value.allLocations.length; i++) {
+    if (locationInfo.value.allLocations[i].id === selectedLocation.value) {
+      location.value.description = locationInfo.value.allLocations[i].description;
     }
   }
-};
+}
+
+function cancelLocationForm() {
+  location.value.description = "";
+  selectedLocation.value = 0;
+  emit("cancel", false);
+}
+
+function saveLocationForm() {
+  saveLocation("saved");
+}
+
+function saveLocation(emitMessage: string) {
+  let locationId = selectedLocation.value;
+  let locationData = {
+    description: location.value.description,
+    address_id: locationInfo.value.address_id
+  };
+  if (locationId) {
+    updateLocation(locationData, locationId, emitMessage);
+  } else {
+    addLocation(locationData, emitMessage);
+  }
+  selectedLocation.value = 0;
+}
+
+function addLocation(locationData: any, emitMessage: string) {
+  http
+    .post("/api/v1/places/locations", locationData)
+    .then(resp => {
+      emit(emitMessage, resp.data);
+    })
+    .then(() => {
+      formDisabled.value = false;
+      cancelLocationForm();
+    })
+    .catch(err => {
+      console.log("FAILED", err);
+      formDisabled.value = false;
+    });
+}
+
+function updateLocation(locationData: any, locationId: number, emitMessage: string) {
+  http
+    .put(`api/v1/places/locations/${locationId}`, locationData)
+    .then(resp => {
+      emit(emitMessage, resp.data);
+    })
+    .then(() => {
+      formDisabled.value = false;
+      cancelLocationForm();
+    })
+    .catch(err => {
+      console.log("FAILED", err);
+      formDisabled.value = false;
+    });
+}
 </script>

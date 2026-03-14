@@ -1,21 +1,21 @@
 <template>
   <div>
     <v-toolbar class="pa-1">
-      <v-layout align-center justify-space-between fill-height>
-        <v-flex md2>
-          <v-toolbar-title>{{ $t("places.area.area") }}</v-toolbar-title>
-        </v-flex>
-        <v-flex md2>
+      <v-row align="center" justify="space-between">
+        <v-col md="2">
+          <v-toolbar-title>{{ t("places.area.area") }}</v-toolbar-title>
+        </v-col>
+        <v-col md="2">
           <v-text-field
             v-model="search"
             append-icon="search"
-            v-bind:label="$t('actions.search')"
+            v-bind:label="t('actions.search')"
             single-line
             hide-details
             data-cy="form-search"
           ></v-text-field>
-        </v-flex>
-        <v-flex md3>
+        </v-col>
+        <v-col md="3">
           <div data-cy="view-dropdown">
             <v-select
               hide-details
@@ -25,19 +25,19 @@
               v-model="viewStatus"
             ></v-select>
           </div>
-        </v-flex>
-        <v-flex shrink justify-self-end>
+        </v-col>
+        <v-col shrink>
           <v-btn
             color="primary"
-            raised
+            variant="elevated"
             v-on:click.stop="newArea"
             data-cy="add-area"
           >
             <v-icon dark left>add</v-icon>
-            {{ $t("places.area.new") }}
+            {{ t("places.area.new") }}
           </v-btn>
-        </v-flex>
-      </v-layout>
+        </v-col>
+      </v-row>
     </v-toolbar>
 
     <v-data-table
@@ -46,70 +46,81 @@
       :search="search"
       class="elevation-1"
     >
-      <template slot="items" slot-scope="props">
-        <td>{{ props.item.name }}</td>
-        <td>{{ $t(props.item.country.name_i18n) }}</td>
+      <template #item="{ item }">
+        <tr>
+          <td>{{ item.name }}</td>
+          <td>{{ t(item.country.name_i18n) }}</td>
+          <td>
+            <v-tooltip bottom>
+              <template #activator="{ props: tooltipProps }">
+                <v-btn
+                  icon
+                  variant="outlined"
+                  size="small"
+                  color="primary"
+                  v-bind="tooltipProps"
+                  v-on:click="editArea(item)"
+                  data-cy="edit-place"
+                >
+                  <v-icon size="small">edit</v-icon>
+                </v-btn>
+              </template>
+              <span>{{ t("actions.edit") }}</span>
+            </v-tooltip>
 
-        <v-tooltip bottom>
-          <v-btn
-            icon
-            outline
-            small
-            color="primary"
-            slot="activator"
-            v-on:click="editArea(props.item)"
-            data-cy="edit-place"
-          >
-            <v-icon small>edit</v-icon>
-          </v-btn>
-          <span>{{ $t("actions.edit") }}</span>
-        </v-tooltip>
+            <v-tooltip bottom>
+              <template #activator="{ props: tooltipProps }">
+                <v-btn
+                  icon
+                  variant="outlined"
+                  size="small"
+                  color="primary"
+                  v-bind="tooltipProps"
+                  v-on:click="duplicate(item)"
+                  data-cy="duplicate-place"
+                >
+                  <v-icon size="small">filter_none</v-icon>
+                </v-btn>
+              </template>
+              <span>{{ t("actions.duplicate") }}</span>
+            </v-tooltip>
 
-        <v-tooltip bottom>
-          <v-btn
-            icon
-            outline
-            small
-            color="primary"
-            slot="activator"
-            v-on:click="duplicate(props.item)"
-            data-cy="duplicate-place"
-          >
-            <v-icon small>filter_none</v-icon>
-          </v-btn>
-          <span>{{ $t("actions.duplicate") }}</span>
-        </v-tooltip>
-
-        <v-tooltip bottom>
-          <v-btn
-            v-if="props.item.active === true"
-            icon
-            outline
-            small
-            color="primary"
-            slot="activator"
-            v-on:click="showConfirmDialog('deactivate', props.item)"
-            data-cy="deactivate-area"
-          >
-            <v-icon small>archive</v-icon>
-          </v-btn>
-          <span>{{ $t("actions.tooltips.archive") }}</span>
-        </v-tooltip>
-        <v-tooltip bottom>
-          <v-btn
-            v-if="props.item.active === false"
-            icon
-            outline
-            small
-            color="primary"
-            slot="activator"
-            v-on:click="showConfirmDialog('activate', props.item)"
-            data-cy="reactivate-area"
-          >
-            <v-icon small>undo</v-icon>
-          </v-btn>
-          <span>{{ $t("actions.tooltips.activate") }}</span>
-        </v-tooltip>
+            <v-tooltip bottom>
+              <template #activator="{ props: tooltipProps }">
+                <v-btn
+                  v-if="item.active === true"
+                  icon
+                  variant="outlined"
+                  size="small"
+                  color="primary"
+                  v-bind="tooltipProps"
+                  v-on:click="showConfirmDialog('deactivate', item)"
+                  data-cy="deactivate-area"
+                >
+                  <v-icon size="small">archive</v-icon>
+                </v-btn>
+              </template>
+              <span>{{ t("actions.tooltips.archive") }}</span>
+            </v-tooltip>
+            <v-tooltip bottom>
+              <template #activator="{ props: tooltipProps }">
+                <v-btn
+                  v-if="item.active === false"
+                  icon
+                  variant="outlined"
+                  size="small"
+                  color="primary"
+                  v-bind="tooltipProps"
+                  v-on:click="showConfirmDialog('activate', item)"
+                  data-cy="reactivate-area"
+                >
+                  <v-icon size="small">undo</v-icon>
+                </v-btn>
+              </template>
+              <span>{{ t("actions.tooltips.activate") }}</span>
+            </v-tooltip>
+          </td>
+        </tr>
       </template>
     </v-data-table>
 
@@ -119,13 +130,13 @@
       v-model="areaDialog.show"
       max-width="1000px"
     >
-      <v-layout column>
+      <v-col>
         <v-card>
-          <v-layout align-center justify-center row fill-height>
+          <v-row align="center" justify="center">
             <v-card-title class="headline">
-              {{ $t(areaDialog.title) }}
+              {{ t(areaDialog.title) }}
             </v-card-title>
-          </v-layout>
+          </v-row>
         </v-card>
         <AreaForm
           v-bind:countries="countries"
@@ -133,41 +144,41 @@
           v-on:saved="refreshPlacesList"
           v-bind:initialData="areaDialog.area"
         />
-      </v-layout>
+      </v-col>
     </v-dialog>
-    <v-layout class="mt-3">
-      <v-flex>
+    <v-row class="mt-3">
+      <v-col>
         <v-toolbar color="blue" dark>
           <v-toolbar-title data-cy="church-sentence">
-            {{ $t("places.area.area") }}
+            {{ t("places.area.area") }}
           </v-toolbar-title>
         </v-toolbar>
         <GoogleMap v-bind:markers="homegroups"></GoogleMap>
-      </v-flex>
-    </v-layout>
+      </v-col>
+    </v-row>
     <v-dialog
       v-model="confirmDialog.show"
       max-width="350px"
       data-cy="place-table-confirmation"
     >
       <v-card>
-        <v-card-text>{{ $t(confirmDialog.title) }}</v-card-text>
+        <v-card-text>{{ t(confirmDialog.title) }}</v-card-text>
         <v-card-actions>
           <v-btn
             v-on:click="cancelAction"
             color="secondary"
-            flat
+            variant="text"
             :disabled="confirmDialog.loading"
-            >{{ $t("actions.cancel") }}</v-btn
+            >{{ t("actions.cancel") }}</v-btn
           >
           <v-spacer></v-spacer>
           <v-btn
             v-on:click="confirmAction(confirmDialog.action, confirmDialog.area)"
             color="primary"
-            raised
+            variant="elevated"
             :disabled="confirmDialog.loading"
             :loading="confirmDialog.loading"
-            >{{ $t("actions.confirm") }}</v-btn
+            >{{ t("actions.confirm") }}</v-btn
           >
         </v-card-actions>
       </v-card>
@@ -175,182 +186,176 @@
   </div>
 </template>
 
-<script>
-import AreaForm from "./AreaForm";
-import GoogleMap from "../../components/GoogleMap";
-export default {
-  name: "AreaTable",
-  components: { AreaForm, GoogleMap },
-  props: {
-    addresses: Array,
-    areas: Array,
-    locations: Array,
-    countries: Array
-  },
+<script setup lang="ts">
+import { ref, computed, watch } from "vue";
+import { useI18n } from "vue-i18n";
+import { inject } from "vue";
+import type { AxiosInstance } from "axios";
+import AreaForm from "./AreaForm.vue";
+import GoogleMap from "../../components/GoogleMap.vue";
 
-  data() {
-    return {
-      areaDialog: {
-        title: "",
-        show: false,
-        editMode: false,
-        saveLoading: false,
-        addMoreLoading: false,
-        area: {}
-      },
-      confirmDialog: {
-        show: false,
-        action: "",
-        area: {},
-        title: "",
-        loading: false
-      },
-      search: "",
-      homegroups: [],
-      groupLocations: [],
-      viewStatus: "viewActive",
-      allAreas: [],
-      activeAreas: [],
-      archivedAreas: []
-    };
-  },
-  computed: {
-    headers() {
-      return [
-        {
-          text: this.$t("places.address.name"),
-          value: "name",
-          width: "20%"
-        },
-        {
-          text: this.$t("places.address.country"),
-          value: "country",
-          width: "20%"
-        },
+const { t } = useI18n();
+const http = inject<AxiosInstance>("$http")!;
 
-        { text: this.$t("actions.header"), width: "17%", sortable: false }
-      ];
-    },
-    visiblePlaces() {
-      return this.assets;
-    },
-    viewOptions() {
-      return [
-        {
-          text: this.$t("actions.view-active"),
-          value: "viewActive",
-          class: "view-active"
-        },
-        {
-          text: this.$t("actions.view-archived"),
-          value: "viewArchived",
-          class: "view-archived"
-        },
-        { text: this.$t("actions.view-all"), value: "viewAll" }
-      ];
-    },
-    areasToDisplay() {
-      switch (this.viewStatus) {
-        case "viewActive":
-          return this.activeAreas;
-        case "viewArchived":
-          return this.archivedAreas;
-        case "viewAll":
-          return this.allAreas;
-        default:
-          return this.activeAreas;
-      }
-    }
-  },
-  watch: {
-    areas(all_areas) {
-      this.allAreas = all_areas;
-      this.activeAreas = this.allAreas.filter(area => area.active);
-      this.archivedAreas = this.allAreas.filter(area => !area.active);
-    }
-  },
-  methods: {
-    activateAreaDialog(area = {}, editMode = false) {
-      this.areaDialog.title = editMode
-        ? this.$t("places.area.edit")
-        : this.$t("places.area.new");
-      this.areaDialog.area = {
-        id: area.id,
-        name: area.name,
-        country_code: area.country_code
-      };
-      this.areaDialog.show = true;
-    },
+const props = defineProps<{
+  addresses?: any[];
+  areas?: any[];
+  locations?: any[];
+  countries?: any[];
+}>();
 
-    editArea(area) {
-      this.activateAreaDialog({ ...area }, true);
-    },
+const emit = defineEmits(["fetchPlacesList"]);
 
-    newArea() {
-      this.activateAreaDialog();
-    },
+const areaDialog = ref({
+  title: "",
+  show: false,
+  editMode: false,
+  saveLoading: false,
+  addMoreLoading: false,
+  area: {} as any
+});
 
-    cancelArea() {
-      this.areaDialog.show = false;
-    },
+const confirmDialog = ref({
+  show: false,
+  action: "",
+  area: {} as any,
+  title: "",
+  loading: false
+});
 
-    refreshPlacesList() {
-      this.$emit("fetchPlacesList");
-    },
-    showConfirmDialog(action, area) {
-      this.confirmDialog.title = "places.area.confirm." + action;
-      this.confirmDialog.action = action;
-      this.confirmDialog.area = area;
-      this.confirmDialog.show = true;
-    },
-    confirmAction(action, area) {
-      if (action === "deactivate") {
-        this.deactivateArea(area);
-      } else if (action === "activate") {
-        this.activateArea(area);
-      }
-    },
-    cancelAction() {
-      this.confirmDialog.show = false;
-    },
-    deactivateArea(area) {
-      console.log(area);
-      this.$http
-        .patch(`/api/v1/places/areas/${area.id}`, { active: false })
-        .then(resp => {
-          console.log("DEACTIVATED AREA", resp);
-        })
-        .then(() => {
-          this.refreshPlacesList();
-        })
-        .catch(err => {
-          console.log("FAILED", err);
-        })
-        .finally(() => {
-          this.confirmDialog.loading = false;
-          this.confirmDialog.show = false;
-        });
-    },
-    activateArea(area) {
-      console.log(area);
-      this.$http
-        .patch(`/api/v1/places/areas/${area.id}`, { active: true })
-        .then(resp => {
-          console.log("ACTIVATED AREA", resp);
-        })
-        .then(() => {
-          this.refreshPlacesList();
-        })
-        .catch(err => {
-          console.log("FAILED", err);
-        })
-        .finally(() => {
-          this.confirmDialog.loading = false;
-          this.confirmDialog.show = false;
-        });
+const search = ref("");
+const homegroups = ref<any[]>([]);
+const viewStatus = ref("viewActive");
+const allAreas = ref<any[]>([]);
+const activeAreas = ref<any[]>([]);
+const archivedAreas = ref<any[]>([]);
+
+const headers = computed(() => [
+  { title: t("places.address.name"), value: "name", width: "20%" },
+  { title: t("places.address.country"), value: "country", width: "20%" },
+  { title: t("actions.header"), width: "17%", sortable: false }
+]);
+
+const viewOptions = computed(() => [
+  { title: t("actions.view-active"), value: "viewActive", class: "view-active" },
+  { title: t("actions.view-archived"), value: "viewArchived", class: "view-archived" },
+  { title: t("actions.view-all"), value: "viewAll" }
+]);
+
+const areasToDisplay = computed(() => {
+  switch (viewStatus.value) {
+    case "viewActive":
+      return activeAreas.value;
+    case "viewArchived":
+      return archivedAreas.value;
+    case "viewAll":
+      return allAreas.value;
+    default:
+      return activeAreas.value;
+  }
+});
+
+watch(
+  () => props.areas,
+  (all_areas) => {
+    if (all_areas) {
+      allAreas.value = all_areas;
+      activeAreas.value = allAreas.value.filter((area: any) => area.active);
+      archivedAreas.value = allAreas.value.filter((area: any) => !area.active);
     }
   }
-};
+);
+
+function activateAreaDialog(area: any = {}, editMode = false) {
+  areaDialog.value.title = editMode
+    ? t("places.area.edit")
+    : t("places.area.new");
+  areaDialog.value.area = {
+    id: area.id,
+    name: area.name,
+    country_code: area.country_code
+  };
+  areaDialog.value.show = true;
+}
+
+function editArea(area: any) {
+  activateAreaDialog({ ...area }, true);
+}
+
+function newArea() {
+  activateAreaDialog();
+}
+
+function cancelArea() {
+  areaDialog.value.show = false;
+}
+
+function duplicate(area: any) {
+  const copyArea = JSON.parse(JSON.stringify(area));
+  delete copyArea.id;
+  activateAreaDialog(copyArea);
+}
+
+function refreshPlacesList() {
+  emit("fetchPlacesList");
+}
+
+function showConfirmDialog(action: string, area: any) {
+  confirmDialog.value.title = "places.area.confirm." + action;
+  confirmDialog.value.action = action;
+  confirmDialog.value.area = area;
+  confirmDialog.value.show = true;
+}
+
+function confirmAction(action: string, area: any) {
+  if (action === "deactivate") {
+    deactivateArea(area);
+  } else if (action === "activate") {
+    activateArea(area);
+  }
+}
+
+function cancelAction() {
+  confirmDialog.value.show = false;
+}
+
+function deactivateArea(area: any) {
+  console.log(area);
+  http
+    .patch(`/api/v1/places/areas/${area.id}`, { active: false })
+    .then(resp => {
+      console.log("DEACTIVATED AREA", resp);
+    })
+    .then(() => {
+      refreshPlacesList();
+    })
+    .catch(err => {
+      console.log("FAILED", err);
+    })
+    .finally(() => {
+      confirmDialog.value.loading = false;
+      confirmDialog.value.show = false;
+    });
+}
+
+function activateArea(area: any) {
+  console.log(area);
+  http
+    .patch(`/api/v1/places/areas/${area.id}`, { active: true })
+    .then(resp => {
+      console.log("ACTIVATED AREA", resp);
+    })
+    .then(() => {
+      refreshPlacesList();
+    })
+    .catch(err => {
+      console.log("FAILED", err);
+    })
+    .finally(() => {
+      confirmDialog.value.loading = false;
+      confirmDialog.value.show = false;
+    });
+}
 </script>
 
 <style scoped></style>

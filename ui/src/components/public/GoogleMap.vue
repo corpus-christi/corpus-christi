@@ -26,34 +26,30 @@
   </gmap-map>
 </template>
 
-<script>
-export default {
-  name: "GoogleMap",
-  data() {
-    return {
-      center: { lat: -2.90548355117024, lng: -79.02949294174876 },
-      zoom: 13
-    };
-  },
-  methods: {
-    markerSelected(m) {
-      for (let marker of this.$props.markers) {
-        marker.opened = true;
-      }
-      this.$refs.gmap.$mapPromise.then(map => {
-        map.panTo(m.position);
-      });
-      m.opened = true;
-    },
-    close(m) {
-      m.opened = false;
-    }
-  },
-  props: {
-    markers: {
-      type: Array,
-      required: true
-    }
+<script setup lang="ts">
+import { ref } from "vue";
+
+const props = defineProps<{
+  markers: any[];
+}>();
+
+const gmap = ref<any>(null);
+const center = ref({ lat: -2.90548355117024, lng: -79.02949294174876 });
+const zoom = ref(13);
+
+function markerSelected(m: any) {
+  for (let marker of props.markers) {
+    marker.opened = true;
   }
-};
+  if (gmap.value && gmap.value.$mapPromise) {
+    gmap.value.$mapPromise.then((map: any) => {
+      map.panTo(m.position);
+    });
+  }
+  m.opened = true;
+}
+
+function close(m: any) {
+  m.opened = false;
+}
 </script>
