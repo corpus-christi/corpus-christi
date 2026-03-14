@@ -1,42 +1,38 @@
 <template>
   <v-app>
     <Toolbar />
-    <v-content> <router-view /> </v-content>
+    <v-main><router-view /></v-main>
     <Footer />
   </v-app>
 </template>
 
-<script>
-import Toolbar from "./components/Toolbar";
-import { mapGetters, mapMutations } from "vuex";
-import Footer from "./components/Footer";
+<script setup lang="ts">
+import { inject, onBeforeMount } from "vue";
+import type { AxiosInstance } from "axios";
+import Toolbar from "./components/Toolbar.vue";
+import Footer from "./components/Footer.vue";
 import { setJWT } from "./plugins/axios";
 import { Locale } from "./models/Locale";
+import { useAuthStore } from "./stores/auth";
+import { useI18n } from "vue-i18n";
 
-export default {
-  name: "App",
-  components: { Footer, Toolbar },
-  computed: mapGetters(["currentJWT"]),
-  methods: mapMutations(["setLocaleModels", "setCurrentLocale"]),
+const authStore = useAuthStore();
+const { locale } = useI18n();
+const http = inject<AxiosInstance>("$http")!;
 
-  created: function() {
-    // Initialize early application stuff
+onBeforeMount(() => {
+  // Initialize JWT from stored value
+  setJWT(authStore.currentJWT);
 
-    // Locales
-    this.$http.get("/api/v1/i18n/locales").then(response => {
-      const localeData = response.data;
-
-      if (localeData && localeData.length > 0) {
-        this.setLocaleModels(localeData);
-
-        const firstLocaleString = localeData[0].code;
-        this.setCurrentLocale(new Locale(firstLocaleString));
-        this.$i18n.locale = firstLocaleString;
-      }
-    });
-
-    // Authentication information in local storage.
-    setJWT(this.currentJWT);
-  }
-};
+  // Load locale models from API
+  http.get("/api/v1/i18n/locales").then(response => {
+    const localeData = response.data;
+    if (localeData && localeData.length > 0) {
+      authStore.setLocaleModels(localeData);
+      const firstLocaleString = localeData[0].code;
+      authStore.setCurrentLocale(new Locale(firstLocaleString));
+      locale.value = firstLocaleString;
+    }
+  });
+});
 </script>

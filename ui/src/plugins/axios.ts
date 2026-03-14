@@ -1,10 +1,8 @@
-import Vue from "vue";
 import axios from "axios";
-import store from "../store.js";
+import type { App } from "vue";
 
 const authAxios = axios.create({
   baseURL: "/"
-  // headers: { "Authorization": "Bearer NOT SET" }
 });
 
 authAxios.interceptors.response.use(
@@ -12,9 +10,13 @@ authAxios.interceptors.response.use(
     return Promise.resolve(resp);
   },
   error => {
-    if (error.response.status === 401) {
+    if (error.response?.status === 401) {
       console.log(error.config);
-      store.commit("logOut");
+      // Lazy import to avoid circular dependency with store
+      import("../stores/auth").then(({ useAuthStore }) => {
+        const authStore = useAuthStore();
+        authStore.logOut();
+      });
       window.location.replace(
         "login?redirect=" + window.location.toString().replace(/^\/*$/, "")
       );
@@ -25,14 +27,23 @@ authAxios.interceptors.response.use(
   }
 );
 
-Vue.prototype.$http = authAxios;
-
-export function setJWT(jwt: string) {
-  authAxios.defaults.headers.common["Authorization"] = `Bearer ${jwt}`;
+export function setJWT(jwt: string | null) {
+  if (jwt) {
+    authAxios.defaults.headers.common["Authorization"] = `Bearer ${jwt}`;
+  } else {
+    delete authAxios.defaults.headers.common["Authorization"];
+  }
 }
 
 const plainAxios = axios.create({
   baseURL: "/"
 });
 
-Vue.prototype.$httpNoAuth = plainAxios;
+export { authAxios, plainAxios };
+
+export default {
+  install(app: App) {
+    app.provide("$http", authAxios);
+    app.provide("$httpNoAuth", plainAxios);
+  }
+};

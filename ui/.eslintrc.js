@@ -2,21 +2,23 @@ module.exports = {
   root: true,
 
   env: {
-    node: true
+    node: true,
+    browser: true
   },
 
-  extends: ["plugin:vue/essential", "@vue/prettier"],
+  extends: [
+    "plugin:vue/vue3-recommended",
+    "@vue/eslint-config-typescript",
+    "@vue/eslint-config-prettier"
+  ],
 
   rules: {
-    // FIXME: Restore this setting after chasing out console calls.
-    // "no-console": process.env.NODE_ENV === "production" ? "error" : "off",
     "no-console": "off",
-    "no-debugger": process.env.NODE_ENV === "production" ? "error" : "off"
+    "no-debugger": process.env.NODE_ENV === "production" ? "error" : "off",
+    "vue/multi-word-component-names": "off"
   },
 
   parserOptions: {
-    parser: "@typescript-eslint/parser"
-  },
-
-  extends: ["plugin:vue/essential", "@vue/prettier", "@vue/typescript"]
+    ecmaVersion: "latest"
+  }
 };
