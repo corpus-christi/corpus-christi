@@ -1,5 +1,4 @@
 <template>
-  <!-- https://codesandbox.io/s/mjy97x85py?from-embed -->
   <v-card>
     <v-card-title>
       <span class="headline">{{ title }}</span>
@@ -8,34 +7,32 @@
       <form>
         <v-text-field
           v-model="diploma.name"
-          v-bind:label="$t('diplomas.title')"
+          v-bind:label="t('diplomas.title')"
           name="title"
-          v-validate="'required'"
-          v-bind:error-messages="errors.collect('title')"
+          :error-messages="nameErrors"
           data-cy="diplomas-form-name"
         ></v-text-field>
         <v-textarea
           v-model="diploma.description"
-          v-bind:label="$t('diplomas.description')"
+          v-bind:label="t('diplomas.description')"
           name="description"
-          v-validate="'required'"
-          v-bind:error-messages="errors.collect('description')"
+          :error-messages="descriptionErrors"
           data-cy="diploma-form-description"
         ></v-textarea>
         <br />
         <v-select
           v-model="diploma.courseList"
           :items="items"
-          v-bind:label="$t('diplomas.courses')"
+          v-bind:label="t('diplomas.courses')"
           chips
-          deletable-chips
+          closable-chips
           clearable
-          outline
+          variant="outlined"
           multiple
           hide-selected
           return-object
           item-value="id"
-          item-text="name"
+          item-title="name"
           :menu-props="{ closeOnContentClick: true }"
         ></v-select>
       </form>
@@ -43,117 +40,116 @@
     <v-card-actions>
       <v-btn
         color="secondary"
-        flat
+        variant="text"
         :disabled="formDisabled"
         v-on:click="cancel"
-        >{{ $t("actions.cancel") }}</v-btn
+        >{{ t("actions.cancel") }}</v-btn
       >
       <v-spacer></v-spacer>
       <v-btn
         color="primary"
-        outline
+        variant="outlined"
         v-on:click="addAnother"
         v-if="!editMode"
         :loading="addMoreLoading"
         :disabled="formDisabled"
         data-cy="form-addanother"
-        >{{ $t("actions.add-another") }}</v-btn
+        >{{ t("actions.add-another") }}</v-btn
       >
       <v-btn
         color="primary"
-        raised
         :disabled="formDisabled"
         :loading="saveLoading"
         data-cy="form-save"
         v-on:click="save"
-        >{{ $t("actions.save") }}</v-btn
+        >{{ t("actions.save") }}</v-btn
       >
     </v-card-actions>
   </v-card>
 </template>
 
-<script>
+<script setup lang="ts">
+import { ref, computed, watch, onMounted } from "vue";
+import { useI18n } from "vue-i18n";
+import { inject } from "vue";
+import type { AxiosInstance } from "axios";
 import { isEmpty } from "lodash";
 
-export default {
-  name: "DiplomaEditor",
-  props: {
-    initialData: {
-      type: Object,
-      required: true
-    },
-    editMode: {
-      type: Boolean,
-      required: true
-    },
-    saveLoading: {
-      type: Boolean
-    },
-    addMoreLoading: {
-      type: Boolean
-    }
-  },
-  data: function() {
-    return {
-      coursesPool: [], // courses for this diploma (the list of courses for this diploma)
-      diploma: {},
-      addMore: false
-    };
-  },
+const { t } = useI18n();
+const http = inject<AxiosInstance>("$http")!;
 
-  computed: {
-    title() {
-      return this.editMode ? this.$t("actions.edit") : this.$t("diplomas.new");
-    },
-    items() {
-      return this.coursesPool;
-    },
-    formDisabled() {
-      return this.saveLoading || this.addMoreLoading;
-    }
-  },
+const props = defineProps<{
+  initialData: Record<string, any>;
+  editMode: boolean;
+  saveLoading?: boolean;
+  addMoreLoading?: boolean;
+}>();
 
-  watch: {
-    initialData(diplomaProp) {
-      if (isEmpty(diplomaProp)) {
-        this.clear();
-      } else {
-        this.diploma = diplomaProp;
-      }
-    }
-  },
+const emit = defineEmits(["cancel", "save", "addAnother"]);
 
-  methods: {
-    cancel() {
-      this.$emit("cancel");
-    },
+const coursesPool = ref<any[]>([]);
+const diploma = ref<Record<string, any>>({});
+const addMore = ref(false);
+const nameErrors = ref<string[]>([]);
+const descriptionErrors = ref<string[]>([]);
 
-    clear() {
-      this.diploma = {};
-      this.$validator.reset();
-    },
+const title = computed(() =>
+  props.editMode ? t("actions.edit") : t("diplomas.new")
+);
 
-    addAnother() {
-      this.addMore = true;
-      this.save();
-    },
+const items = computed(() => coursesPool.value);
 
-    save() {
-      this.$validator.validateAll().then(() => {
-        if (!this.errors.any()) {
-          this.$validator.reset();
-          if (this.addMore) this.$emit("addAnother", this.diploma);
-          else this.$emit("save", this.diploma);
-        }
-        this.addMore = false;
-      });
-    }
-  },
+const formDisabled = computed(() => !!(props.saveLoading || props.addMoreLoading));
 
-  mounted() {
-    this.$http
-      .get("/api/v1/courses/courses")
-      .then(resp => (this.coursesPool = resp.data));
+watch(() => props.initialData, (diplomaProp) => {
+  if (isEmpty(diplomaProp)) {
+    clear();
+  } else {
+    diploma.value = diplomaProp;
   }
-};
+});
+
+function cancel() {
+  emit("cancel");
+}
+
+function clear() {
+  diploma.value = {};
+  nameErrors.value = [];
+  descriptionErrors.value = [];
+}
+
+function validateForm(): boolean {
+  nameErrors.value = [];
+  descriptionErrors.value = [];
+  let valid = true;
+  if (!diploma.value.name) {
+    nameErrors.value = [t("validations.required")];
+    valid = false;
+  }
+  if (!diploma.value.description) {
+    descriptionErrors.value = [t("validations.required")];
+    valid = false;
+  }
+  return valid;
+}
+
+function addAnother() {
+  addMore.value = true;
+  save();
+}
+
+function save() {
+  if (validateForm()) {
+    if (addMore.value) emit("addAnother", diploma.value);
+    else emit("save", diploma.value);
+  }
+  addMore.value = false;
+}
+
+onMounted(() => {
+  http
+    .get("/api/v1/courses/courses")
+    .then(resp => (coursesPool.value = resp.data));
+});
 </script>

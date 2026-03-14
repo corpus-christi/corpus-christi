@@ -2,23 +2,23 @@
   <div>
     <!-- Header -->
     <v-toolbar>
-      <v-layout align-center justify-space-between fill-height>
-        <v-flex md2>
-          <v-toolbar-title>{{ $t("diplomas.diplomas") }}</v-toolbar-title>
-        </v-flex>
+      <v-row align="center" justify="space-between" no-gutters>
+        <v-col md="2">
+          <v-toolbar-title>{{ t("diplomas.diplomas") }}</v-toolbar-title>
+        </v-col>
         <v-spacer></v-spacer>
-        <v-flex md3>
+        <v-col md="3">
           <v-text-field
             v-model="search"
             append-icon="search"
-            v-bind:label="$t('actions.search')"
+            v-bind:label="t('actions.search')"
             single-line
             hide-details
             data-cy="diplomas-table-search"
           ></v-text-field>
-        </v-flex>
+        </v-col>
         <v-spacer></v-spacer>
-        <v-flex md3>
+        <v-col md="3">
           <v-select
             v-model="viewStatus"
             :items="options"
@@ -26,23 +26,22 @@
             hide-details
             data-cy="diplomas-table-viewstatus"
           ></v-select>
-        </v-flex>
+        </v-col>
 
-        <v-flex shrink justify-self-end>
+        <v-col cols="auto">
           <v-btn
             color="primary"
-            raised
             v-on:click.stop="newDiploma"
             data-cy="diplomas-table-new"
           >
-            <v-icon left>library_add</v-icon>
-            {{ $t("diplomas.new") }}
+            <v-icon start>library_add</v-icon>
+            {{ t("diplomas.new") }}
           </v-btn>
-        </v-flex>
-      </v-layout>
+        </v-col>
+      </v-row>
     </v-toolbar>
 
-    <!-- Table of existing people -->
+    <!-- Table of existing diplomas -->
     <v-data-table
       :headers="headers"
       :items="showDiplomas"
@@ -51,19 +50,19 @@
       class="elevation-1"
       data-cy="diplomas-table"
     >
-      <template slot="items" slot-scope="props">
+      <template #item="{ item }">
         <tr>
-          <td class="hover-hand" @click="clickThrough(props.item)">
-            {{ props.item.name }}
+          <td class="hover-hand" @click="clickThrough(item)">
+            {{ item.name }}
           </td>
-          <td class="hover-hand" @click="clickThrough(props.item)">
-            {{ props.item.description }}
+          <td class="hover-hand" @click="clickThrough(item)">
+            {{ item.description }}
           </td>
-          <td class="hover-hand" @click="clickThrough(props.item)">
+          <td class="hover-hand">
             <DiplomaAdminActions
-              v-bind:diploma="props.item"
+              v-bind:diploma="item"
               display-context="compact"
-              v-on:action="dispatchAction($event, props.item)"
+              v-on:action="dispatchAction($event, item)"
             />
           </td>
         </tr>
@@ -72,9 +71,11 @@
 
     <v-snackbar v-model="snackbar.show">
       {{ snackbar.text }}
-      <v-btn flat @click="snackbar.show = false">{{
-        $t("actions.close")
-      }}</v-btn>
+      <template #actions>
+        <v-btn variant="text" @click="snackbar.show = false">{{
+          t("actions.close")
+        }}</v-btn>
+      </template>
     </v-snackbar>
 
     <!-- New/Edit dialog -->
@@ -87,7 +88,6 @@
         v-on:cancel="cancelDiploma"
         v-on:save="saveDiploma"
         v-on:addAnother="addAnother"
-        v-on:clearForm="clearDiploma"
       />
     </v-dialog>
 
@@ -98,23 +98,22 @@
       data-cy="diplomas-table-confirmation"
     >
       <v-card>
-        <v-card-text>{{ $t("diplomas.confirm-archive") }}</v-card-text>
+        <v-card-text>{{ t("diplomas.confirm-archive") }}</v-card-text>
         <v-card-actions>
           <v-btn
             v-on:click="cancelDeactivate"
             color="secondary"
-            flat
+            variant="text"
             :disabled="deactivateDialog.loading"
-            >{{ $t("actions.cancel") }}</v-btn
+            >{{ t("actions.cancel") }}</v-btn
           >
           <v-spacer></v-spacer>
           <v-btn
             v-on:click="deactivate(deactivateDialog.diploma)"
             color="primary"
-            raised
             :disabled="deactivateDialog.loading"
             :loading="deactivateDialog.loading"
-            >{{ $t("actions.confirm") }}</v-btn
+            >{{ t("actions.confirm") }}</v-btn
           >
         </v-card-actions>
       </v-card>
@@ -122,249 +121,224 @@
   </div>
 </template>
 
-<script>
-import DiplomaEditor from "./DiplomaEditor";
-import DiplomaAdminActions from "./DiplomaAdminActions";
+<script setup lang="ts">
+import { ref, computed, onMounted } from "vue";
+import { useI18n } from "vue-i18n";
+import { useRouter } from "vue-router";
+import { inject } from "vue";
+import type { AxiosInstance } from "axios";
 import { cloneDeep } from "lodash";
-export default {
-  name: "DiplomasTable",
-  components: {
-    DiplomaEditor,
-    DiplomaAdminActions
-  },
-  data() {
-    return {
-      diplomaDialog: {
-        show: false,
-        editMode: false,
-        saveLoading: false,
-        addMoreLoading: false,
-        diploma: {},
-        courses: []
-      },
-      snackbar: {
-        show: false,
-        text: ""
-      },
-      deactivateDialog: {
-        show: false,
-        course: {},
-        loading: false
-      },
-      addMore: false,
-      tableLoaded: false,
-      selected: [],
-      diplomas: [],
-      search: "",
-      viewStatus: "active"
-    };
-  },
-  computed: {
-    // Put here so that the headers are reactive.
-    headers() {
-      return [
-        { text: this.$t("diplomas.title"), value: "name", width: "40%" },
-        {
-          text: this.$t("diplomas.description"),
-          value: "description",
-          width: "60%"
-        },
-        { text: this.$t("actions.header"), sortable: false }
-      ];
-    },
-    options() {
-      return [
-        { text: this.$t("actions.view-active"), value: "active" },
-        { text: this.$t("actions.view-archived"), value: "archived" },
-        { text: this.$t("actions.view-all"), value: "all" }
-      ];
-    },
-    showDiplomas() {
-      switch (this.viewStatus) {
-        case "active":
-          return this.diplomas.filter(diploma => diploma.active);
-        case "archived":
-          return this.diplomas.filter(diploma => !diploma.active);
-        case "all":
-        default:
-          return this.diplomas;
-      }
-    }
-  },
+import DiplomaEditor from "./DiplomaEditor.vue";
+import DiplomaAdminActions from "./DiplomaAdminActions.vue";
 
-  methods: {
-    dispatchAction(actionName, diploma) {
-      switch (actionName) {
-        case "edit":
-          this.editDiploma(diploma);
-          break;
-        case "deactivate":
-          this.confirmDeactivate(diploma);
-          break;
-        case "activate":
-          this.activate(diploma);
-          break;
-        default:
-          break;
-      }
-    },
+const { t } = useI18n();
+const http = inject<AxiosInstance>("$http")!;
+const router = useRouter();
 
-    activateDiplomaDialog(diploma = {}, editMode = false) {
-      this.diplomaDialog.editMode = editMode;
-      this.diplomaDialog.diploma = diploma;
-      this.diplomaDialog.show = true;
-    },
-    editDiploma(diploma) {
-      this.activateDiplomaDialog({ ...diploma }, true);
-    },
-    newDiploma() {
-      this.activateDiplomaDialog();
-    },
-    confirmDeactivate(diploma) {
-      this.deactivateDialog.show = true;
-      this.deactivateDialog.diploma = diploma;
-    },
-    cancelDeactivate() {
-      this.deactivateDialog.show = false;
-    },
-    deactivate(diploma) {
-      this.deactivateDialog.loading = true;
-      this.$http
-        .patch(`/api/v1/courses/diplomas/deactivate/${diploma.id}`)
-        .then(resp => {
-          let returnedDiploma = resp.data;
-          const idx = this.diplomas.findIndex(d => d.id === returnedDiploma.id);
-          this.diplomas[idx].active = false;
-          this.snackbar.text = this.$t("diplomas.archived");
-          this.snackbar.show = true;
-        })
-        .catch(() => {
-          this.snackbar.text = this.$t("diplomas.update-failed");
-          this.snackbar.show = true;
-        })
-        .finally(() => {
-          this.deactivateDialog.loading = false;
-          this.deactivateDialog.show = false;
-        });
-    },
+const diplomaDialog = ref({
+  show: false,
+  editMode: false,
+  saveLoading: false,
+  addMoreLoading: false,
+  diploma: {} as Record<string, any>,
+  courses: [] as any[]
+});
 
-    activate(diploma) {
-      this.$http
-        .patch(`/api/v1/courses/diplomas/activate/${diploma.id}`)
-        .then(resp => {
-          let returnedDiploma = resp.data;
-          const idx = this.diplomas.findIndex(d => d.id === returnedDiploma.id);
-          this.diplomas[idx].active = true;
-          this.snackbar.text = this.$t("diplomas.reactivated");
-          this.snackbar.show = true;
-        })
-        .catch(() => {
-          this.snackbar.text = this.$t("diplomas.update-failed");
-          this.snackbar.show = true;
-        });
-    },
+const snackbar = ref({ show: false, text: "" });
 
-    clickThrough(diploma) {
-      this.$router.push({
-        name: "diploma-details",
-        params: { diplomaId: diploma.id }
-      });
-    },
+const deactivateDialog = ref({
+  show: false,
+  diploma: {} as Record<string, any>,
+  loading: false
+});
 
-    clearDiploma() {
-      this.addMore = false;
-      this.diplomaDialog.saveLoading = false;
-      this.diplomaDialog.addMoreLoading = false;
-      this.diplomaDialog.diploma = {};
-    },
+const addMore = ref(false);
+const tableLoaded = ref(false);
+const diplomas = ref<any[]>([]);
+const search = ref("");
+const viewStatus = ref("active");
 
-    cancelDiploma() {
-      this.addMore = false;
-      this.diplomaDialog.show = false;
-      this.diplomaDialog.saveLoading = false;
-      this.diplomaDialog.addMoreLoading = false;
-    },
+const headers = computed(() => [
+  { title: t("diplomas.title"), value: "name", width: "40%" },
+  { title: t("diplomas.description"), value: "description", width: "60%" },
+  { title: t("actions.header"), sortable: false }
+]);
 
-    addAnother(diploma) {
-      this.addMore = true;
-      this.diplomaDialog.addMoreLoading = true;
-      this.saveDiploma(diploma);
-    },
+const options = computed(() => [
+  { title: t("actions.view-active"), value: "active" },
+  { title: t("actions.view-archived"), value: "archived" },
+  { title: t("actions.view-all"), value: "all" }
+]);
 
-    save(diploma) {
-      this.diplomaDialog.saveLoading = true;
-      this.saveDiploma(diploma);
-    },
-
-    saveDiploma(diploma) {
-      // just to be careful, make a clone of diploma, so not editing the object itself
-      let diplomaClone = cloneDeep(diploma);
-      // grab the courses
-      const courses = diplomaClone.courseList || [];
-      // create an array of course ids
-      const courseIDList = courses.map(course => course.id);
-      // Get rid of the courseList, which is an array of objects
-      delete diplomaClone.courseList;
-      // the api is expecting an array of course IDs, so add that property to diplomaClone
-      diplomaClone.courseList = courseIDList;
-      if (this.diplomaDialog.editMode) {
-        // Hang on to the ID of the diploma being updated.
-        const diploma_id = diplomaClone.id;
-        // Locate the diploma we're updating in the table.
-        const idx = this.diplomas.findIndex(d => d.id === diplomaClone.id);
-        // get rid of the id; not for consumption by the endpoint
-        delete diplomaClone.id;
-
-        this.$http
-          .patch(`/api/v1/courses/diplomas/${diploma_id}`, diplomaClone)
-          .then(resp => {
-            console.log("UPDATED", resp);
-            let updatedDiploma = resp.data;
-            Object.assign(this.diplomas[idx], updatedDiploma);
-            this.cancelDiploma();
-            this.showSnackbar(this.$t("diplomas.updated"));
-          })
-          .catch(err => {
-            console.error("FALURE", err.response);
-            this.diplomaDialog.saveLoading = false;
-            this.showSnackbar(this.$t("diplomas.update-failed"));
-          });
-      } else {
-        // All new diplomas are active
-        diplomaClone.active = true;
-        this.$http
-          .post("/api/v1/courses/diplomas", diplomaClone)
-          .then(resp => {
-            console.log("ADDED", resp);
-            let newDiploma = resp.data;
-            this.diplomas.push(newDiploma);
-            if (this.addMore) {
-              this.clearDiploma();
-            } else {
-              this.cancelDiploma();
-            }
-            this.showSnackbar(this.$t("diplomas.added"));
-          })
-          .catch(err => {
-            console.error("FAILURE", err);
-            this.diplomaDialog.saveLoading = false;
-            this.diplomaDialog.addMoreLoading = false;
-            this.showSnackbar(this.$t("diplomas.add-failed"));
-          });
-      }
-    },
-    showSnackbar(message) {
-      this.snackbar.text = message;
-      this.snackbar.show = true;
-    }
-  },
-  mounted: function() {
-    this.$http.get("/api/v1/courses/diplomas").then(resp => {
-      this.diplomas = resp.data;
-      this.tableLoaded = true;
-    });
+const showDiplomas = computed(() => {
+  switch (viewStatus.value) {
+    case "active":
+      return diplomas.value.filter(diploma => diploma.active);
+    case "archived":
+      return diplomas.value.filter(diploma => !diploma.active);
+    case "all":
+    default:
+      return diplomas.value;
   }
-};
+});
+
+function dispatchAction(actionName: string, diploma: any) {
+  switch (actionName) {
+    case "edit":
+      editDiploma(diploma);
+      break;
+    case "deactivate":
+      confirmDeactivate(diploma);
+      break;
+    case "activate":
+      activate(diploma);
+      break;
+    default:
+      break;
+  }
+}
+
+function activateDiplomaDialog(diploma: Record<string, any> = {}, editMode = false) {
+  diplomaDialog.value.editMode = editMode;
+  diplomaDialog.value.diploma = diploma;
+  diplomaDialog.value.show = true;
+}
+
+function editDiploma(diploma: any) {
+  activateDiplomaDialog({ ...diploma }, true);
+}
+
+function newDiploma() {
+  activateDiplomaDialog();
+}
+
+function confirmDeactivate(diploma: any) {
+  deactivateDialog.value.show = true;
+  deactivateDialog.value.diploma = diploma;
+}
+
+function cancelDeactivate() {
+  deactivateDialog.value.show = false;
+}
+
+function deactivate(diploma: any) {
+  deactivateDialog.value.loading = true;
+  http
+    .patch(`/api/v1/courses/diplomas/deactivate/${diploma.id}`)
+    .then(resp => {
+      let returnedDiploma = resp.data;
+      const idx = diplomas.value.findIndex(d => d.id === returnedDiploma.id);
+      diplomas.value[idx].active = false;
+      showSnackbar(t("diplomas.archived"));
+    })
+    .catch(() => {
+      showSnackbar(t("diplomas.update-failed"));
+    })
+    .finally(() => {
+      deactivateDialog.value.loading = false;
+      deactivateDialog.value.show = false;
+    });
+}
+
+function activate(diploma: any) {
+  http
+    .patch(`/api/v1/courses/diplomas/activate/${diploma.id}`)
+    .then(resp => {
+      let returnedDiploma = resp.data;
+      const idx = diplomas.value.findIndex(d => d.id === returnedDiploma.id);
+      diplomas.value[idx].active = true;
+      showSnackbar(t("diplomas.reactivated"));
+    })
+    .catch(() => {
+      showSnackbar(t("diplomas.update-failed"));
+    });
+}
+
+function clickThrough(diploma: any) {
+  router.push({ name: "diploma-details", params: { diplomaId: diploma.id } });
+}
+
+function clearDiploma() {
+  addMore.value = false;
+  diplomaDialog.value.saveLoading = false;
+  diplomaDialog.value.addMoreLoading = false;
+  diplomaDialog.value.diploma = {};
+}
+
+function cancelDiploma() {
+  addMore.value = false;
+  diplomaDialog.value.show = false;
+  diplomaDialog.value.saveLoading = false;
+  diplomaDialog.value.addMoreLoading = false;
+}
+
+function addAnother(diploma: any) {
+  addMore.value = true;
+  diplomaDialog.value.addMoreLoading = true;
+  saveDiploma(diploma);
+}
+
+function saveDiploma(diploma: any) {
+  let diplomaClone = cloneDeep(diploma);
+  const courses = diplomaClone.courseList || [];
+  const courseIDList = courses.map((course: any) => course.id);
+  delete diplomaClone.courseList;
+  diplomaClone.courseList = courseIDList;
+
+  if (diplomaDialog.value.editMode) {
+    const diploma_id = diplomaClone.id;
+    const idx = diplomas.value.findIndex(d => d.id === diplomaClone.id);
+    delete diplomaClone.id;
+
+    http
+      .patch(`/api/v1/courses/diplomas/${diploma_id}`, diplomaClone)
+      .then(resp => {
+        console.log("UPDATED", resp);
+        let updatedDiploma = resp.data;
+        Object.assign(diplomas.value[idx], updatedDiploma);
+        cancelDiploma();
+        showSnackbar(t("diplomas.updated"));
+      })
+      .catch(err => {
+        console.error("FAILURE", err.response);
+        diplomaDialog.value.saveLoading = false;
+        showSnackbar(t("diplomas.update-failed"));
+      });
+  } else {
+    diplomaClone.active = true;
+    http
+      .post("/api/v1/courses/diplomas", diplomaClone)
+      .then(resp => {
+        console.log("ADDED", resp);
+        let newDiploma = resp.data;
+        diplomas.value.push(newDiploma);
+        if (addMore.value) {
+          clearDiploma();
+        } else {
+          cancelDiploma();
+        }
+        showSnackbar(t("diplomas.added"));
+      })
+      .catch(err => {
+        console.error("FAILURE", err);
+        diplomaDialog.value.saveLoading = false;
+        diplomaDialog.value.addMoreLoading = false;
+        showSnackbar(t("diplomas.add-failed"));
+      });
+  }
+}
+
+function showSnackbar(message: string) {
+  snackbar.value.text = message;
+  snackbar.value.show = true;
+}
+
+onMounted(() => {
+  http.get("/api/v1/courses/diplomas").then(resp => {
+    diplomas.value = resp.data;
+    tableLoaded.value = true;
+  });
+});
 </script>
 
 <style scoped>
