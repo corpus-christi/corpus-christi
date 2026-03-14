@@ -1,16 +1,14 @@
 <template>
   <nav>
-    <ArcoToolbar v-if="$route.meta.layout === 'arco'" />
+    <ArcoToolbar v-if="route.meta.layout === 'arco'" />
     <StandardToolbar v-else />
   </nav>
 </template>
 
-<script>
-import ArcoToolbar from "./toolbars/Arco";
-import StandardToolbar from "./toolbars/Standard";
+<script setup lang="ts">
+import { useRoute } from "vue-router";
+import ArcoToolbar from "./toolbars/Arco.vue";
+import StandardToolbar from "./toolbars/Standard.vue";
 
-export default {
-  name: "Toolbar",
-  components: { StandardToolbar, ArcoToolbar }
-};
+const route = useRoute();
 </script>

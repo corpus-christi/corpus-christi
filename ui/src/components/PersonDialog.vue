@@ -6,106 +6,96 @@
     v-model="personDialog.show"
     max-width="1000px"
   >
-    <v-layout column>
-      <v-card>
-        <v-layout align-center justify-center row fill-height>
-          <v-card-title class="headline">
-            {{ $t(personDialog.title) }}
-          </v-card-title>
-        </v-layout>
-      </v-card>
-      <PersonForm
-        v-bind:initialData="personDialog.person"
-        v-bind:addAnotherEnabled="personDialog.addAnotherEnabled"
-        v-bind:saveButtonText="personDialog.saveButtonText"
-        v-bind:showAccountInfo="personDialog.showAccountInfo"
-        v-bind:isAccountRequired="false"
-        v-on:cancel="cancelPerson"
-        v-on:saved="savePerson"
-        v-on:added-another="addAnother"
-      />
-    </v-layout>
+    <v-row no-gutters>
+      <v-col>
+        <v-card>
+          <v-row align="center" justify="center" no-gutters>
+            <v-card-title class="headline">
+              {{ t(personDialog.title) }}
+            </v-card-title>
+          </v-row>
+        </v-card>
+        <PersonForm
+          v-bind:initialData="personDialog.person"
+          v-bind:addAnotherEnabled="personDialog.addAnotherEnabled"
+          v-bind:saveButtonText="personDialog.saveButtonText"
+          v-bind:showAccountInfo="personDialog.showAccountInfo"
+          v-bind:isAccountRequired="false"
+          v-on:cancel="cancelPerson"
+          v-on:saved="savePerson"
+          v-on:added-another="addAnother"
+        />
+      </v-col>
+    </v-row>
   </v-dialog>
 </template>
 
-<script>
-import PersonForm from "./people/PersonForm";
+<script setup lang="ts">
+import { ref, watch } from "vue";
+import { useI18n } from "vue-i18n";
+import PersonForm from "./people/PersonForm.vue";
 
-export default {
-  name: "PersonDialog",
-  components: { PersonForm },
-  props: {
-    dialogState: {
-      type: String,
-      required: true
-    },
-    person: {
-      type: Object,
-      required: true
-    },
-    allPeople: {
-      type: Array,
-      required: true
-    }
-  },
-  data() {
-    return {
-      personDialog: {
-        show: false,
-        title: "",
-        person: {},
-        addAnotherEnabled: false
-      }
-    };
-  },
+const { t } = useI18n();
 
-  watch: {
-    dialogState(val) {
-      if (val === "edit") this.editPerson(this.person);
-      if (val === "new") this.newPerson();
-    }
-  },
+const props = defineProps<{
+  dialogState: string;
+  person: Record<string, any>;
+  allPeople: any[];
+}>();
 
-  methods: {
-    activatePersonDialog(person = {}, isEditTitle = false) {
-      this.personDialog.title = isEditTitle
-        ? this.$t("person.actions.edit")
-        : this.$t("person.actions.new");
-      this.personDialog.showAccountInfo = !isEditTitle;
-      this.personDialog.addAnotherEnabled = !isEditTitle;
-      this.personDialog.person = person;
-      this.personDialog.show = true;
-    },
+const emit = defineEmits(["cancel", "snack", "refreshPeople"]);
 
-    editPerson(person) {
-      this.activatePersonDialog({ ...person }, true);
-    },
+const personDialog = ref({
+  show: false,
+  title: "",
+  person: {} as Record<string, any>,
+  addAnotherEnabled: false,
+  showAccountInfo: false,
+  saveButtonText: ""
+});
 
-    newPerson() {
-      this.activatePersonDialog();
-    },
+watch(() => props.dialogState, (val) => {
+  if (val === "edit") editPerson(props.person);
+  if (val === "new") newPerson();
+});
 
-    cancelPerson() {
-      this.personDialog.show = false;
-      this.$emit("cancel");
-    },
+function activatePersonDialog(person: Record<string, any> = {}, isEditTitle = false) {
+  personDialog.value.title = isEditTitle
+    ? "person.actions.edit"
+    : "person.actions.new";
+  personDialog.value.showAccountInfo = !isEditTitle;
+  personDialog.value.addAnotherEnabled = !isEditTitle;
+  personDialog.value.person = person;
+  personDialog.value.show = true;
+}
 
-    savePerson() {
-      let idx = this.allPeople.findIndex(p => p.id === this.person.id);
-      if (idx === -1) {
-        this.$emit("snack", this.$t("person.messages.person-add"));
-      } else {
-        this.$emit("snack", this.$t("person.messages.person-edit"));
-      }
-      this.cancelPerson();
-      this.$emit("refreshPeople");
-    },
+function editPerson(person: Record<string, any>) {
+  activatePersonDialog({ ...person }, true);
+}
 
-    addAnother() {
-      this.$emit("refreshPeople");
-      this.activatePersonDialog();
-      this.$emit("snack", this.$t("person.messages.person-add"));
-    }
+function newPerson() {
+  activatePersonDialog();
+}
+
+function cancelPerson() {
+  personDialog.value.show = false;
+  emit("cancel");
+}
+
+function savePerson() {
+  let idx = props.allPeople.findIndex(p => p.id === props.person.id);
+  if (idx === -1) {
+    emit("snack", t("person.messages.person-add"));
+  } else {
+    emit("snack", t("person.messages.person-edit"));
   }
-};
+  cancelPerson();
+  emit("refreshPeople");
+}
+
+function addAnother() {
+  emit("refreshPeople");
+  activatePersonDialog();
+  emit("snack", t("person.messages.person-add"));
+}
 </script>

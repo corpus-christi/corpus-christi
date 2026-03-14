@@ -6,81 +6,71 @@
   </v-navigation-drawer>
 </template>
 
-<script>
-import NavItem from "./NavItem";
+<script setup lang="ts">
+import { ref, computed } from "vue";
+import { useI18n } from "vue-i18n";
+import NavItem from "./NavItem.vue";
 
-export default {
-  name: "NavDrawer",
-  components: {
-    NavItem
+const { t } = useI18n();
+const drawerVisible = ref(false);
+
+const menuItems = computed(() => [
+  {
+    title: t("public.title"),
+    route: "public",
+    icon: "home",
+    divider: true
   },
-  data() {
-    return {
-      drawerVisible: false
-    };
+  {
+    title: t("people.title"),
+    route: "people",
+    icon: "account_circle"
   },
-  computed: {
-    // Computed property so it's reactive.
-    menuItems: function() {
-      return [
-        {
-          title: this.$t("public.title"),
-          route: "public",
-          icon: "home",
-          divider: true
-        },
-        {
-          title: this.$t("people.title"),
-          route: "people",
-          icon: "account_circle"
-        },
-        {
-          title: this.$t("groups.title"),
-          route: "groups",
-          icon: "group"
-        },
-        {
-          title: this.$t("courses.course"),
-          route: "courses",
-          icon: "school",
-          children: [
-            {
-              title: this.$t("diplomas.diploma"),
-              route: "diplomas-admin"
-            },
-            {
-              title: this.$t("transcripts.transcript"),
-              route: "transcripts"
-            }
-          ]
-        },
-        {
-          title: this.$t("events.header"),
-          route: "events",
-          icon: "event"
-        },
-        {
-          title: this.$t("teams.title"),
-          route: "teams",
-          icon: "group"
-        },
-        {
-          title: this.$t("assets.title"),
-          route: "assets",
-          icon: "devices_other"
-        },
-        {
-          title: this.$t("places.title"),
-          route: "places",
-          icon: "places"
-        }
-      ];
-    }
+  {
+    title: t("groups.title"),
+    route: "groups",
+    icon: "group"
   },
-  methods: {
-    toggle() {
-      this.drawerVisible = !this.drawerVisible;
-    }
+  {
+    title: t("courses.course"),
+    route: "courses",
+    icon: "school",
+    children: [
+      {
+        title: t("diplomas.diploma"),
+        route: "diplomas-admin"
+      },
+      {
+        title: t("transcripts.transcript"),
+        route: "transcripts"
+      }
+    ]
+  },
+  {
+    title: t("events.header"),
+    route: "events",
+    icon: "event"
+  },
+  {
+    title: t("teams.title"),
+    route: "teams",
+    icon: "group"
+  },
+  {
+    title: t("assets.title"),
+    route: "assets",
+    icon: "devices_other"
+  },
+  {
+    title: t("places.title"),
+    route: "places",
+    icon: "places"
   }
-};
+]);
+
+function toggle() {
+  drawerVisible.value = !drawerVisible.value;
+}
+
+defineExpose({ toggle });
 </script>

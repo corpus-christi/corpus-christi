@@ -1,10 +1,10 @@
 <template>
   <div>
-    <v-toolbar app style="z-index: 50">
-      <v-toolbar-side-icon
+    <v-app-bar app style="z-index: 50">
+      <v-app-bar-nav-icon
         v-on:click="toggleNavDrawer"
         data-cy="toggle-nav-drawer"
-      ></v-toolbar-side-icon>
+      ></v-app-bar-nav-icon>
 
       <v-toolbar-title class="headline text-uppercase">
         <span>Corpus</span> <span class="font-weight-light">Christi</span>
@@ -14,26 +14,21 @@
 
       <AccountMenu data-cy="account-menu"></AccountMenu>
       <LocaleMenu data-cy="cur-locale"></LocaleMenu>
-    </v-toolbar>
+    </v-app-bar>
 
     <NavDrawer style="z-index: 100" ref="drawer"></NavDrawer>
   </div>
 </template>
 
-<script>
-import LocaleMenu from "../LocaleMenu";
-import AccountMenu from "../AccountMenu";
-import NavDrawer from "../NavDrawer";
+<script setup lang="ts">
+import { ref } from "vue";
+import LocaleMenu from "../LocaleMenu.vue";
+import AccountMenu from "../AccountMenu.vue";
+import NavDrawer from "../NavDrawer.vue";
 
-export default {
-  name: "StandardToolbar",
-  components: { NavDrawer, AccountMenu, LocaleMenu },
-  methods: {
-    // Holding a reference to the navigation drawer is not good separation of concerns,
-    // but it greatly simplifies this interaction.
-    toggleNavDrawer() {
-      this.$refs.drawer.toggle();
-    }
-  }
-};
+const drawer = ref<InstanceType<typeof NavDrawer> | null>(null);
+
+function toggleNavDrawer() {
+  drawer.value?.toggle();
+}
 </script>

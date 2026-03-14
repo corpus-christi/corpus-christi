@@ -1,26 +1,28 @@
 <template>
   <div>
-    <v-list-tile
+    <v-list-item
       v-if="!item.children || item.children.length === 0"
       :to="{ name: item.route }"
       :data-cy="item.route"
     >
-      <v-list-tile-action v-if="item.icon && !isChild">
+      <v-list-item-action v-if="item.icon && !isChild">
         <v-icon>{{ item.icon }}</v-icon>
-      </v-list-tile-action>
-      <v-list-tile-title>{{ item.title }}</v-list-tile-title>
-    </v-list-tile>
+      </v-list-item-action>
+      <v-list-item-title>{{ item.title }}</v-list-item-title>
+    </v-list-item>
     <v-list-group v-else :sub-group="isChild" no-action>
-      <v-list-tile
-        slot="activator"
-        :to="{ name: item.route }"
-        :data-cy="item.route"
-      >
-        <v-list-tile-action v-if="item.icon && !isChild">
-          <v-icon>{{ item.icon }}</v-icon>
-        </v-list-tile-action>
-        <v-list-tile-title>{{ item.title }}</v-list-tile-title>
-      </v-list-tile>
+      <template #activator="{ props: activatorProps }">
+        <v-list-item
+          v-bind="activatorProps"
+          :to="{ name: item.route }"
+          :data-cy="item.route"
+        >
+          <v-list-item-action v-if="item.icon && !isChild">
+            <v-icon>{{ item.icon }}</v-icon>
+          </v-list-item-action>
+          <v-list-item-title>{{ item.title }}</v-list-item-title>
+        </v-list-item>
+      </template>
 
       <NavItem
         v-for="child in item.children"
@@ -32,18 +34,15 @@
   </div>
 </template>
 
-<script>
-export default {
-  name: "NavItem",
-  props: {
-    item: {
-      type: Object,
-      required: true
-    },
-    isChild: {
-      type: Boolean,
-      default: false
-    }
-  }
-};
+<script setup lang="ts">
+defineProps<{
+  item: {
+    title: string;
+    route: string;
+    icon?: string;
+    divider?: boolean;
+    children?: Array<{ title: string; route: string }>;
+  };
+  isChild?: boolean;
+}>();
 </script>

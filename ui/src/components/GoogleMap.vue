@@ -1,17 +1,18 @@
 <template>
-  <gmap-map
-    ref="map"
+  <GmapMap
+    ref="mapRef"
     v-bind:center="center"
     v-bind:zoom="zoom"
     style="width:100%;  height: 400px;"
     data-cy="gmap"
-    ><gmap-marker
+  >
+    <GmapMarker
       :key="index"
       v-for="(m, index) in markers"
       :position="m.position"
       @click="openInfoWindow(m)"
     />
-    <gmap-info-window
+    <GmapInfoWindow
       :options="{ maxWidth: 300 }"
       :position="infoWindow.position"
       :opened="infoWindow.open"
@@ -20,50 +21,50 @@
       {{ infoWindow.name }} <br />
       {{ infoWindow.address }} <br />
       {{ infoWindow.description }}
-    </gmap-info-window>
-  </gmap-map>
+    </GmapInfoWindow>
+  </GmapMap>
 </template>
 
-<script>
-export default {
-  name: "GoogleMap",
-  props: {
-    markers: {
-      type: Array,
-      required: false
-    }
-  },
-  methods: {
-    centerMapOnMarker(position) {
-      this.map.panTo(position);
-      this.infoWindow.position = position;
-      this.infoWindow.open = true;
-    },
-    openInfoWindow(item) {
-      this.centerMapOnMarker(item.position);
-      this.infoWindow.name = item.data.name;
-      this.infoWindow.description = item.data.description;
-      this.infoWindow.address = item.data.address;
-    }
-  },
-  data() {
-    return {
-      center: { lat: -2.90548355117024, lng: -79.02949294174876 },
-      zoom: 15,
-      map: "",
-      infoWindow: {
-        position: { lat: 0, lng: 0 },
-        open: false,
-        address: "",
-        name: "",
-        description: ""
-      }
-    };
-  },
-  mounted: function() {
-    this.$refs.map.$mapPromise.then(m => {
-      this.map = m;
+<script setup lang="ts">
+import { ref, onMounted } from "vue";
+
+defineProps<{
+  markers?: Array<{
+    position: { lat: number; lng: number };
+    data: { name: string; address: string; description?: string };
+  }>;
+}>();
+
+const center = ref({ lat: -2.90548355117024, lng: -79.02949294174876 });
+const zoom = ref(15);
+const map = ref<any>(null);
+const mapRef = ref<any>(null);
+const infoWindow = ref({
+  position: { lat: 0, lng: 0 },
+  open: false,
+  address: "",
+  name: "",
+  description: ""
+});
+
+function centerMapOnMarker(position: { lat: number; lng: number }) {
+  map.value?.panTo(position);
+  infoWindow.value.position = position;
+  infoWindow.value.open = true;
+}
+
+function openInfoWindow(item: any) {
+  centerMapOnMarker(item.position);
+  infoWindow.value.name = item.data.name;
+  infoWindow.value.description = item.data.description;
+  infoWindow.value.address = item.data.address;
+}
+
+onMounted(() => {
+  if (mapRef.value) {
+    mapRef.value.$mapPromise.then((m: any) => {
+      map.value = m;
     });
   }
-};
+});
 </script>
