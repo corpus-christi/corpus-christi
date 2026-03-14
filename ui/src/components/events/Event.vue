@@ -1,47 +1,34 @@
 <template>
   <v-container>
-    <v-layout column>
-      <v-flex shrink>
-        <v-btn outline color="primary" :to="{ path: '/events/all' }"
-          ><v-icon>arrow_back</v-icon>{{ $t("events.all-events") }}</v-btn
+    <v-col>
+      <v-col cols="auto">
+        <v-btn variant="outlined" color="primary" :to="{ path: '/events/all' }"
+          ><v-icon>arrow_back</v-icon>{{ t("events.all-events") }}</v-btn
         >
-      </v-flex>
+      </v-col>
       <v-tabs color="transparent" slider-color="accent">
-        <v-tab ripple :to="{ path: '/event/' + eventId + '/details' }">
-          <v-icon>list</v-icon>&nbsp;{{ $t("events.details.title") }}
+        <v-tab :to="{ path: '/event/' + eventId + '/details' }">
+          <v-icon>list</v-icon>&nbsp;{{ t("events.details.title") }}
         </v-tab>
-        <v-tab ripple :to="{ path: '/event/' + eventId + '/participants' }">
-          <v-icon>person</v-icon>&nbsp;{{ $t("events.participants.title") }}
+        <v-tab :to="{ path: '/event/' + eventId + '/participants' }">
+          <v-icon>person</v-icon>&nbsp;{{ t("events.participants.title") }}
         </v-tab>
       </v-tabs>
       <hr class="vertical-spacer" />
       <router-view></router-view>
-    </v-layout>
+    </v-col>
   </v-container>
 </template>
 
-<script>
-export default {
-  name: "Event",
-  computed: {
-    eventId() {
-      return this.$route.params.event;
-    }
-  },
+<script setup lang="ts">
+import { computed } from "vue";
+import { useI18n } from "vue-i18n";
+import { useRoute } from "vue-router";
 
-  data() {
-    return {
-      activeTab: null,
-      currentPath: this.$route.path,
-      currentComponent: "details",
-      tabs: {
-        details: 0,
-        participants: 1,
-        assets: 2
-      }
-    };
-  }
-};
+const { t } = useI18n();
+const route = useRoute();
+
+const eventId = computed(() => route.params.event);
 </script>
 
 <style scoped>

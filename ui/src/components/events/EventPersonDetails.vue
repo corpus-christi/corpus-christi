@@ -3,82 +3,69 @@
     <v-card class="ma-1">
       <template v-if="loaded">
         <v-container fill-height fluid>
-          <v-flex xs9 sm9 align-end flexbox>
-            <span class="headline">{{ $t("events.persons.title") }}</span>
-          </v-flex>
-          <v-layout xs3 sm3 align-end justify-end>
+          <v-col cols="9" sm="9" class="align-end">
+            <span class="headline">{{ t("events.persons.title") }}</span>
+          </v-col>
+          <v-row cols="3" sm="3" align="end" justify="end">
             <v-btn
-              flat
+              variant="text"
               color="primary"
               data-cy="add-person-dialog"
               v-on:click="addPersonDialog.show = true"
             >
-              <v-icon>add</v-icon>&nbsp;{{ $t("events.persons.new") }}
+              <v-icon>add</v-icon>&nbsp;{{ t("events.persons.new") }}
             </v-btn>
-          </v-layout>
+          </v-row>
         </v-container>
         <v-list v-if="persons.length">
-          <template v-for="person in persons">
-            <v-divider v-bind:key="'personDivider' + person.id"></v-divider>
-            <v-list-tile v-bind:key="person.id">
-              <v-list-tile-content>
-                <v-container fluid class="pa-0">
-                  <v-layout align-center row justify-space-between>
-                    <v-flex>
-                      {{ getFullName(person.person) }}
-                      <template v-if="person.description">
-                        - {{ person.description }}</template
-                      >
-                    </v-flex>
-                    <v-flex shrink>
-                      <v-layout>
-                        <v-flex xs6>
-                          <v-btn
-                            icon
-                            outline
-                            flat
-                            color="primary"
-                            v-on:click="openEditDialog(person)"
-                            :data-cy="'editPerson-' + person.id"
-                            ><v-icon>edit</v-icon>
-                          </v-btn>
-                        </v-flex>
-                        <v-flex xs6>
-                          <v-btn
-                            icon
-                            outline
-                            flat
-                            color="primary"
-                            v-on:click="showDeletePersonDialog(person.id)"
-                            :data-cy="'deletePerson-' + person.id"
-                            ><v-icon>delete</v-icon>
-                          </v-btn>
-                        </v-flex>
-                      </v-layout>
-                    </v-flex>
-                  </v-layout>
-                </v-container>
-              </v-list-tile-content>
-            </v-list-tile>
+          <template v-for="person in persons" :key="'personDivider' + person.id">
+            <v-divider></v-divider>
+            <v-list-item>
+              <v-container fluid class="pa-0">
+                <v-row align="center" justify="space-between">
+                  <v-col>
+                    {{ getFullName(person.person) }}
+                    <template v-if="person.description">
+                      - {{ person.description }}</template
+                    >
+                  </v-col>
+                  <v-col cols="auto">
+                    <v-btn
+                      icon
+                      variant="outlined"
+                      color="primary"
+                      v-on:click="openEditDialog(person)"
+                      :data-cy="'editPerson-' + person.id"
+                      ><v-icon>edit</v-icon>
+                    </v-btn>
+                    <v-btn
+                      icon
+                      variant="outlined"
+                      color="primary"
+                      v-on:click="showDeletePersonDialog(person.id)"
+                      :data-cy="'deletePerson-' + person.id"
+                      ><v-icon>delete</v-icon>
+                    </v-btn>
+                  </v-col>
+                </v-row>
+              </v-container>
+            </v-list-item>
           </template>
         </v-list>
-        <div v-else class="text-xs-center pa-4">
-          {{ $t("events.persons.none-assigned") }}
+        <div v-else class="text-center pa-4">
+          {{ t("events.persons.none-assigned") }}
         </div>
       </template>
-      <v-layout v-else justify-center height="500px">
+      <v-row v-else justify="center" style="height: 500px;">
         <div class="ma-5 pa-5">
-          <v-progress-circular
-            indeterminate
-            color="primary"
-          ></v-progress-circular>
+          <v-progress-circular indeterminate color="primary"></v-progress-circular>
         </div>
-      </v-layout>
+      </v-row>
     </v-card>
     <!-- Add Person dialog -->
     <v-dialog v-model="addPersonDialog.show" persistent max-width="500px">
       <v-card>
-        <v-card-title primary-title>
+        <v-card-title>
           <span class="headline">{{ addPersonDialogTitle }}</span>
         </v-card-title>
         <v-card-text>
@@ -86,21 +73,21 @@
             readonly
             disabled
             v-if="addPersonDialog.editMode"
-            v-bind:value="getFullName(addPersonDialog.person)"
+            :model-value="getFullName(addPersonDialog.person)"
           ></v-text-field>
           <!-- TODO conditionally hide, don't remove -->
           <div :hidden="addPersonDialog.editMode">
-            <entity-search
+            <EntitySearch
               person
               data-cy="person-entity-search"
               v-model="addPersonDialog.person"
               :existing-entities="persons"
-            ></entity-search>
+            ></EntitySearch>
           </div>
           <v-textarea
             rows="1"
             v-model="addPersonDialog.description"
-            v-bind:label="$t('events.persons.description')"
+            :label="t('events.persons.description')"
             name="description"
             data-cy="description"
           ></v-textarea>
@@ -109,20 +96,19 @@
           <v-btn
             v-on:click="closeAddPersonDialog()"
             color="secondary"
-            flat
+            variant="text"
             :disabled="addPersonDialog.loading"
             data-cy="cancel-add"
-            >{{ $t("actions.cancel") }}</v-btn
+            >{{ t("actions.cancel") }}</v-btn
           >
           <v-spacer></v-spacer>
           <v-btn
             v-on:click="addPerson()"
             color="primary"
-            raised
             :disabled="!addPersonDialog.person"
             :loading="addPersonDialog.loading"
             data-cy="confirm-add"
-            >{{ $t("actions.confirm") }}</v-btn
+            >{{ t("actions.confirm") }}</v-btn
           >
         </v-card-actions>
       </v-card>
@@ -131,171 +117,148 @@
     <v-dialog v-model="deletePersonDialog.show" max-width="350px">
       <v-card>
         <v-card-text>
-          <span>{{ $t("events.persons.confirm-remove-from-event") }}</span>
+          <span>{{ t("events.persons.confirm-remove-from-event") }}</span>
         </v-card-text>
         <v-card-actions>
           <v-btn
             v-on:click="deletePersonDialog.show = false"
             color="secondary"
-            flat
+            variant="text"
             :disabled="deletePersonDialog.loading"
             data-cy="cancel-delete"
-            >{{ $t("actions.cancel") }}</v-btn
+            >{{ t("actions.cancel") }}</v-btn
           >
           <v-spacer></v-spacer>
           <v-btn
             v-on:click="deletePerson()"
             color="primary"
-            raised
             :loading="deletePersonDialog.loading"
             data-cy="confirm-delete"
-            >{{ $t("actions.confirm") }}</v-btn
+            >{{ t("actions.confirm") }}</v-btn
           >
         </v-card-actions>
       </v-card>
     </v-dialog>
   </div>
 </template>
-<script>
-import EntitySearch from "../EntitySearch";
 
-export default {
-  name: "EventPersonDetails",
-  components: {
-    "entity-search": EntitySearch
-  },
+<script setup lang="ts">
+import { ref, computed } from "vue";
+import { useI18n } from "vue-i18n";
+import { useRoute } from "vue-router";
+import { inject } from "vue";
+import type { AxiosInstance } from "axios";
+import EntitySearch from "../EntitySearch.vue";
 
-  props: {
-    persons: {
-      required: true
-    },
-    loaded: {
-      type: Boolean,
-      required: true
-    }
-  },
+const { t } = useI18n();
+const http = inject<AxiosInstance>("$http")!;
+const route = useRoute();
 
-  data() {
-    return {
-      addPersonDialog: {
-        editMode: false,
-        show: false,
-        loading: false,
-        person: null,
-        description: ""
-      },
+const props = defineProps<{
+  persons: any[];
+  loaded: boolean;
+}>();
 
-      deletePersonDialog: {
-        show: false,
-        loading: false,
-        personId: -1
-      }
-    };
-  },
-  computed: {
-    addPersonDialogTitle() {
-      return this.addPersonDialog.editMode
-        ? this.$t("events.persons.edit")
-        : this.$t("events.persons.new");
-    }
-  },
+const emit = defineEmits(["snackbar", "person-added"]);
 
-  methods: {
-    closeAddPersonDialog() {
-      this.addPersonDialog.loading = false;
-      this.addPersonDialog.show = false;
-      this.addPersonDialog.editMode = false;
-      this.addPersonDialog.person = null;
-      this.addPersonDialog.description = "";
-    },
+const addPersonDialog = ref({
+  editMode: false,
+  show: false,
+  loading: false,
+  person: null as any,
+  description: ""
+});
+const deletePersonDialog = ref({ show: false, loading: false, personId: -1 });
 
-    openEditDialog(eventPerson) {
-      this.addPersonDialog.editMode = true;
-      this.addPersonDialog.show = true;
-      this.$set(this.addPersonDialog, "person", eventPerson.person);
-      this.addPersonDialog.description = eventPerson.description;
-    },
+const addPersonDialogTitle = computed(() => {
+  return addPersonDialog.value.editMode
+    ? t("events.persons.edit")
+    : t("events.persons.new");
+});
 
-    addPerson() {
-      const eventId = this.$route.params.event;
-      let personId = this.addPersonDialog.person.id;
-      this.addPersonDialog.loading = true;
-      if (!this.addPersonDialog.editMode) {
-        const idx = this.persons.findIndex(p => p.id === personId);
-        if (idx > -1) {
-          this.closeAddPersonDialog();
-          this.showSnackbar(this.$t("events.persons.person-on-event"));
-          return;
-        }
-      }
-      let body = { description: this.addPersonDialog.description };
-      let promise;
-      if (this.addPersonDialog.editMode) {
-        promise = this.$http.patch(
-          `/api/v1/events/${eventId}/individuals/${personId}`,
-          body
-        );
-      } else {
-        promise = this.$http.post(
-          `/api/v1/events/${eventId}/individuals/${personId}`,
-          body
-        );
-      }
-      promise
-        .then(() => {
-          if (this.addPersonDialog.editMode) {
-            this.showSnackbar(this.$t("events.persons.person-edited"));
-          } else {
-            this.showSnackbar(this.$t("events.persons.person-added"));
-          }
-          this.$emit("person-added");
-          this.closeAddPersonDialog();
-        })
-        .catch(err => {
-          console.log(err);
-          this.addPersonDialog.loading = false;
-          if (err.response.status == 422) {
-            this.showSnackbar(this.$t("events.persons.error-person-assigned"));
-          } else {
-            this.showSnackbar(this.$t("events.persons.error-adding-person"));
-          }
-        });
-    },
+function closeAddPersonDialog() {
+  addPersonDialog.value.loading = false;
+  addPersonDialog.value.show = false;
+  addPersonDialog.value.editMode = false;
+  addPersonDialog.value.person = null;
+  addPersonDialog.value.description = "";
+}
 
-    deletePerson() {
-      let id = this.deletePersonDialog.personId;
-      const idx = this.persons.findIndex(p => p.id === id);
-      this.deletePersonDialog.loading = true;
-      const eventId = this.$route.params.event;
-      this.$http
-        .delete(`/api/v1/events/${eventId}/individuals/${id}`)
-        .then(resp => {
-          console.log("REMOVED", resp);
-          this.deletePersonDialog.show = false;
-          this.deletePersonDialog.loading = false;
-          this.deletePersonDialog.personId = -1;
-          this.persons.splice(idx, 1); //TODO maybe fix me?
-          this.showSnackbar(this.$t("events.persons.person-removed"));
-        })
-        .catch(err => {
-          console.log(err);
-          this.deletePersonDialog.loading = false;
-          this.showSnackbar(this.$t("events.persons.error-removing-person"));
-        });
-    },
+function openEditDialog(eventPerson: any) {
+  addPersonDialog.value.editMode = true;
+  addPersonDialog.value.show = true;
+  addPersonDialog.value.person = eventPerson.person;
+  addPersonDialog.value.description = eventPerson.description;
+}
 
-    showDeletePersonDialog(personId) {
-      this.deletePersonDialog.personId = personId;
-      this.deletePersonDialog.show = true;
-    },
-
-    showSnackbar(message) {
-      this.$emit("snackbar", message);
-    },
-
-    getFullName(person) {
-      return `${person.firstName} ${person.lastName}`;
+function addPerson() {
+  const eventId = route.params.event;
+  let personId = addPersonDialog.value.person.id;
+  addPersonDialog.value.loading = true;
+  if (!addPersonDialog.value.editMode) {
+    const idx = props.persons.findIndex(p => p.id === personId);
+    if (idx > -1) {
+      closeAddPersonDialog();
+      emit("snackbar", t("events.persons.person-on-event"));
+      return;
     }
   }
-};
+  let body = { description: addPersonDialog.value.description };
+  let promise;
+  if (addPersonDialog.value.editMode) {
+    promise = http.patch(`/api/v1/events/${eventId}/individuals/${personId}`, body);
+  } else {
+    promise = http.post(`/api/v1/events/${eventId}/individuals/${personId}`, body);
+  }
+  promise
+    .then(() => {
+      if (addPersonDialog.value.editMode) {
+        emit("snackbar", t("events.persons.person-edited"));
+      } else {
+        emit("snackbar", t("events.persons.person-added"));
+      }
+      emit("person-added");
+      closeAddPersonDialog();
+    })
+    .catch(err => {
+      console.log(err);
+      addPersonDialog.value.loading = false;
+      if (err.response.status == 422) {
+        emit("snackbar", t("events.persons.error-person-assigned"));
+      } else {
+        emit("snackbar", t("events.persons.error-adding-person"));
+      }
+    });
+}
+
+function deletePerson() {
+  let id = deletePersonDialog.value.personId;
+  const idx = props.persons.findIndex(p => p.id === id);
+  deletePersonDialog.value.loading = true;
+  const eventId = route.params.event;
+  http
+    .delete(`/api/v1/events/${eventId}/individuals/${id}`)
+    .then(resp => {
+      console.log("REMOVED", resp);
+      deletePersonDialog.value.show = false;
+      deletePersonDialog.value.loading = false;
+      deletePersonDialog.value.personId = -1;
+      props.persons.splice(idx, 1);
+      emit("snackbar", t("events.persons.person-removed"));
+    })
+    .catch(err => {
+      console.log(err);
+      deletePersonDialog.value.loading = false;
+      emit("snackbar", t("events.persons.error-removing-person"));
+    });
+}
+
+function showDeletePersonDialog(personId: number) {
+  deletePersonDialog.value.personId = personId;
+  deletePersonDialog.value.show = true;
+}
+
+function getFullName(person: any) {
+  return `${person.firstName} ${person.lastName}`;
+}
 </script>

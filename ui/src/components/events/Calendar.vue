@@ -1,7 +1,7 @@
 <template>
   <div>
     <vue-cal
-      :locale="currentLocaleModel.code.split('-')[0]"
+      :locale="authStore.currentLocaleModel?.code?.split('-')[0]"
       default-view="week"
       events-on-month-view
       :events="calendarEvents"
@@ -10,83 +10,71 @@
     </vue-cal>
   </div>
 </template>
-<script>
+
+<script setup lang="ts">
+import { ref, computed, onMounted } from "vue";
+import { useRouter } from "vue-router";
+import { inject } from "vue";
+import type { AxiosInstance } from "axios";
 import Vuecal from "vue-cal";
 import "vue-cal/dist/vuecal.css";
-import { mapGetters, mapState } from "vuex";
-export default {
-  components: { "vue-cal": Vuecal },
-  data() {
-    return {
-      events: []
-    };
-  },
-  mounted() {
-    this.tableLoading = true;
-    this.$http.get("/api/v1/events/").then(resp => {
-      var currentDate = new Date();
-      for (let event of resp.data) {
-        this.events.push({
-          event: event,
-          start: this.getDatetime(event.start),
-          end: this.getDatetime(event.end),
-          description: event.description,
-          class: new Date(event.end) < currentDate ? "leisure" : "sport",
-          content: this.getTemplate(event)
-        });
-      }
-    });
-  },
+import { useAuthStore } from "@/stores/auth";
 
-  computed: {
-    calendarEvents() {
-      return this.events;
-    },
-    ...mapState(["locales"]),
-    ...mapGetters(["currentLocaleModel"])
-  },
+const http = inject<AxiosInstance>("$http")!;
+const router = useRouter();
+const authStore = useAuthStore();
 
-  methods: {
-    getDatetime(ts) {
-      let date = this.getDateFromTimestamp(ts);
-      let time = this.getTimeFromTimestamp(ts);
-      return `${date} ${time}`;
-    },
+const events = ref<any[]>([]);
 
-    getTemplate(event) {
-      return `<span data-cy="cal-event-${event.id}">${event.title}</span>`;
-    },
+const calendarEvents = computed(() => events.value);
 
-    goToEvent(e) {
-      this.$router.push({ path: "/event/" + e.event.id + "/details" });
-    },
+function getDatetime(ts: any) {
+  let date = getDateFromTimestamp(ts);
+  let time = getTimeFromTimestamp(ts);
+  return `${date} ${time}`;
+}
 
-    getDateFromTimestamp(ts) {
-      let date = new Date(ts);
-      if (date.getTime() < 86400000) {
-        //ms in a day
-        return "";
-      }
-      let yr = date.toLocaleDateString(this.currentLanguageCode, {
-        year: "numeric"
-      });
-      let mo = date.toLocaleDateString(this.currentLanguageCode, {
-        month: "2-digit"
-      });
-      let da = date.toLocaleDateString(this.currentLanguageCode, {
-        day: "2-digit"
-      });
-      return `${yr}-${mo}-${da}`;
-    },
+function getTemplate(event: any) {
+  return `<span data-cy="cal-event-${event.id}">${event.title}</span>`;
+}
 
-    getTimeFromTimestamp(ts) {
-      let date = new Date(ts);
-      let hr = String(date.getHours()).padStart(2, "0");
-      let min = String(date.getMinutes()).padStart(2, "0");
-      return `${hr}:${min}`;
-    }
+function goToEvent(e: any) {
+  router.push({ path: "/event/" + e.event.id + "/details" });
+}
+
+function getDateFromTimestamp(ts: any) {
+  let date = new Date(ts);
+  if (date.getTime() < 86400000) {
+    return "";
   }
-};
+  let yr = date.toLocaleDateString(authStore.currentLanguageCode, { year: "numeric" });
+  let mo = date.toLocaleDateString(authStore.currentLanguageCode, { month: "2-digit" });
+  let da = date.toLocaleDateString(authStore.currentLanguageCode, { day: "2-digit" });
+  return `${yr}-${mo}-${da}`;
+}
+
+function getTimeFromTimestamp(ts: any) {
+  let date = new Date(ts);
+  let hr = String(date.getHours()).padStart(2, "0");
+  let min = String(date.getMinutes()).padStart(2, "0");
+  return `${hr}:${min}`;
+}
+
+onMounted(() => {
+  http.get("/api/v1/events/").then(resp => {
+    var currentDate = new Date();
+    for (let event of resp.data) {
+      events.value.push({
+        event: event,
+        start: getDatetime(event.start),
+        end: getDatetime(event.end),
+        description: event.description,
+        class: new Date(event.end) < currentDate ? "leisure" : "sport",
+        content: getTemplate(event)
+      });
+    }
+  });
+});
 </script>
 
 <style>
