@@ -1,125 +1,111 @@
+import hashlib
 import os
+from typing import Optional
 
-from flask import request, send_file
-from flask.json import jsonify
-from flask_jwt_extended import jwt_required
-from marshmallow import ValidationError
-from werkzeug.utils import secure_filename
+from fastapi import APIRouter, Depends, File, Form, HTTPException, UploadFile
+from fastapi.responses import FileResponse
+from sqlalchemy import select
+from sqlalchemy.orm import Session
 
-from . import images
-from .models import Image, ImageSchema
-from .. import db, BASE_DIR
-from src.shared.helpers import modify_entity, is_allowed_file, get_file_extension, get_hash
+from config import BASE_DIR
+from ..db import get_db
+from ..auth.dependencies import get_current_user
+from .models import Image, ImageRead
+from ..shared.helpers import is_allowed_file, get_file_extension
 
-# ---- Image
-
-image_schema = ImageSchema()
-image_schema_partial = ImageSchema(partial=('id', 'path', 'events'))
+router = APIRouter()
 
 
-@images.route('/<image_id>')
-def download_image(image_id):
+def get_hash(file_content: bytes) -> str:
+    return hashlib.sha1(file_content).hexdigest()
+
+
+@router.get("/{image_id}")
+def download_image(image_id: int, db: Session = Depends(get_db)):
     base_dir = BASE_DIR + '/'
-    image = db.session.query(Image).filter_by(id=image_id).first()
+    image = db.get(Image, image_id)
 
     if not image:
-        return jsonify(f"Image with id #{image_id} does not exist."), 404
+        raise HTTPException(status_code=404, detail=f"Image with id #{image_id} does not exist.")
 
     image_path = os.path.join(base_dir, image.path)
+    return FileResponse(image_path, media_type='image/jpeg')
 
-    return send_file(image_path, mimetype='image/jpg')
 
-
-@images.route('/', methods=['POST'])
-@jwt_required
-def upload_image():
-    # -- POST request should be sent with image in request.files['file'] &
-    # description in request.form['data'] as a json object (e.g. {'description': 'this is a picture.'})
+@router.post("/", response_model=ImageRead, status_code=201)
+async def upload_image(
+    file: UploadFile = File(...),
+    description: Optional[str] = Form(None),
+    db: Session = Depends(get_db),
+    _=Depends(get_current_user)
+):
     base_dir = BASE_DIR + '/'
-    if request.files:
-        if request.files['file']:
-            image = request.files['file']
-        else:
-            return 'No image file found in "files" section', 422
-    else:
-        return 'No image selected', 422
 
-    # Grab a description from the request if there is one
-    valid_desc = None
-    if request.form:
-        if request.form['description']:
-            valid_desc = True
+    filename = file.filename or ""
+    if not is_allowed_file(filename):
+        raise HTTPException(status_code=422, detail="Invalid file type")
 
-    # Safely convert the filename into an ASCII only string
-    filename = secure_filename(image.filename)
+    file_content = await file.read()
+    file_hash = get_hash(file_content)
+    folder = file_hash[0:2]
+    new_filename = file_hash + '.' + get_file_extension(filename)
 
-    # Check to make sure the file is of an acceptable type
-    if is_allowed_file(filename):
-        file_hash = get_hash(image)
-        folder = file_hash[0:2]
-        new_filename = file_hash + '.' + get_file_extension(filename)
+    folder_path = os.path.join('data/', folder)
+    if not os.path.exists(os.path.join(base_dir, folder_path)):
+        os.makedirs(os.path.join(base_dir, folder_path))
 
-        folder_path = os.path.join('data/', folder)
+    path_to_image = os.path.join(folder_path, new_filename)
 
-        # Create a folder that is the first two characters of the file hash
-        if not os.path.exists(os.path.join(base_dir, folder_path)):
-            os.makedirs(os.path.join(base_dir, folder_path))
+    image_already_in_db = db.execute(
+        select(Image).where(Image.path == path_to_image)
+    ).scalar_one_or_none()
+    if image_already_in_db:
+        raise HTTPException(
+            status_code=303,
+            detail={'message': 'Identical image already exists', 'id': image_already_in_db.id}
+        )
 
-        path_to_image = os.path.join(folder_path, new_filename)
-        image_already_in_db = db.session.query(Image).filter_by(path=path_to_image).first()
+    full_path = os.path.join(base_dir, path_to_image)
+    with open(full_path, 'wb') as f:
+        f.write(file_content)
 
-        # return a directive to look up the existing image
-        if image_already_in_db:
-            return jsonify({
-                'message': 'Identical image already exists',
-                'id': image_already_in_db.id
-            }), 303
-
-        # Save the image into the file system
-        full_path = os.path.join(base_dir, path_to_image)
-        image.save(full_path)
-    else:
-        return 'Invalid file type', 422
-
-    # Create and store the image object into the db
-    valid_image = dict()
-    valid_image['path'] = path_to_image
-    if valid_desc:
-        valid_image['description'] = request.form['description']
-
-    valid_image = image_schema.load(valid_image, partial=True)
-
-    new_image = Image(**valid_image)
-    db.session.add(new_image)
-    db.session.commit()
-
-    return jsonify(image_schema.dump(new_image)), 201
+    new_image = Image(path=path_to_image, description=description)
+    db.add(new_image)
+    db.commit()
+    db.refresh(new_image)
+    return new_image
 
 
-@images.route('/<image_id>', methods=['PATCH'])
-@jwt_required
-def update_image(image_id):
-    # -- PATCH can only be used to update an image's description
-    try:
-        valid_attributes = image_schema_partial.load(request.json)
-    except ValidationError as err:
-        return jsonify(err.messages), 422
-
-    return modify_entity(Image, image_schema_partial, image_id, valid_attributes)
-
-
-@images.route('/<image_id>', methods=['DELETE'])
-@jwt_required
-def delete_image(image_id):
-    image = db.session.query(Image).filter_by(id=image_id).first()
-
+@router.patch("/{image_id}", response_model=ImageRead)
+def update_image(
+    image_id: int,
+    description: Optional[str] = None,
+    db: Session = Depends(get_db),
+    _=Depends(get_current_user)
+):
+    image = db.get(Image, image_id)
     if not image:
-        return jsonify(f"Image with id #{image_id} does not exist."), 404
+        raise HTTPException(status_code=404, detail=f"Image with id #{image_id} does not exist.")
+    if description is not None:
+        image.description = description
+    db.commit()
+    db.refresh(image)
+    return image
 
-    os.remove(os.path.join(BASE_DIR, image.path))
 
-    db.session.delete(image)
-    db.session.commit()
+@router.delete("/{image_id}", status_code=204)
+def delete_image(
+    image_id: int,
+    db: Session = Depends(get_db),
+    _=Depends(get_current_user)
+):
+    image = db.get(Image, image_id)
+    if not image:
+        raise HTTPException(status_code=404, detail=f"Image with id #{image_id} does not exist.")
 
-    # 204 codes don't respond with any content
-    return "Deleted successfully", 204
+    full_path = os.path.join(BASE_DIR, image.path)
+    if os.path.exists(full_path):
+        os.remove(full_path)
+
+    db.delete(image)
+    db.commit()

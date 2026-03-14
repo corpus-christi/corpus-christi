@@ -1,498 +1,418 @@
-from flask import request, jsonify
-from flask_jwt_extended import jwt_required
-from marshmallow import Schema, fields
-from marshmallow import ValidationError
-from marshmallow.validate import Length
+from typing import Optional
 
-from . import places
-from .models import Country, CountrySchema, Address, AddressSchema, Area, AreaSchema, Location, LocationSchema
-from .. import db
+from fastapi import APIRouter, Depends, HTTPException, Query
+from sqlalchemy import select
+from sqlalchemy.orm import Session
+
+from ..db import get_db
+from ..auth.dependencies import get_current_user
+from .models import (
+    Country, CountryRead,
+    Area, AreaCreate, AreaUpdate, AreaRead,
+    Address, AddressCreate, AddressUpdate, AddressRead,
+    Location, LocationCreate, LocationUpdate, LocationRead
+)
 from ..i18n.models import I18NValue, I18NKey
 from ..images.models import Image, ImageLocation
 
-
-def modify_entity(entity_type, schema, id, new_value_dict):
-    item = db.session.query(entity_type).filter_by(id=id).first()
-
-    if not item:
-        return jsonify(f"Item with id #{id} does not exist."), 404
-
-    for key, val in new_value_dict.items():
-        setattr(item, key, val)
-
-    db.session.commit()
-
-    return jsonify(schema.dump(item)), 200
+router = APIRouter()
 
 
-class CountryListSchema(Schema):
-    code = fields.String(required=True, validate=Length(equal=2))
-    name = fields.String(attribute="gloss", required=True,
-                         validate=Length(min=1))
+# ---- Countries
+
+@router.get("/countries", response_model=list[CountryRead])
+def read_all_countries(db: Session = Depends(get_db)):
+    return db.execute(select(Country)).scalars().all()
 
 
-country_list_schema = CountryListSchema()
-country_schema = CountrySchema()
+@router.get("/countries/{country_code}")
+def read_countries(
+    country_code: str,
+    locale: Optional[str] = Query(None),
+    db: Session = Depends(get_db)
+):
+    if locale is None:
+        raise HTTPException(status_code=400, detail="Missing locale")
 
-
-@places.route('/countries')
-# @jwt_required
-def read_all_countries():
-    result = db.session.query(Country).all()
-    return jsonify(country_schema.dump(result, many=True))
-
-@places.route('/countries/<country_code>')
-def read_countries(country_code=None):
-    locale_code = request.args.get('locale')
-    if locale_code is None:
-        return 'Missing locale', 400
-
-    if country_code is None:
-        result = db.session \
-            .query(Country.code, I18NValue.gloss) \
-            .join(I18NKey, I18NValue) \
-            .filter_by(locale_code=locale_code) \
-            .all()
-        return jsonify(country_list_schema.dump(result, many=True))
-    else:
-        result = db.session \
-            .query(Country.code, I18NValue.gloss) \
-            .filter_by(code=country_code) \
-            .join(I18NKey, I18NValue) \
-            .filter_by(locale_code=locale_code) \
-            .first()
-    return jsonify(country_list_schema.dump(result))
+    result = db.execute(
+        select(Country.code, I18NValue.gloss)
+        .where(Country.code == country_code)
+        .join(I18NKey, Country.name_i18n == I18NKey.id)
+        .join(I18NValue, I18NKey.id == I18NValue.key_id)
+        .where(I18NValue.locale_code == locale)
+    ).first()
+    if result is None:
+        return {}
+    return {"code": result[0], "name": result[1]}
 
 
 # ---- Area
 
-area_schema = AreaSchema()
+@router.post("/areas", response_model=AreaRead, status_code=201)
+def create_area(
+    payload: AreaCreate,
+    db: Session = Depends(get_db),
+    _=Depends(get_current_user)
+):
+    new_area = Area(**payload.model_dump())
+    db.add(new_area)
+    db.commit()
+    db.refresh(new_area)
+    return new_area
 
 
-@places.route('/areas', methods=['POST'])
-@jwt_required
-def create_area():
-    try:
-        valid_area = area_schema.load(request.json)
-    except ValidationError as err:
-        return jsonify(err.messages), 422
-
-    new_area = Area(**valid_area)
-    db.session.add(new_area)
-    db.session.commit()
-    return jsonify(area_schema.dump(new_area)), 201
+@router.get("/areas", response_model=list[AreaRead])
+def read_all_areas(
+    db: Session = Depends(get_db),
+    _=Depends(get_current_user)
+):
+    return db.execute(select(Area)).scalars().all()
 
 
-@places.route('/areas')
-@jwt_required
-def read_all_areas():
-    result = db.session.query(Area).all()
-    return jsonify(area_schema.dump(result, many=True))
+@router.get("/areas/{area_id}", response_model=AreaRead)
+def read_one_area(
+    area_id: int,
+    db: Session = Depends(get_db),
+    _=Depends(get_current_user)
+):
+    result = db.get(Area, area_id)
+    if result is None:
+        raise HTTPException(status_code=404, detail=f"Area with id #{area_id} does not exist.")
+    return result
 
 
-@places.route('/areas/<area_id>')
-@jwt_required
-def read_one_area(area_id):
-    result = db.session.query(Area).filter_by(id=area_id).first()
-    return jsonify(area_schema.dump(result))
+@router.put("/areas/{area_id}", response_model=AreaRead)
+def replace_area(
+    area_id: int,
+    payload: AreaCreate,
+    db: Session = Depends(get_db),
+    _=Depends(get_current_user)
+):
+    from ..shared.helpers import modify_entity
+    return modify_entity(db, Area, area_id, payload.model_dump())
 
 
-@places.route('/areas/<area_id>', methods=['PUT'])
-@jwt_required
-def replace_area(area_id):
-    try:
-        valid_attributes = area_schema.load(request.json)
-    except ValidationError as err:
-        return jsonify(err.messages), 422
-
-    return modify_area(area_id, valid_attributes)
-
-
-@places.route('/areas/<area_id>', methods=['PATCH'])
-@jwt_required
-def update_area(area_id):
-    try:
-        valid_attributes = area_schema.load(request.json, partial=True)
-    except ValidationError as err:
-        return jsonify(err.messages), 422
-
-    return modify_area(area_id, valid_attributes)
+@router.patch("/areas/{area_id}", response_model=AreaRead)
+def update_area(
+    area_id: int,
+    payload: AreaUpdate,
+    db: Session = Depends(get_db),
+    _=Depends(get_current_user)
+):
+    from ..shared.helpers import modify_entity
+    return modify_entity(db, Area, area_id, {k: v for k, v in payload.model_dump().items() if v is not None})
 
 
-@places.route('/areas/<area_id>', methods=['DELETE'])
-@jwt_required
-def delete_area(area_id):
-    area = db.session.query(Area).filter_by(id=area_id).first()
-
+@router.delete("/areas/{area_id}", status_code=204)
+def delete_area(
+    area_id: int,
+    db: Session = Depends(get_db),
+    _=Depends(get_current_user)
+):
+    area = db.get(Area, area_id)
     if not area:
-        return jsonify(f"Area with id #{area_id} does not exist."), 404
-
-    db.session.delete(area)
-    db.session.commit()
-
-    # 204 codes don't respond with any content
-    return 'Successfully deleted', 204
-
-
-def modify_area(area_id, area_object):
-    return modify_entity(Area, area_schema, area_id, area_object)
+        raise HTTPException(status_code=404, detail=f"Area with id #{area_id} does not exist.")
+    db.delete(area)
+    db.commit()
 
 
 # ---- Address
 
-
-address_schema = AddressSchema()
-
-
-@places.route('/addresses', methods=['POST'])
-@jwt_required
-def create_address():
-    try:
-        valid_address = address_schema.load(request.json)
-    except ValidationError as err:
-        return jsonify(err.messages), 422
-
-    new_address = Address(**valid_address)
-    db.session.add(new_address)
-    db.session.commit()
-    return jsonify(address_schema.dump(new_address)), 201
+@router.post("/addresses", response_model=AddressRead, status_code=201)
+def create_address(
+    payload: AddressCreate,
+    db: Session = Depends(get_db),
+    _=Depends(get_current_user)
+):
+    new_address = Address(**payload.model_dump())
+    db.add(new_address)
+    db.commit()
+    db.refresh(new_address)
+    return new_address
 
 
-@places.route('/addresses')
-def read_all_addresses():
-    query = db.session.query(Address)
-
-    # -- name --
-    # Filter address on a wildcard name string
-    name_filter = request.args.get('name')
-    if name_filter:
-        query = query.filter(Address.name.like(f"%{name_filter}%"))
-
-    # -- address --
-    # Filter address on a wildcard address string
-    address_filter = request.args.get('address')
-    if address_filter:
-        query = query.filter(Address.address.like(f"%{address_filter}%"))
-
-    # -- city --
-    # Filter city on a wildcard city string
-    city_filter = request.args.get('city')
-    if city_filter:
-        query = query.filter(Address.city.like(f"%{city_filter}%"))
-
-    # -- area_id --
-    # Filter on an area_id string
-    area_filter = request.args.get('area_id')
-    if area_filter:
-        query = query.filter_by(area_id=area_filter)
-
-    # -- country_code --
-    # Filter country_code on a wildcard country_code string
-    country_filter = request.args.get('country_code')
-    if country_filter:
-        query = query.filter(Address.country_code.like(f"%{country_filter}%"))
-
-    # -- latitude --
-    # Filter latitude between start and end latitudes
-    lat_start_filter = request.args.get('lat_start')
-    lat_end_filter = request.args.get('lat_end')
-    if lat_start_filter:
-        query = query.filter(Address.latitude >= lat_start_filter)
-    if lat_end_filter:
-        query = query.filter(Address.latitude <= lat_end_filter)
-
-    # -- longitude --
-    # Filter longitude between start and end longitudes
-    lon_start_filter = request.args.get('lon_start')
-    lon_end_filter = request.args.get('lon_end')
-    if lon_start_filter:
-        query = query.filter(Address.longitude >= lon_start_filter)
-    if lon_end_filter:
-        query = query.filter(Address.longitude <= lon_end_filter)
-
-    result = query.all()
-
-    return jsonify(address_schema.dump(result, many=True))
+@router.get("/addresses", response_model=list[AddressRead])
+def read_all_addresses(
+    name: Optional[str] = Query(None),
+    address: Optional[str] = Query(None),
+    city: Optional[str] = Query(None),
+    area_id: Optional[int] = Query(None),
+    country_code: Optional[str] = Query(None),
+    lat_start: Optional[float] = Query(None),
+    lat_end: Optional[float] = Query(None),
+    lon_start: Optional[float] = Query(None),
+    lon_end: Optional[float] = Query(None),
+    db: Session = Depends(get_db)
+):
+    query = select(Address)
+    if name:
+        query = query.where(Address.name.like(f"%{name}%"))
+    if address:
+        query = query.where(Address.address.like(f"%{address}%"))
+    if city:
+        query = query.where(Address.city.like(f"%{city}%"))
+    if area_id is not None:
+        query = query.where(Address.area_id == area_id)
+    if country_code:
+        query = query.where(Address.country_code.like(f"%{country_code}%"))
+    if lat_start is not None:
+        query = query.where(Address.latitude >= lat_start)
+    if lat_end is not None:
+        query = query.where(Address.latitude <= lat_end)
+    if lon_start is not None:
+        query = query.where(Address.longitude >= lon_start)
+    if lon_end is not None:
+        query = query.where(Address.longitude <= lon_end)
+    return db.execute(query).scalars().all()
 
 
-@places.route('/addresses/<address_id>')
-@jwt_required
-def read_one_address(address_id):
-    result = db.session.query(Address).filter_by(id=address_id).first()
-    return jsonify(address_schema.dump(result))
+@router.get("/addresses/{address_id}", response_model=AddressRead)
+def read_one_address(
+    address_id: int,
+    db: Session = Depends(get_db),
+    _=Depends(get_current_user)
+):
+    result = db.get(Address, address_id)
+    if result is None:
+        raise HTTPException(status_code=404, detail=f"Address with id #{address_id} does not exist.")
+    return result
 
 
-@places.route('/addresses/<address_id>', methods=['PUT'])
-@jwt_required
-def replace_address(address_id):
-    try:
-        valid_attributes = address_schema.load(request.json)
-    except ValidationError as err:
-        return jsonify(err.messages), 422
-
-    return modify_address(address_id, valid_attributes)
-
-
-@places.route('/addresses/<address_id>', methods=['PATCH'])
-@jwt_required
-def update_address(address_id):
-    try:
-        valid_attributes = address_schema.load(request.json, partial=True)
-    except ValidationError as err:
-        return jsonify(err.messages), 422
-
-    return modify_address(address_id, valid_attributes)
+@router.put("/addresses/{address_id}", response_model=AddressRead)
+def replace_address(
+    address_id: int,
+    payload: AddressCreate,
+    db: Session = Depends(get_db),
+    _=Depends(get_current_user)
+):
+    from ..shared.helpers import modify_entity
+    return modify_entity(db, Address, address_id, payload.model_dump())
 
 
-@places.route('/addresses/<address_id>', methods=['DELETE'])
-@jwt_required
-def delete_address(address_id):
-    address = db.session.query(Address).filter_by(id=address_id).first()
+@router.patch("/addresses/{address_id}", response_model=AddressRead)
+def update_address(
+    address_id: int,
+    payload: AddressUpdate,
+    db: Session = Depends(get_db),
+    _=Depends(get_current_user)
+):
+    from ..shared.helpers import modify_entity
+    return modify_entity(db, Address, address_id, {k: v for k, v in payload.model_dump().items() if v is not None})
 
+
+@router.delete("/addresses/{address_id}", status_code=204)
+def delete_address(
+    address_id: int,
+    db: Session = Depends(get_db),
+    _=Depends(get_current_user)
+):
+    address = db.get(Address, address_id)
     if not address:
-        return jsonify(f"Address with id #{address_id} does not exist."), 404
-
-    db.session.delete(address)
-    db.session.commit()
-
-    # 204 codes don't respond with any content
-    return 'Successfully deleted', 204
-
-
-def modify_address(address_id, address_object):
-    return modify_entity(Address, address_schema, address_id, address_object)
+        raise HTTPException(status_code=404, detail=f"Address with id #{address_id} does not exist.")
+    db.delete(address)
+    db.commit()
 
 
 # ---- Location
 
-location_schema = LocationSchema()
+class LocationCreateNested(LocationCreate):
+    # Extra fields for nested resolution
+    country_code: Optional[str] = None
+    area_name: Optional[str] = None
+    latitude: Optional[float] = None
+    longitude: Optional[float] = None
+    city: Optional[str] = None
+    address: Optional[str] = None
+    address_name: Optional[str] = None
 
 
-@places.route('/locations', methods=['POST'])
-@jwt_required
-def create_location():
-    # Example payload for nested resolving
-    # {
-    # ------- Country related
-    #        'country_code': 'US',                  # required for nesting
-    # ------- Area related
-    #        'area_name': 'area name',              # required for nesting
-    # ------- Address related
-    #        'latitude': 0,                         # optional
-    #        'longitude': 0,                        # optional
-    #        'city': 'Upland',                      # required if address doesn't exist in database
-    #        'address': '236 W. Reade Ave.',        # required if address doesn't exist in database
-    #        'address_name': 'Taylor University',   # required if address doesn't exist in database
-    # ------- Location related
-    #        'description': 'Euler 217'             # optional
-    # }
-    # This method tries to link existing entries in Country, Area, Address table if possible, otherwise create
-    # When there is at least a certain table related field in the payload, the foreign key specified in the payload for that table will be overridden by the fields given
-    def debugPrint(msg):
-        pass
-        print(msg)
+@router.post("/locations", response_model=LocationRead, status_code=201)
+def create_location(
+    payload: dict,
+    db: Session = Depends(get_db),
+    _=Depends(get_current_user)
+):
+    from ..shared.helpers import modify_entity
 
-    resolving_keys = ('country_code', 'area_name', 'latitude',
-                      'longitude', 'city', 'address', 'address_name')
+    resolving_keys = ('country_code', 'area_name', 'latitude', 'longitude', 'city', 'address', 'address_name')
     payload_data = {}
-    # process country information
     resolve_needed = False
+
     for key in resolving_keys:
-        if key in request.json:
+        if key in payload:
             resolve_needed = True
-            payload_data[key] = request.json[key]
-            del request.json[key]
+            payload_data[key] = payload.pop(key)
 
     if resolve_needed:
-        debugPrint("starting to resolve")
-        debugPrint(payload_data)
-        # resolve country
         if 'country_code' not in payload_data:
-            return 'country_code not specified in request body', 422
-        country = db.session.query(Country).filter_by(
-            code=payload_data['country_code']).first()
+            raise HTTPException(status_code=422, detail='country_code not specified in request body')
+        country = db.execute(
+            select(Country).where(Country.code == payload_data['country_code'])
+        ).scalar_one_or_none()
         if not country:
-            return f'no country code found in database matching {payload_data["country_code"]}', 404
+            raise HTTPException(status_code=404, detail=f'no country code found in database matching {payload_data["country_code"]}')
         country_code = country.code
-        debugPrint(f"Country code resolved: {country_code}")
-        # resolve area
+
         if 'area_name' not in payload_data:
-            return 'area_name not specified in request body', 422
-        area = db.session.query(Area).filter_by(
-            country_code=country_code, name=payload_data['area_name']).first()
-        area_id = None
+            raise HTTPException(status_code=422, detail='area_name not specified in request body')
+        area = db.execute(
+            select(Area).where(Area.country_code == country_code, Area.name == payload_data['area_name'])
+        ).scalar_one_or_none()
         if area:
             area_id = area.id
-            debugPrint(f"fetched existing area_id {area_id}")
         else:
-            debugPrint(f"creating new area")
-            area_payload = {
-                'name': payload_data['area_name'],
-                'country_code': country_code
-            }
-            try:
-                valid_area = area_schema.load(area_payload)
-            except ValidationError as err:
-                return jsonify(err.messages), 500
-            area = Area(**valid_area)
-            db.session.add(area)
-            db.session.flush()
+            area = Area(name=payload_data['area_name'], country_code=country_code, active=True)
+            db.add(area)
+            db.flush()
             area_id = area.id
-            debugPrint(f"new_area created with id {area_id}")
-        # resolve address
+
         address_name_transform = {'address_name': 'name'}
-        address_keys = ('latitude', 'longitude', 'city',
-                        'address', 'address_name')
-        address_payload = {k if k not in address_name_transform else address_name_transform[k]: v
-                           for k, v in payload_data.items() if k in address_keys}
+        address_keys = ('latitude', 'longitude', 'city', 'address', 'address_name')
+        address_payload = {
+            k if k not in address_name_transform else address_name_transform[k]: v
+            for k, v in payload_data.items() if k in address_keys
+        }
         address_payload['area_id'] = area_id
         address_payload['country_code'] = country_code
-        address = db.session.query(Address).filter_by(
-            **address_payload).first()
-        address_id = None
-        if address:
-            address_id = address.id
-            debugPrint(f"fetched existing address id {address_id}")
+
+        existing_address = db.execute(
+            select(Address).filter_by(**address_payload)
+        ).scalar_one_or_none()
+        if existing_address:
+            address_id = existing_address.id
         else:
-            debugPrint(f"creating new address")
-            debugPrint(f"address payload {address_payload}")
-            if (address_payload['name'] == ''):
-                address_payload['name'] = address_payload['address']
-            try:
-                valid_address = address_schema.load(address_payload)
-            except ValidationError as err:
-                return jsonify(err.messages), 500
-            address = Address(**valid_address)
-            db.session.add(address)
-            db.session.flush()
-            address_id = address.id
-            debugPrint(f"new_address created with id {address_id}")
-        # setting the request for location with the address_id obtained
-        request.json['address_id'] = address_id
-    else:
-        debugPrint("no need to resolve")
+            if address_payload.get('name', '') == '':
+                address_payload['name'] = address_payload.get('address', '')
+            address_obj = Address(**address_payload, active=True)
+            db.add(address_obj)
+            db.flush()
+            address_id = address_obj.id
 
-    debugPrint(f"final request for location: {request.json} ")
-    try:
-        valid_location = location_schema.load(request.json)
-    except ValidationError as err:
-        return jsonify(err.messages), 422
+        payload['address_id'] = address_id
 
-    new_location = Location(**valid_location)
-    db.session.add(new_location)
-    db.session.commit()
-    return jsonify(location_schema.dump(new_location)), 201
+    new_location = Location(
+        description=payload.get('description'),
+        address_id=payload['address_id'],
+        active=payload.get('active', True)
+    )
+    db.add(new_location)
+    db.commit()
+    db.refresh(new_location)
+    return new_location
 
 
-@places.route('/locations')
-# @jwt_required
-def read_all_locations():
-    result = db.session.query(Location).all()
-    return jsonify(location_schema.dump(result, many=True))
+@router.get("/locations", response_model=list[LocationRead])
+def read_all_locations(db: Session = Depends(get_db)):
+    return db.execute(select(Location)).scalars().all()
 
 
-@places.route('/locations/<location_id>')
-@jwt_required
-def read_one_location(location_id):
-    result = db.session.query(Location).filter_by(id=location_id).first()
-    return jsonify(location_schema.dump(result))
+@router.get("/locations/{location_id}", response_model=LocationRead)
+def read_one_location(
+    location_id: int,
+    db: Session = Depends(get_db),
+    _=Depends(get_current_user)
+):
+    result = db.get(Location, location_id)
+    if result is None:
+        raise HTTPException(status_code=404, detail=f"Location with id #{location_id} does not exist.")
+    return result
 
 
-@places.route('/locations/<location_id>', methods=['PUT'])
-@jwt_required
-def replace_location(location_id):
-    try:
-        valid_location = location_schema.load(request.json)
-    except ValidationError as err:
-        return jsonify(err.messages), 422
-
-    return modify_location(location_id, valid_location)
-
-
-@places.route('/locations/<location_id>', methods=['PATCH'])
-@jwt_required
-def update_location(location_id):
-    try:
-        valid_attributes = location_schema.load(request.json, partial=True)
-    except ValidationError as err:
-        return jsonify(err.messages), 422
-
-    return modify_location(location_id, valid_attributes)
+@router.put("/locations/{location_id}", response_model=LocationRead)
+def replace_location(
+    location_id: int,
+    payload: LocationCreate,
+    db: Session = Depends(get_db),
+    _=Depends(get_current_user)
+):
+    from ..shared.helpers import modify_entity
+    return modify_entity(db, Location, location_id, payload.model_dump())
 
 
-@places.route('/locations/<location_id>', methods=['DELETE'])
-@jwt_required
-def delete_location(location_id):
-    location = db.session.query(Location).filter_by(id=location_id).first()
+@router.patch("/locations/{location_id}", response_model=LocationRead)
+def update_location(
+    location_id: int,
+    payload: LocationUpdate,
+    db: Session = Depends(get_db),
+    _=Depends(get_current_user)
+):
+    from ..shared.helpers import modify_entity
+    return modify_entity(db, Location, location_id, {k: v for k, v in payload.model_dump().items() if v is not None})
 
+
+@router.delete("/locations/{location_id}", status_code=204)
+def delete_location(
+    location_id: int,
+    db: Session = Depends(get_db),
+    _=Depends(get_current_user)
+):
+    location = db.get(Location, location_id)
     if not location:
-        return jsonify(f"Location with id #{location_id} does not exist."), 404
-
-    db.session.delete(location)
-    db.session.commit()
-
-    # 204 codes don't respond with any content
-    return 'Successfully deleted', 204
-
-
-def modify_location(location_id, location_object):
-    return modify_entity(Location, location_schema, location_id, location_object)
+        raise HTTPException(status_code=404, detail=f"Location with id #{location_id} does not exist.")
+    db.delete(location)
+    db.commit()
 
 
 # ---- Image
 
-@places.route('/<location_id>/images/<image_id>', methods=['POST'])
-@jwt_required
-def add_location_images(location_id, image_id):
-    location = db.session.query(Location).filter_by(id=location_id).first()
-    image = db.session.query(Image).filter_by(id=image_id).first()
-
-    location_image = db.session.query(ImageLocation).filter_by(location_id=location_id, image_id=image_id).first()
+@router.post("/{location_id}/images/{image_id}", status_code=201)
+def add_location_images(
+    location_id: int,
+    image_id: int,
+    db: Session = Depends(get_db),
+    _=Depends(get_current_user)
+):
+    location = db.get(Location, location_id)
+    image = db.get(Image, image_id)
 
     if not location:
-        return jsonify(f"Location with id #{location_id} does not exist."), 404
-
+        raise HTTPException(status_code=404, detail=f"Location with id #{location_id} does not exist.")
     if not image:
-        return jsonify(f"Image with id #{image_id} does not exist."), 404
+        raise HTTPException(status_code=404, detail=f"Image with id #{image_id} does not exist.")
 
-    # If image is already attached to the location
+    location_image = db.execute(
+        select(ImageLocation).where(ImageLocation.location_id == location_id, ImageLocation.image_id == image_id)
+    ).scalar_one_or_none()
     if location_image:
-        return jsonify(f"Image with id#{image_id} is already attached to location with id#{location_id}."), 422
-    else:
-        new_entry = ImageLocation(**{'location_id': location_id, 'image_id': image_id})
-        db.session.add(new_entry)
-        db.session.commit()
+        raise HTTPException(status_code=422, detail=f"Image with id#{image_id} is already attached to location with id#{location_id}.")
 
-    return jsonify(f"Image with id #{image_id} successfully added to Location with id #{location_id}."), 201
+    new_entry = ImageLocation(location_id=location_id, image_id=image_id)
+    db.add(new_entry)
+    db.commit()
+    return f"Image with id #{image_id} successfully added to Location with id #{location_id}."
 
 
-@places.route('/<location_id>/images/<image_id>', methods=['PUT'])
-@jwt_required
-def put_location_images(location_id, image_id):
-    # check for old image id in parameter list (?old=<id>)
-    old_image_id = request.args['old']
+@router.put("/{location_id}/images/{image_id}")
+def put_location_images(
+    location_id: int,
+    image_id: int,
+    old: Optional[str] = Query(None),
+    db: Session = Depends(get_db),
+    _=Depends(get_current_user)
+):
+    old_image_id = old
     new_image_id = image_id
 
-    if old_image_id == 'false':
-        post_resp = add_location_images(location_id, new_image_id)
-        return jsonify({'deleted': 'No image to delete', 'posted': str(post_resp[0].data, "utf-8")})
+    if old_image_id == 'false' or old_image_id is None:
+        add_location_images(location_id, new_image_id, db)
+        return {'deleted': 'No image to delete', 'posted': f'Image {new_image_id} added'}
     else:
-        del_resp = delete_location_image(location_id, old_image_id)
-        post_resp = add_location_images(location_id, new_image_id)
+        delete_location_image(location_id, int(old_image_id), db)
+        add_location_images(location_id, new_image_id, db)
+        return {'deleted': f'Image {old_image_id} removed', 'posted': f'Image {new_image_id} added'}
 
-        return jsonify({'deleted': del_resp[0], 'posted': str(post_resp[0].data, "utf-8")})
 
-
-@places.route('/<location_id>/images/<image_id>', methods=['DELETE'])
-@jwt_required
-def delete_location_image(location_id, image_id):
-    location_image = db.session.query(ImageLocation).filter_by(location_id=location_id, image_id=image_id).first()
-
+@router.delete("/{location_id}/images/{image_id}", status_code=204)
+def delete_location_image(
+    location_id: int,
+    image_id: int,
+    db: Session = Depends(get_db),
+    _=Depends(get_current_user)
+):
+    location_image = db.execute(
+        select(ImageLocation).where(ImageLocation.location_id == location_id, ImageLocation.image_id == image_id)
+    ).scalar_one_or_none()
     if not location_image:
-        return jsonify(f"Image with id #{image_id} is not assigned to Location with id #{location_id}."), 404
-
-    db.session.delete(location_image)
-    db.session.commit()
-
-    # 204 codes don't respond with any content
-    return 'Successfully removed image', 204
+        raise HTTPException(status_code=404, detail=f"Image with id #{image_id} is not assigned to Location with id #{location_id}.")
+    db.delete(location_image)
+    db.commit()

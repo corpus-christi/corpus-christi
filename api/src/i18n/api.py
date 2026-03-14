@@ -1,169 +1,166 @@
-from flask import request, jsonify
-from flask_jwt_extended import jwt_required
-from marshmallow import ValidationError, Schema, fields
-from marshmallow.validate import Length
+from typing import Optional
 
-from . import i18n
-from .models import I18NLocale, I18NLocaleSchema, I18NKeySchema, I18NKey, I18NValue, I18NValueSchema, Language
-from .. import db
+from fastapi import APIRouter, Depends, HTTPException, Query
+from pydantic import BaseModel
+from sqlalchemy import select
+from sqlalchemy.orm import Session
+
+from ..db import get_db
+from ..auth.dependencies import get_current_user
+from .models import (
+    I18NLocale, I18NLocaleCreate, I18NLocaleRead,
+    I18NKey, I18NKeyCreate, I18NKeyRead,
+    I18NValue, I18NValueCreate, I18NValueRead,
+    Language
+)
+
+router = APIRouter()
+
 
 # ---- I18N Locale
 
-i18n_locale_schema = I18NLocaleSchema()
+@router.get("/locales", response_model=list[I18NLocaleRead])
+def read_all_locales(db: Session = Depends(get_db)):
+    return db.execute(select(I18NLocale)).scalars().all()
 
 
-@i18n.route('/locales')
-def read_all_locales():
-    locales = db.session.query(I18NLocale).all()
-    return jsonify(i18n_locale_schema.dump(locales, many=True))
-
-
-@i18n.route('/locales/<locale_code>')
-def read_one_locale(locale_code):
-    locale = db.session.query(I18NLocale).filter_by(code=locale_code).first()
+@router.get("/locales/{locale_code}", response_model=I18NLocaleRead)
+def read_one_locale(locale_code: str, db: Session = Depends(get_db)):
+    locale = db.execute(
+        select(I18NLocale).where(I18NLocale.code == locale_code)
+    ).scalar_one_or_none()
     if locale is None:
-        return 'No such locale', 404
-    else:
-        return jsonify(i18n_locale_schema.dump(locale))
+        raise HTTPException(status_code=404, detail="No such locale")
+    return locale
 
 
-@i18n.route('/locales', methods=['POST'])
-@jwt_required
-def create_locale():
-    try:
-        loaded = i18n_locale_schema.load(request.json)
-    except ValidationError as err:
-        return jsonify(err.messages), 422
+@router.post("/locales", response_model=I18NLocaleRead, status_code=201)
+def create_locale(
+    payload: I18NLocaleCreate,
+    db: Session = Depends(get_db),
+    _: I18NLocale = Depends(get_current_user)
+):
+    new_locale = I18NLocale(**payload.model_dump())
+    db.add(new_locale)
+    db.commit()
+    db.refresh(new_locale)
+    return new_locale
 
-    new_locale = I18NLocale(**request.json)
-    db.session.add(new_locale)
-    db.session.commit()
-    return jsonify(i18n_locale_schema.dump(new_locale)), 201
 
-
-@i18n.route('/locales/<locale_code>', methods=['DELETE'])
-@jwt_required
-def delete_one_locale(locale_code):
-    locale = db.session.query(I18NLocale).get(locale_code)
-    db.session.delete(locale)
-    db.session.commit()
-    return 'ok', 204
+@router.delete("/locales/{locale_code}", status_code=204)
+def delete_one_locale(
+    locale_code: str,
+    db: Session = Depends(get_db),
+    _=Depends(get_current_user)
+):
+    locale = db.get(I18NLocale, locale_code)
+    if locale is None:
+        raise HTTPException(status_code=404, detail="Locale not found")
+    db.delete(locale)
+    db.commit()
 
 
 # ---- I18N Key
 
-i18n_key_schema = I18NKeySchema()
+@router.get("/keys", response_model=list[I18NKeyRead])
+def read_all_keys(db: Session = Depends(get_db)):
+    return db.execute(select(I18NKey)).scalars().all()
 
 
-@i18n.route('/keys')
-def read_all_keys():
-    keys = db.session.query(I18NKey).all()
-    return jsonify(i18n_key_schema.dump(keys, many=True))
-
-
-@i18n.route('/keys/<key_id>')
-def read_one_key(key_id):
-    key = db.session.query(I18NKey).filter_by(id=key_id).first()
+@router.get("/keys/{key_id}", response_model=I18NKeyRead)
+def read_one_key(key_id: str, db: Session = Depends(get_db)):
+    key = db.execute(
+        select(I18NKey).where(I18NKey.id == key_id)
+    ).scalar_one_or_none()
     if key is None:
-        return 'No such key', 404
-    else:
-        return jsonify(i18n_key_schema.dump(key))
+        raise HTTPException(status_code=404, detail="No such key")
+    return key
 
 
-@i18n.route('/keys', methods=['POST'])
-@jwt_required
-def create_key():
-    try:
-        loaded = i18n_key_schema.load(request.json)
-    except ValidationError as err:
-        return jsonify(err.messages), 422
-
-    new_key = I18NKey(**request.json)
-    db.session.add(new_key)
-    db.session.commit()
-    return jsonify(i18n_key_schema.dump(new_key)), 201
+@router.post("/keys", response_model=I18NKeyRead, status_code=201)
+def create_key(
+    payload: I18NKeyCreate,
+    db: Session = Depends(get_db),
+    _=Depends(get_current_user)
+):
+    new_key = I18NKey(**payload.model_dump())
+    db.add(new_key)
+    db.commit()
+    db.refresh(new_key)
+    return new_key
 
 
 # ---- I18N Value
 
-i18n_value_schema = I18NValueSchema()
+@router.get("/values", response_model=list[I18NValueRead])
+def read_all_values(db: Session = Depends(get_db)):
+    return db.execute(select(I18NValue)).scalars().all()
 
 
-@i18n.route('/values')
-def read_all_values():
-    values = db.session.query(I18NValue).all()
-    return jsonify(i18n_value_schema.dump(values, many=True))
-
-
-@i18n.route('/values/<locale_code>')
-def read_xlation(locale_code):
-    # Check that the locale exists.
-    locale = db.session.query(I18NLocale).filter_by(code=locale_code).first()
+@router.get("/values/{locale_code}")
+def read_xlation(
+    locale_code: str,
+    format: Optional[str] = Query("list"),
+    db: Session = Depends(get_db)
+):
+    locale = db.execute(
+        select(I18NLocale).where(I18NLocale.code == locale_code)
+    ).scalar_one_or_none()
     if locale is None:
-        return 'Locale not found', 404
+        raise HTTPException(status_code=404, detail="Locale not found")
 
-    # Fetch the values for this locale
-    values = db.session.query(I18NValue).filter_by(locale_code=locale_code)
+    values = db.execute(
+        select(I18NValue).where(I18NValue.locale_code == locale_code)
+    ).scalars().all()
 
-    # Format the response.
-    format = request.args.get('format', 'list')
     if format == 'list':
-        # Return the values as a simple list.
-        return jsonify(i18n_value_schema.dump(values, many=True))
+        return [{"key_id": v.key_id, "locale_code": v.locale_code, "gloss": v.gloss} for v in values]
     elif format == 'tree':
-        # Interpret keys as a hierarchical structure.
-        # Tree-building idea from  https://stackoverflow.com/questions/16547643
         tree = {}
         for value in values:
             t = tree
             keys = value.key_id.split('.')
             for idx, key in enumerate(keys):
                 if idx < len(keys) - 1:
-                    # Intermediate "node"; add another dictionary
                     t = t.setdefault(key, {})
                 else:
-                    # Last node
                     if isinstance(t, dict):
-                        # Set key-value in leaf node of tree
                         t[key] = value.gloss
                     else:
-                        # Already a string value for this key
-                        return f'Invalid key ({value.key_id})', 400
-        return jsonify(tree)
+                        raise HTTPException(status_code=400, detail=f'Invalid key ({value.key_id})')
+        return tree
     else:
-        return 'Invalid format', 400
+        raise HTTPException(status_code=400, detail="Invalid format")
 
 
 # ---- Language
 
-
-class LanguageSchema(Schema):
-    code = fields.String(required=True, validate=Length(equal=2))
-    name = fields.String(attribute="gloss", required=True, validate=Length(min=1))
-
-
-language_schema = LanguageSchema()
-
-
-@i18n.route('/languages')
-@i18n.route('/languages/<language_code>')
-def read_languages(language_code=None):
-    locale_code = request.args.get('locale')
-    if locale_code is None:
-        return 'Missing locale', 400
+@router.get("/languages")
+@router.get("/languages/{language_code}")
+def read_languages(
+    language_code: Optional[str] = None,
+    locale: Optional[str] = Query(None),
+    db: Session = Depends(get_db)
+):
+    if locale is None:
+        raise HTTPException(status_code=400, detail="Missing locale")
 
     if language_code is None:
-        result = db.session \
-            .query(Language.code, I18NValue.gloss) \
-            .join(I18NKey, I18NValue) \
-            .filter_by(locale_code=locale_code) \
-            .all()
-        return jsonify(language_schema.dump(result, many=True))
+        result = db.execute(
+            select(Language.code, I18NValue.gloss)
+            .join(I18NKey, Language.name_i18n == I18NKey.id)
+            .join(I18NValue, I18NKey.id == I18NValue.key_id)
+            .where(I18NValue.locale_code == locale)
+        ).all()
+        return [{"code": r[0], "name": r[1]} for r in result]
     else:
-        result = db.session \
-            .query(Language.code, I18NValue.gloss) \
-            .filter_by(code=language_code) \
-            .join(I18NKey, I18NValue) \
-            .filter_by(locale_code=locale_code) \
-            .first()
-        return jsonify(language_schema.dump(result))
+        result = db.execute(
+            select(Language.code, I18NValue.gloss)
+            .where(Language.code == language_code)
+            .join(I18NKey, Language.name_i18n == I18NKey.id)
+            .join(I18NValue, I18NKey.id == I18NValue.key_id)
+            .where(I18NValue.locale_code == locale)
+        ).first()
+        if result is None:
+            return {}
+        return {"code": result[0], "name": result[1]}

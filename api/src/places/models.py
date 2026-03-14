@@ -1,14 +1,11 @@
 import os
+from typing import Optional
 
-from flask import json
-from marshmallow import Schema, fields
-from marshmallow.validate import Length, Range
+from pydantic import BaseModel, ConfigDict, Field
 from sqlalchemy import Column, String, ForeignKey, Integer, Float, Boolean
-from sqlalchemy.orm import relationship
-from src.db import Base
-from src.i18n.models import i18n_create, I18NLocale, i18n_check
+from sqlalchemy.orm import relationship, Mapped, mapped_column
 
-from .. import db
+from ..db import Base, SessionLocal
 from ..shared.models import StringTypes
 
 
@@ -17,8 +14,8 @@ from ..shared.models import StringTypes
 class Country(Base):
     """Country; uses ISO 3166-1 country codes"""
     __tablename__ = 'places_country'
-    code = Column(String(2), primary_key=True)
-    name_i18n = Column(StringTypes.I18N_KEY, ForeignKey('i18n_key.id'), nullable=False)
+    code: Mapped[str] = mapped_column(String(2), primary_key=True)
+    name_i18n: Mapped[str] = mapped_column(StringTypes.I18N_KEY, ForeignKey('i18n_key.id'), nullable=False)
     key = relationship('I18NKey', backref='countries', lazy=True)
 
     def __repr__(self):
@@ -26,142 +23,228 @@ class Country(Base):
 
     @classmethod
     def load_from_file(cls, file_name='country-codes.json'):
+        import json
+        from ..i18n.models import i18n_create, I18NLocale, i18n_check
         count = 0
         file_path = os.path.abspath(os.path.join(__file__, os.path.pardir, 'data', file_name))
 
-        with open(file_path, 'r') as fp:
-            countries = json.load(fp)
+        with SessionLocal() as db:
+            with open(file_path, 'r') as fp:
+                countries = json.load(fp)
 
-            for country in countries:
-                country_code = country['Code']
-                country_name = country['Name']
+                for country in countries:
+                    country_code = country['Code']
+                    country_name = country['Name']
+                    name_i18n = f'country.name.{country_code}'
 
-                name_i18n = f'country.name.{country_code}'
+                    for locale in country['locales']:
+                        locale_code = locale['locale_code']
+                        if not db.get(I18NLocale, locale_code):
+                            db.add(I18NLocale(code=locale_code, desc=''))
+                        if not i18n_check(db, name_i18n, locale_code):
+                            i18n_create(db, name_i18n, locale_code,
+                                        locale['name'], description=f"Country {country_name}")
 
-                for locale in country['locales']:
-                    locale_code = locale['locale_code'] # e.g., en-US
-                    if not db.session.query(I18NLocale).get(locale_code):
-                        # Don't have this locale code
-                        db.session.add(I18NLocale(code=locale_code, desc=''))
-
-                    if not i18n_check(name_i18n, locale_code):
-                        # Don't have this country
-                        i18n_create(name_i18n, locale_code,
-                                    locale['name'], description=f"Country {country_name}")
-
-                # Add to the Country table.
-                if not db.session.query(cls).filter_by(code=country_code).count():
-                    db.session.add(cls(code=country_code, name_i18n=name_i18n))
-                    count += 1
-            db.session.commit()
-        fp.close()
+                    from sqlalchemy import select
+                    if not db.execute(select(cls).where(cls.code == country_code)).scalar_one_or_none():
+                        db.add(cls(code=country_code, name_i18n=name_i18n))
+                        count += 1
+                db.commit()
         return count
 
 
-class CountrySchema(Schema):
-    code = fields.String()
-    name_i18n = fields.String()
+class CountryRead(BaseModel):
+    model_config = ConfigDict(from_attributes=True)
+    code: str
+    name_i18n: str
+
+
+class CountrySchema:
+    """Compat shim."""
+    def dump(self, obj, many=False):
+        if many:
+            return [{'code': o.code, 'name_i18n': o.name_i18n} for o in obj]
+        if obj is None:
+            return {}
+        return {'code': obj.code, 'name_i18n': obj.name_i18n}
 
 
 # ---- Area
 
-
 class Area(Base):
     """Generic area within country (e.g., state, province)"""
     __tablename__ = 'places_area'
-    id = Column(Integer, primary_key=True)
-    name = Column(StringTypes.MEDIUM_STRING, nullable=False)
-    country_code = Column(String(2), ForeignKey(
-        'places_country.code'), nullable=False)
-
+    id: Mapped[int] = mapped_column(Integer, primary_key=True)
+    name: Mapped[str] = mapped_column(StringTypes.MEDIUM_STRING, nullable=False)
+    country_code: Mapped[str] = mapped_column(String(2), ForeignKey('places_country.code'), nullable=False)
     addresses = relationship('Address', backref='areas', passive_deletes=True)
     country = relationship('Country', backref='areas', lazy=True)
-    active = Column(Boolean, nullable=False, default=True)
+    active: Mapped[bool] = mapped_column(Boolean, nullable=False, default=True)
 
     def __repr__(self):
         return f"<Area(name={self.name},Country Code='{self.country_code}')>"
 
 
-class AreaSchema(Schema):
-    id = fields.Integer(dump_only=True, required=True, validate=Range(min=1))
-    name = fields.String(required=True, validate=Length(min=1))
-    country_code = fields.String(required=True, validate=Length(min=1))
-    active = fields.Boolean(missing=1)
-    country = fields.Nested('CountrySchema')
+class AreaCreate(BaseModel):
+    name: str
+    country_code: str
+    active: bool = True
+
+
+class AreaUpdate(BaseModel):
+    name: Optional[str] = None
+    country_code: Optional[str] = None
+    active: Optional[bool] = None
+
+
+class AreaRead(AreaCreate):
+    model_config = ConfigDict(from_attributes=True)
+    id: int
+    country: Optional[CountryRead] = None
+
+
+class AreaSchema:
+    """Compat shim."""
+    def dump(self, obj, many=False):
+        if many:
+            return [self._dump_one(o) for o in obj]
+        return self._dump_one(obj)
+
+    def _dump_one(self, obj):
+        if obj is None:
+            return {}
+        return {
+            'id': obj.id,
+            'name': obj.name,
+            'country_code': obj.country_code,
+            'active': obj.active,
+        }
+
+
+# ---- Address
+
+class Address(Base):
+    __tablename__ = 'places_address'
+    id: Mapped[int] = mapped_column(Integer, primary_key=True, nullable=False)
+    name: Mapped[str] = mapped_column(StringTypes.MEDIUM_STRING, nullable=False)
+    address: Mapped[str] = mapped_column(StringTypes.LONG_STRING, nullable=False)
+    city: Mapped[str] = mapped_column(StringTypes.MEDIUM_STRING, nullable=False)
+    area_id: Mapped[int] = mapped_column(Integer, ForeignKey('places_area.id', ondelete='CASCADE'), nullable=False)
+    country_code: Mapped[str] = mapped_column(StringTypes.SHORT_STRING, ForeignKey('places_country.code'), nullable=False)
+    latitude: Mapped[Optional[float]] = mapped_column(Float)
+    longitude: Mapped[Optional[float]] = mapped_column(Float)
+    country = relationship('Country', backref='addresses', lazy=True)
+    meetings = relationship('Meeting', back_populates='address', lazy=True)
+    locations = relationship('Location', back_populates='address', lazy=True)
+    active: Mapped[bool] = mapped_column(Boolean, nullable=False, default=True)
+
+    def __repr__(self):
+        return f"<Address(id={self.id},name={self.name})>"
+
+
+class AddressCreate(BaseModel):
+    name: str
+    address: str
+    city: str
+    area_id: int
+    country_code: str
+    latitude: Optional[float] = None
+    longitude: Optional[float] = None
+    active: bool = True
+
+
+class AddressUpdate(BaseModel):
+    name: Optional[str] = None
+    address: Optional[str] = None
+    city: Optional[str] = None
+    area_id: Optional[int] = None
+    country_code: Optional[str] = None
+    latitude: Optional[float] = None
+    longitude: Optional[float] = None
+    active: Optional[bool] = None
+
+
+class AddressRead(AddressCreate):
+    model_config = ConfigDict(from_attributes=True)
+    id: int
+    area: Optional[AreaRead] = None
+    country: Optional[CountryRead] = None
+
+
+class AddressSchema:
+    """Compat shim."""
+    def dump(self, obj, many=False):
+        if many:
+            return [self._dump_one(o) for o in obj]
+        return self._dump_one(obj)
+
+    def _dump_one(self, obj):
+        if obj is None:
+            return {}
+        return {
+            'id': obj.id,
+            'name': obj.name,
+            'address': obj.address,
+            'city': obj.city,
+            'area_id': obj.area_id,
+            'country_code': obj.country_code,
+            'latitude': obj.latitude,
+            'longitude': obj.longitude,
+            'active': obj.active,
+        }
+
+    def load(self, data, partial=False):
+        return data
 
 
 # ---- Location
 
 class Location(Base):
     __tablename__ = 'places_location'
-    id = Column(Integer, primary_key=True, nullable=False)
-    description = Column(StringTypes.MEDIUM_STRING)
-    address_id = Column(Integer, ForeignKey(
-        'places_address.id'), nullable=False)
+    id: Mapped[int] = mapped_column(Integer, primary_key=True, nullable=False)
+    description: Mapped[Optional[str]] = mapped_column(StringTypes.MEDIUM_STRING)
+    address_id: Mapped[int] = mapped_column(Integer, ForeignKey('places_address.id'), nullable=False)
     address = relationship('Address', back_populates='locations', lazy=True)
     events = relationship('Event', back_populates="location")
     assets = relationship('Asset', back_populates="location")
     images = relationship('ImageLocation', back_populates="location")
-    active = Column(Boolean, nullable=False, default=True)
+    active: Mapped[bool] = mapped_column(Boolean, nullable=False, default=True)
 
     def __repr__(self):
-        attributes = [f"id='{self.id}'"]
-        for attr in ['description', "address_id"]:
-            if hasattr(self, attr):
-                value = getattr(self, attr)
-                attributes.append(f"{attr}={value}")
-        as_string = ",".join(attributes)
-        return f"<Location({as_string})>"
+        return f"<Location(id={self.id})>"
 
 
-class LocationSchema(Schema):
-    id = fields.Integer(dump_only=True, required=False, validate=Range(min=1))
-    description = fields.String(required=False)
-    address_id = fields.Integer(required=True, validate=Range(min=1))
-    active = fields.Boolean(missing=1)
-    address = fields.Nested('AddressSchema')
+class LocationCreate(BaseModel):
+    description: Optional[str] = None
+    address_id: int
+    active: bool = True
 
 
-# ---- Address
+class LocationUpdate(BaseModel):
+    description: Optional[str] = None
+    address_id: Optional[int] = None
+    active: Optional[bool] = None
 
 
-class Address(Base):
-    __tablename__ = 'places_address'
-    id = Column(Integer, primary_key=True, nullable=False)
-    name = Column(StringTypes.MEDIUM_STRING, nullable=False)
-    address = Column(StringTypes.LONG_STRING, nullable=False)
-    city = Column(StringTypes.MEDIUM_STRING, nullable=False)
-    area_id = Column(Integer, ForeignKey(
-        'places_area.id', ondelete='CASCADE'), nullable=False)
-    country_code = Column(StringTypes.SHORT_STRING, ForeignKey(
-        'places_country.code'), nullable=False)
-    latitude = Column(Float)
-    longitude = Column(Float)
-    # area = relationship('Area', backref='addresses', lazy=True)
-    country = relationship('Country', backref='addresses', lazy=True)
-    meetings = relationship('Meeting', back_populates='address', lazy=True)
-    locations = relationship('Location', back_populates='address', lazy=True)
-    active = Column(Boolean, nullable=False, default=True)
-
-    def __repr__(self):
-        attributes = [f"id='{self.id}'"]
-        for attr in ['name', 'address', 'city', 'area_id', 'country_code', 'latitude', 'longitude']:
-            if hasattr(self, attr):
-                value = getattr(self, attr)
-                attributes.append(f"{attr}={value}")
-        as_string = ",".join(attributes)
-        return f"<Address({as_string})>"
+class LocationRead(LocationCreate):
+    model_config = ConfigDict(from_attributes=True)
+    id: int
+    address: Optional[AddressRead] = None
 
 
-class AddressSchema(Schema):
-    id = fields.Integer(dump_only=True, required=False, validate=Range(min=1))
-    name = fields.String(required=True, validate=Length(min=1))
-    address = fields.String(required=True, validate=Length(min=1))
-    city = fields.String(required=True, validate=Length(min=1))
-    area_id = fields.Integer(required=True, validate=Range(min=1))
-    country_code = fields.String(required=True)
-    latitude = fields.Float()
-    longitude = fields.Float()
-    active = fields.Boolean(missing=1)
-    area = fields.Nested('AreaSchema')
-    country = fields.Nested('CountrySchema')
+class LocationSchema:
+    """Compat shim."""
+    def dump(self, obj, many=False):
+        if many:
+            return [self._dump_one(o) for o in obj]
+        return self._dump_one(obj)
+
+    def _dump_one(self, obj):
+        if obj is None:
+            return {}
+        return {
+            'id': obj.id,
+            'description': obj.description,
+            'address_id': obj.address_id,
+            'active': obj.active,
+        }

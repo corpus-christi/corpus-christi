@@ -1,167 +1,135 @@
-import datetime
 from datetime import datetime
+from typing import Optional
 
-from flask import jsonify, request, current_app
-from flask_jwt_extended import create_access_token, jwt_required, get_jwt_identity, get_raw_jwt
-from src.auth.utils import jwt_not_required
+from fastapi import APIRouter, Depends, HTTPException, status
+from fastapi.security import OAuth2PasswordRequestForm
+from pydantic import BaseModel
+from sqlalchemy import select
+from sqlalchemy.orm import Session
 
-from . import auth
+from ..db import get_db
+from ..people.models import Person, Role
 from .blacklist_helpers import (
-    is_token_revoked, add_token_to_database, get_user_tokens,
+    add_token_to_database, get_user_tokens,
     revoke_token, unrevoke_token)
-from .. import jwt, db
-from ..auth.exceptions import TokenNotFound
-from ..people.models import Person, PersonSchema, Role, RoleSchema
+from .dependencies import (
+    create_access_token, decode_access_token,
+    get_current_user, oauth2_scheme)
+from .exceptions import TokenNotFound
 
-#removed Account, AccountSchema,  from line 14
-
-blacklist = set()
+router = APIRouter()
 
 
-@auth.route('/login', methods=['POST'])
-# @jwt_not_required
-def login():
-    # Construct Marshmallow-compatible error response
-    err_messages = {}
+class LoginRequest(BaseModel):
+    username: str
+    password: str
 
-    if not request.is_json:
-        err_messages['payload'] = ['No payload received']
-    else:
-        username = request.json.get('username', None)
-        if username is None:
-            err_messages['username'] = ['Missing username']
 
-        password = request.json.get('password', None)
-        if password is None:
-            err_messages['password'] = ['Missing password']
+class TokenResponse(BaseModel):
+    jwt: str
+    username: str
+    firstName: str
+    lastName: str
 
-    if len(err_messages):
-        # No point in going further without all credentials.
-        return jsonify(err_messages), 400
 
-    # Standard vague response when credentials are wrong.
-    badCred = {'login': ['Invalid credentials']}
+@router.post("/login", response_model=TokenResponse)
+def login(
+    payload: LoginRequest,
+    db: Session = Depends(get_db)
+):
+    person = db.execute(
+        select(Person).where(Person.username == payload.username)
+    ).scalar_one_or_none()
 
-    # Return to the caller all the account information needed.
-    person = db.session.query(Person).filter_by(username=username).first()
-    if person is None or not person.verify_password(password):
-        #print(password)
-        #print(person.hash_password)
-        return jsonify(badCred), 404
+    if person is None or not person.verify_password(payload.password):
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail={"login": ["Invalid credentials"]}
+        )
 
-#dont think this is neccesary anymore
-    # person = db.session.query(Person).filter_by(id=account.person_id).first()
-    # if person is None:
-    #     return jsonify(badCred), 404
-
-    print(datetime)
-    access_token = create_access_token(identity=username)
+    access_token = create_access_token(data={"sub": person.username})
     # Add token to database for revokability
-    add_token_to_database(access_token, current_app.config['JWT_IDENTITY_CLAIM'])
-    return jsonify(jwt=access_token, username=person.username,
-                   firstName=person.first_name, lastName=person.last_name)
+    add_token_to_database(db, access_token, identity_claim="sub")
+
+    return {
+        "jwt": access_token,
+        "username": person.username,
+        "firstName": person.first_name,
+        "lastName": person.last_name
+    }
 
 
-# Define our callback function to check if a token has been revoked or not
-@jwt.token_in_blacklist_loader
-def check_if_token_revoked(decoded_token):
-    return is_token_revoked(decoded_token)
+@router.get("/test/jwt")
+def get_test_jwt(db: Session = Depends(get_db)):
+    """Only available in testing mode - returns a test JWT token."""
+    from config import settings
+    if not settings.testing:
+        raise HTTPException(status_code=404, detail="Invalid in production mode")
+    access_token = create_access_token(data={"sub": "test-user"})
+    return {"jwt": access_token}
 
 
-@jwt.user_claims_loader
-def add_claims_to_access_token(identity):
-    roles = db.session.query(Role).join(Person, Role.person).filter_by(
-        username=identity).filter_by(active=True).all()
-    role_schema = RoleSchema()
-    user_roles = []
-    for role in roles:
-        user_roles.append(role_schema.dump(role)['nameI18n'])
-
-    return {'roles': user_roles}
-
-
-@auth.route('/test/jwt')
-@jwt_not_required
-def get_test_jwt():
-    if current_app.config['TESTING']:
-        access_token = create_access_token(identity='test-user')
-        print("ACCESS TOKEN", access_token)
-        return jsonify(jwt=access_token)
-    else:
-        return 'Invalid in production mode', 404
-
-
-@auth.route('/test/login')
-@jwt_required
-def login_test():
-    print("REQ", request.__dict__)
-    token = get_raw_jwt()
+@router.get("/test/login")
+def login_test(
+    token: str = Depends(oauth2_scheme),
+    db: Session = Depends(get_db)
+):
+    payload = decode_access_token(token)
+    username = payload.get("sub")
     response = {
-        'token': token,
+        'token': payload,
         'timestamps': {
-            'exp': datetime.fromtimestamp(token['exp']),
-            'nbf': datetime.fromtimestamp(token['nbf']),
-            'iat': datetime.fromtimestamp(token['iat'])
+            'exp': datetime.fromtimestamp(payload['exp']).isoformat(),
+            'nbf': datetime.fromtimestamp(payload['nbf']).isoformat(),
+            'iat': datetime.fromtimestamp(payload['iat']).isoformat(),
         }
     }
-    username = response['username'] = get_jwt_identity()
+    response['username'] = username
 
-    success = True
-    person = db.session.query(Person).filter_by(username=username).first()
-    #dont think this is needed
-    # if account is None:
-    #     success = False
-    #     response['account'] = f"Can't fetch <Account(username='{username}')>"
-    # else:
-    #     account_schema = AccountSchema()
-    #     response['account'] = account_schema.dump(account)
-
-    #     person = db.session.query(Person).filter_by(
-    #         id=account.person_id).first()
+    person = db.execute(
+        select(Person).where(Person.username == username)
+    ).scalar_one_or_none()
     if person is None:
-        success = False
+        response['status'] = 'failure'
         response['person'] = f"Can't fetch <Person(username='{username}')>"
     else:
+        from ..people.models import PersonSchema
         person_schema = PersonSchema()
         response['person'] = person_schema.dump(person)
+        response['status'] = 'success'
 
-    response['status'] = 'success' if success else 'failure'
-
-    return jsonify(response)
-
-
-# Provide a way for a user to look at their tokens
-@auth.route('/auth/token', methods=['GET'])
-@jwt_required
-def get_tokens():
-    user_identity = get_jwt_identity()
-    all_tokens = get_user_tokens(user_identity)
-    ret = [token.to_dict() for token in all_tokens]
-    return jsonify(ret), 200
+    return response
 
 
-# Provide a way for a user to revoke/unrevoke their tokens
-@auth.route('/auth/token/<token_id>', methods=['PUT'])
-@jwt_required
-def modify_token(token_id):
-    # Get and verify the desired revoked status from the body
-    json_data = request.get_json(silent=True)
-    if not json_data:
-        return jsonify(msg="Missing 'revoke' in body"), 400
-    revoke = json_data.get('revoke', None)
-    if revoke is None:
-        return jsonify(msg="Missing 'revoke' in body"), 400
-    if not isinstance(revoke, bool):
-        return jsonify(msg="'revoke' must be a boolean"), 400
+@router.get("/auth/token")
+def get_tokens(
+    current_user: Person = Depends(get_current_user),
+    db: Session = Depends(get_db)
+):
+    all_tokens = get_user_tokens(db, current_user.username)
+    return [token.to_dict() for token in all_tokens]
 
-    # Revoke or unrevoke the token based on what was passed to this function
-    user_identity = get_jwt_identity()
+
+class TokenModifyRequest(BaseModel):
+    revoke: bool
+
+
+@router.put("/auth/token/{token_id}")
+def modify_token(
+    token_id: int,
+    body: TokenModifyRequest,
+    current_user: Person = Depends(get_current_user),
+    db: Session = Depends(get_db)
+):
     try:
-        if revoke:
-            revoke_token(token_id, user_identity)
-            return jsonify(msg='Token revoked'), 200
+        if body.revoke:
+            revoke_token(db, token_id, current_user.username)
+            return {"msg": "Token revoked"}
         else:
-            unrevoke_token(token_id, user_identity)
-            return jsonify(msg='Token unrevoked'), 200
+            unrevoke_token(db, token_id, current_user.username)
+            return {"msg": "Token unrevoked"}
     except TokenNotFound:
-        return jsonify(msg='The specified token was not found'), 404
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="The specified token was not found"
+        )
