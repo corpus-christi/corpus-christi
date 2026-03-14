@@ -3,70 +3,64 @@
     <v-stepper v-model="currentStep" non-linear>
       <v-stepper-header>
         <v-stepper-step editable step="1">
-          <span v-bind:class="{ 'red--text': stepOneErrors }">
-            {{ $t("people.personal-information") }}
+          <span v-bind:class="{ 'text-red': stepOneErrors }">
+            {{ t("people.personal-information") }}
           </span>
         </v-stepper-step>
 
         <v-divider />
 
         <v-stepper-step editable step="2" v-if="showAccountInfo">
-          <span v-bind:class="{ 'red--text': stepTwoErrors }">
-            {{ $t("people.account-information") }}
+          <span v-bind:class="{ 'text-red': stepTwoErrors }">
+            {{ t("people.account-information") }}
           </span>
           <small
             v-if="!isAccountRequired"
-            v-bind:class="{ 'red--text': stepTwoErrors }"
-            >{{ $t("people.optional") }}</small
+            v-bind:class="{ 'text-red': stepTwoErrors }"
+            >{{ t("people.optional") }}</small
           >
         </v-stepper-step>
 
         <v-divider />
 
         <v-stepper-step editable v-bind:step="showAccountInfo ? 3 : 2">
-          <span v-bind:class="{ 'red--text': stepThreeErrors }">
-            {{ $t("people.additional-information") }}
+          <span v-bind:class="{ 'text-red': stepThreeErrors }">
+            {{ t("people.additional-information") }}
           </span>
-          <small v-bind:class="{ 'red--text': stepThreeErrors }">
-            {{ $t("people.optional") }}
+          <small v-bind:class="{ 'text-red': stepThreeErrors }">
+            {{ t("people.optional") }}
           </small>
         </v-stepper-step>
       </v-stepper-header>
-      <v-stepper-items>
-        <v-stepper-content step="1">
+      <v-stepper-window>
+        <v-stepper-window-item value="1">
           <v-text-field
             v-model="person.firstName"
-            v-bind:label="$t('person.name.first') + ' *'"
+            v-bind:label="t('person.name.first') + ' *'"
             name="firstName"
-            v-validate="'required: true, regex:/[A-Za-zs\'-]$, max:64'"
             :rules="[rules.required, rules.counter]"
             counter
             maxlength="64"
-            v-bind:error-messages="errors.collect('firstName')"
             :readonly="formDisabled"
             data-cy="first-name"
           />
 
           <v-text-field
             v-model="person.lastName"
-            v-bind:label="$t('person.name.last') + ' *'"
+            v-bind:label="t('person.name.last') + ' *'"
             name="lastName"
-            v-validate="'required: true, regex:/[A-Za-z\s\'-]$/'"
             :rules="[rules.required, rules.counter]"
             counter
             maxlength="64"
-            v-bind:error-messages="errors.collect('lastName')"
             :readonly="formDisabled"
             data-cy="last-name"
           />
 
           <v-text-field
             v-model="person.secondLastName"
-            v-bind:label="$t('person.name.second-last')"
+            v-bind:label="t('person.name.second-last')"
             name="secondLastName"
-            v-validate="'alpha_dash'"
-            v-bind:error-messages="errors.collect('secondLastName')"
-            :rules="[rules.required, rules.counter]"
+            :rules="[rules.counter]"
             counter
             maxlength="64"
             :readonly="formDisabled"
@@ -76,80 +70,66 @@
           <v-radio-group
             v-model="person.gender"
             :readonly="formDisabled"
-            row
+            inline
             data-cy="radio-gender"
           >
-            <v-radio v-bind:label="$t('person.male')" value="M" />
-            <v-radio v-bind:label="$t('person.female')" value="F" />
+            <v-radio v-bind:label="t('person.male')" value="M" />
+            <v-radio v-bind:label="t('person.female')" value="F" />
           </v-radio-group>
 
           <v-menu
             :close-on-content-click="false"
             v-model="showBirthdayPicker"
             :nudge-right="40"
-            lazy
             transition="scale-transition"
             offset-y
-            full-width
             min-width="290px"
             :disabled="formDisabled"
             data-cy="show-birthday-picker"
           >
-            <v-text-field
-              slot="activator"
-              v-model="person.birthday"
-              name="birthday"
-              v-bind:label="$t('person.date.birthday')"
-              prepend-icon="event"
-              readonly
-              data-cy="birthday"
-              data-vv-validate-on="input"
-              v-validate="'date_format:YYYY-MM-DD'"
-              v-bind:error-messages="errors.collect('birthday')"
-            />
+            <template #activator="{ props: menuProps }">
+              <v-text-field
+                v-bind="menuProps"
+                v-model="person.birthday"
+                name="birthday"
+                v-bind:label="t('person.date.birthday')"
+                prepend-icon="event"
+                readonly
+                data-cy="birthday"
+              />
+            </template>
             <v-date-picker
-              v-bind:locale="currentLanguageCode"
+              v-bind:locale="authStore.currentLanguageCode"
               :max="getTodayString"
               v-model="person.birthday"
-              @input="showBirthdayPicker = false"
+              @update:model-value="showBirthdayPicker = false"
               data-cy="birthday-picker"
             />
           </v-menu>
 
           <v-text-field
             v-model="person.email"
-            v-bind:label="$t('person.email')"
+            v-bind:label="t('person.email')"
             name="email"
-            v-validate="'email'"
-            data-vv-validate-on="change"
-            v-bind:error-messages="errors.collect('email')"
             prepend-icon="email"
             data-cy="email"
             :readonly="formDisabled"
           />
           <v-text-field
             v-model="person.phone"
-            v-bind:label="$t('person.phone')"
+            v-bind:label="t('person.phone')"
             prepend-icon="phone"
             data-cy="phone"
             :readonly="formDisabled"
           />
-        </v-stepper-content>
-        <v-stepper-content step="2" v-if="showAccountInfo">
+        </v-stepper-window-item>
+        <v-stepper-window-item value="2" v-if="showAccountInfo">
           <!-- User name (for creating new account) -->
           <v-text-field
             v-if="showAccountInfo"
             v-model="person.username"
-            v-bind:label="
-              $t('person.username') + (isAccountRequired ? ' *' : '')
-            "
+            v-bind:label="t('person.username') + (isAccountRequired ? ' *' : '')"
             name="username"
-            v-validate="{
-              required: isAccountRequired,
-              alpha_dash: true,
-              min: 6
-            }"
-            v-bind:error-messages="errors.collect('username')"
             prepend-icon="person"
             data-cy="username"
           />
@@ -160,12 +140,8 @@
             v-model="person.password"
             type="password"
             ref="pwdField"
-            v-bind:label="
-              $t('person.password') + (isAccountRequired ? ' *' : '')
-            "
+            v-bind:label="t('person.password') + (isAccountRequired ? ' *' : '')"
             name="password"
-            v-validate="`${hasUsername}|min:8`"
-            v-bind:error-messages="errors.collect('password')"
             prepend-icon="lock"
             data-cy="password"
           />
@@ -174,47 +150,45 @@
             v-if="showAccountInfo"
             v-model="repeatPassword"
             type="password"
-            v-bind:label="$t('person.repeat-password')"
+            v-bind:label="t('person.repeat-password')"
             name="repeat-password"
-            v-validate="`confirmed:pwdField|${hasUsername}`"
-            v-bind:error-messages="errors.collect('repeat-password')"
             prepend-icon="lock"
             data-cy="confirm-password"
           />
-        </v-stepper-content>
-        <v-stepper-content v-bind:step="showAccountInfo ? 3 : 2">
+        </v-stepper-window-item>
+        <v-stepper-window-item :value="showAccountInfo ? 3 : 2">
           <attribute-form
             :personId="person.id"
             :existingAttributes="person.attributesInfo"
             v-model="attributeFormData"
             ref="attributeForm"
           />
-          <v-layout row justify-center align-space-around>
-            <v-flex shrink>
+          <v-row justify="center" align="space-around">
+            <v-col shrink>
               <v-btn
-                small
+                size="small"
                 color="primary"
-                flat
+                variant="text"
                 :disabled="addressWasSaved"
                 @click="changeAddressView(true)"
               >
-                {{ $t("actions.add-address") }}
+                {{ t("actions.add-address") }}
               </v-btn>
               <v-btn
                 class="text-xs-center"
                 color="primary"
-                flat
-                small
+                variant="text"
+                size="small"
                 @click="showImageChooser = true"
                 :disabled="showImageChooser"
               >
-                {{ $t("images.actions.add-image") }}
+                {{ t("images.actions.add-image") }}
               </v-btn>
-            </v-flex>
-          </v-layout>
-          <v-flex v-show="addressSaved">
-            <span>{{ $t("places.messages.saved") }}</span>
-          </v-flex>
+            </v-col>
+          </v-row>
+          <v-col v-show="addressSaved">
+            <span>{{ t("places.messages.saved") }}</span>
+          </v-col>
           <v-expand-transition>
             <address-form
               v-if="showAddressForm"
@@ -233,575 +207,444 @@
               v-on:missing="missingImage"
             />
           </v-expand-transition>
-        </v-stepper-content>
-      </v-stepper-items>
+        </v-stepper-window-item>
+      </v-stepper-window>
     </v-stepper>
     <v-stepper v-model="currentStep">
-      <v-stepper-content step="1">
-        <v-layout row>
-          <v-btn
-            color="secondary"
-            flat
-            v-on:click="cancel"
-            :disabled="formDisabled"
-            data-cy="cancel"
-            >{{ $t("actions.cancel") }}</v-btn
-          >
-          <v-spacer />
-          <v-btn color="primary" raised v-on:click="next" data-cy="next">
-            {{ $t("people.next") }}
-          </v-btn>
-        </v-layout>
-      </v-stepper-content>
-      <v-stepper-content step="2" v-if="showAccountInfo">
-        <v-layout row>
-          <v-btn
-            color="secondary"
-            flat
-            v-on:click="cancel"
-            :disabled="formDisabled"
-            data-cy="cancel"
-            >{{ $t("actions.cancel") }}</v-btn
-          >
-          <v-spacer />
-          <v-btn
-            color="primary"
-            raised
-            v-on:click="previous"
-            data-cy="previous"
-            >{{ $t("people.previous") }}</v-btn
-          >
-          <v-btn color="primary" raised v-on:click="next" data-cy="next">
-            {{ $t("people.next") }}
-          </v-btn>
-        </v-layout>
-      </v-stepper-content>
+      <v-stepper-window>
+        <v-stepper-window-item value="1">
+          <v-row>
+            <v-btn
+              color="secondary"
+              variant="text"
+              v-on:click="cancel"
+              :disabled="formDisabled"
+              data-cy="cancel"
+              >{{ t("actions.cancel") }}</v-btn
+            >
+            <v-spacer />
+            <v-btn color="primary" variant="elevated" v-on:click="next" data-cy="next">
+              {{ t("people.next") }}
+            </v-btn>
+          </v-row>
+        </v-stepper-window-item>
+        <v-stepper-window-item value="2" v-if="showAccountInfo">
+          <v-row>
+            <v-btn
+              color="secondary"
+              variant="text"
+              v-on:click="cancel"
+              :disabled="formDisabled"
+              data-cy="cancel"
+              >{{ t("actions.cancel") }}</v-btn
+            >
+            <v-spacer />
+            <v-btn
+              color="primary"
+              variant="elevated"
+              v-on:click="previous"
+              data-cy="previous"
+              >{{ t("people.previous") }}</v-btn
+            >
+            <v-btn color="primary" variant="elevated" v-on:click="next" data-cy="next">
+              {{ t("people.next") }}
+            </v-btn>
+          </v-row>
+        </v-stepper-window-item>
 
-      <v-stepper-content v-bind:step="showAccountInfo ? 3 : 2">
-        <v-layout row>
-          <v-btn
-            color="secondary"
-            flat
-            v-on:click="cancel"
-            :disabled="formDisabled"
-            data-cy="cancel"
-            >{{ $t("actions.cancel") }}</v-btn
-          >
-          <v-spacer />
-          <v-btn
-            color="primary"
-            outline
-            v-on:click="addMore"
-            v-if="addAnotherEnabled"
-            :loading="addMoreIsLoading"
-            :disabled="formDisabled"
-            data-cy="add-another"
-            >{{ $t("actions.add-another") }}</v-btn
-          >
-          <v-btn
-            color="primary"
-            raised
-            v-on:click="previous"
-            :disabled="showAddressForm"
-            data-cy="previous"
-            >{{ $t("people.previous") }}</v-btn
-          >
-          <v-btn
-            color="primary"
-            raised
-            v-on:click="save"
-            :loading="saveIsLoading"
-            :disabled="formDisabled"
-            data-cy="save"
-            >{{ $t(saveButtonText) }}</v-btn
-          >
-        </v-layout>
-      </v-stepper-content>
+        <v-stepper-window-item :value="showAccountInfo ? 3 : 2">
+          <v-row>
+            <v-btn
+              color="secondary"
+              variant="text"
+              v-on:click="cancel"
+              :disabled="formDisabled"
+              data-cy="cancel"
+              >{{ t("actions.cancel") }}</v-btn
+            >
+            <v-spacer />
+            <v-btn
+              color="primary"
+              variant="outlined"
+              v-on:click="addMore"
+              v-if="addAnotherEnabled"
+              :loading="addMoreIsLoading"
+              :disabled="formDisabled"
+              data-cy="add-another"
+              >{{ t("actions.add-another") }}</v-btn
+            >
+            <v-btn
+              color="primary"
+              variant="elevated"
+              v-on:click="previous"
+              :disabled="showAddressForm"
+              data-cy="previous"
+              >{{ t("people.previous") }}</v-btn
+            >
+            <v-btn
+              color="primary"
+              variant="elevated"
+              v-on:click="save"
+              :loading="saveIsLoading"
+              :disabled="formDisabled"
+              data-cy="save"
+              >{{ t(saveButtonText) }}</v-btn
+            >
+          </v-row>
+        </v-stepper-window-item>
+      </v-stepper-window>
     </v-stepper>
   </form>
 </template>
 
-<script>
-import { mapGetters } from "vuex";
-import AttributeForm from "./input_fields/AttributeForm.vue";
+<script setup lang="ts">
+import { ref, computed, watch } from "vue";
+import { useI18n } from "vue-i18n";
+import { inject } from "vue";
+import type { AxiosInstance } from "axios";
+import { useAuthStore } from "@/stores/auth";
 import { isEmpty } from "lodash";
+import AttributeForm from "./input_fields/AttributeForm.vue";
 import AddressForm from "../AddressForm.vue";
-import ImageChooser from "../images/ImageChooser";
+import ImageChooser from "../images/ImageChooser.vue";
 
-export default {
-  name: "PersonForm",
-  components: {
-    "attribute-form": AttributeForm,
-    "address-form": AddressForm,
-    "image-chooser": ImageChooser
-  },
-  props: {
-    initialData: {
-      type: Object,
-      required: true
-    },
-    addAnotherEnabled: {
-      type: Boolean,
-      required: false,
-      default: false
-    },
-    saveButtonText: {
-      type: String,
-      required: false,
-      default: "actions.save"
-    },
-    showAccountInfo: {
-      type: Boolean,
-      required: false,
-      default: true
-    },
-    isAccountRequired: {
-      type: Boolean,
-      required: false,
-      default: true
-    }
-  },
-  data: function() {
-    return {
-      showBirthdayPicker: false,
-      showAddressForm: false,
-      showImageChooser: false,
-      imageSaved: false,
-      saveIsLoading: false,
-      addMoreIsLoading: false,
-      addressWasSaved: false,
+const { t } = useI18n();
+const http = inject<AxiosInstance>("$http")!;
+const authStore = useAuthStore();
 
-      rules: {
-        required: value => !!value || "Required.",
-        counter: value => value.length <= 64 || "Max 64 characters"
-      },
+const props = defineProps<{
+  initialData: any;
+  addAnotherEnabled?: boolean;
+  saveButtonText?: string;
+  showAccountInfo?: boolean;
+  isAccountRequired?: boolean;
+}>();
 
-      person: {
-        id: 0,
-        active: true,
-        firstName: "",
-        lastName: "",
-        secondLastName: "",
-        gender: "",
-        birthday: "",
-        email: "",
-        username: "",
-        password: "",
-        phone: "",
-        addressId: 0,
-        attributesInfo: []
-      },
+const emit = defineEmits(["cancel", "saved", "added-another"]);
 
-      repeatPassword: "",
+const attributeForm = ref<any>(null);
+const showBirthdayPicker = ref(false);
+const showAddressForm = ref(false);
+const showImageChooser = ref(false);
+const imageSaved = ref(false);
+const saveIsLoading = ref(false);
+const addMoreIsLoading = ref(false);
+const addressWasSaved = ref(false);
 
-      attributeFormData: {},
+const rules = {
+  required: (value: string) => !!value || "Required.",
+  counter: (value: string) => (value || "").length <= 64 || "Max 64 characters"
+};
 
-      currentStep: 1,
-      stepOneErrors: false,
-      stepTwoErrors: false,
-      stepThreeErrors: false
-    };
-  },
-  computed: {
-    // List the keys in a Person record.
-    personKeys() {
-      return Object.keys(this.person);
-    },
+const person = ref<any>({
+  id: 0,
+  active: true,
+  firstName: "",
+  lastName: "",
+  secondLastName: "",
+  gender: "",
+  birthday: "",
+  email: "",
+  username: "",
+  password: "",
+  phone: "",
+  addressId: 0,
+  attributesInfo: []
+});
 
-    // accountKeys() {
-    //   return Object.keys(this.account);
-    // },
+const repeatPassword = ref("");
+const attributeFormData = ref<any>({});
+const currentStep = ref(1);
+const stepOneErrors = ref(false);
+const stepTwoErrors = ref(false);
+const stepThreeErrors = ref(false);
 
-    ...mapGetters(["currentLanguageCode"]),
+const personKeys = computed(() => Object.keys(person.value));
 
-    formDisabled() {
-      return (
-        this.saveIsLoading ||
-        this.addMoreIsLoading ||
-        this.showAddressForm ||
-        (this.showImageChooser && !this.imageSaved)
-      );
-    },
-    hasUsername() {
-      return this.person.username.length ? "required" : "";
-    },
-    getTodayString() {
-      let today = new Date();
-      return `${today.getFullYear()}-${(today.getMonth() + 1).toLocaleString(
-        "en-US",
-        { minimumIntegerDigits: 2, useGrouping: false }
-      )}-${today.getDate().toLocaleString("en-US", {
-        minimumIntegerDigits: 2,
-        useGrouping: false
-      })}`;
-    },
+const formDisabled = computed(() =>
+  saveIsLoading.value ||
+  addMoreIsLoading.value ||
+  showAddressForm.value ||
+  (showImageChooser.value && !imageSaved.value)
+);
 
-    addressSaved() {
-      return this.addressWasSaved;
-    },
+const hasUsername = computed(() =>
+  person.value.username && person.value.username.length ? "required" : ""
+);
 
-    getImageId() {
-      if (this.person.images) {
-        return this.person.images.length > 0
-          ? this.person.images[0].image_id
-          : -1;
+const getTodayString = computed(() => {
+  let today = new Date();
+  return `${today.getFullYear()}-${(today.getMonth() + 1).toLocaleString("en-US", {
+    minimumIntegerDigits: 2,
+    useGrouping: false
+  })}-${today.getDate().toLocaleString("en-US", {
+    minimumIntegerDigits: 2,
+    useGrouping: false
+  })}`;
+});
+
+const addressSaved = computed(() => addressWasSaved.value);
+
+const getImageId = computed(() => {
+  if (person.value.images) {
+    return person.value.images.length > 0 ? person.value.images[0].image_id : -1;
+  } else {
+    return -1;
+  }
+});
+
+watch(
+  () => props.initialData,
+  (personProp) => {
+    if (isEmpty(personProp)) {
+      clear();
+    } else {
+      person.value = personProp;
+      if (person.value.images && person.value.images.length > 0) {
+        showImageChooser.value = true;
+        imageSaved.value = true;
       } else {
-        return -1;
+        showImageChooser.value = false;
+        imageSaved.value = false;
       }
-    }
-  },
-
-  watch: {
-    // Make sure data stays in sync with any changes to `initialData` from parent.
-    initialData(personProp) {
-      if (isEmpty(personProp)) {
-        this.clear();
-      } else {
-        this.person = personProp;
-        if (this.person.images && this.person.images.length > 0) {
-          this.showImageChooser = true;
-          this.imageSaved = true;
-        } else {
-          this.showImageChooser = false;
-          this.imageSaved = false;
-        }
-      }
-    }
-  },
-
-  methods: {
-    // Abandon ship.
-    cancel() {
-      this.clear();
-      this.stepOneErrors = false;
-      this.stepTwoErrors = false;
-      this.stepThreeErrors = false;
-      this.resetForm();
-      this.removeLocationFromDatabase();
-      this.$emit("cancel");
-    },
-
-    // Clear the form and the validators.
-    clear() {
-      for (let key of this.personKeys) {
-        this.person[key] = "";
-      }
-      // for (let key of this.accountKeys) {
-      //   this.account[key] = "";
-      // }
-      this.$refs.attributeForm.clear();
-      this.showAddressForm = false;
-      this.showImageChooser = false;
-      this.addressWasSaved = false;
-      this.$validator.reset();
-    },
-
-    next() {
-      this.setErrors();
-      this.currentStep++;
-    },
-
-    previous() {
-      this.setErrors();
-      this.currentStep--;
-    },
-
-    redirectToErrors() {
-      if (this.stepOneErrors) {
-        this.currentStep = 1;
-      } else if (this.stepTwoErrors) {
-        this.currentStep = 2;
-      } else if (this.stepThreeErrors) {
-        this.currentStep = 3;
-      }
-    },
-
-    resetForm() {
-      this.saveIsLoading = false;
-      this.addMoreIsLoading = false;
-      this.currentStep = 1;
-    },
-
-    addMore() {
-      this.addMoreIsLoading = true;
-      this.savePerson("added-another");
-    },
-
-    save() {
-      this.saveIsLoading = true;
-      this.savePerson("saved");
-    },
-
-    saveAddress(resp) {
-      this.person.addressId = resp.id;
-      this.addressWasSaved = true;
-      this.showAddressForm = false;
-    },
-
-    setErrors() {
-      this.stepOneErrors =
-        this.errors.items.findIndex(element => {
-          return (
-            element.field === "firstName" ||
-            element.field === "lastName" ||
-            element.field === "secondLastName" ||
-            element.field === "email" ||
-            element.field === "birthday"
-          );
-        }) !== -1;
-      this.stepTwoErrors =
-        this.errors.items.findIndex(element => {
-          return (
-            element.field === "username" ||
-            element.field === "password" ||
-            element.field === "confirm-password"
-          );
-        }) !== -1;
-      this.stepThreeErrors =
-        this.errors.items.findIndex(element => {
-          return (
-            element.field !== "username" &&
-            element.field !== "password" &&
-            element.field !== "confirm-password" &&
-            element.field !== "firstName" &&
-            element.field !== "lastName" &&
-            element.field !== "secondLastName" &&
-            element.field !== "email" &&
-            element.field !== "birthday"
-          );
-        }) !== -1;
-    },
-
-    changeAddressView(show) {
-      this.showAddressForm = show;
-    },
-
-    savePerson(emitMessage) {
-      this.$validator.validateAll().then(() => {
-        if (!this.errors.any()) {
-          let attributes = [];
-          let personId = this.person.id;
-          for (let key in this.attributeFormData) {
-            attributes.push(this.attributeFormData[key]);
-          }
-          delete this.person["attributesInfo"];
-          delete this.person["accountInfo"];
-          delete this.person["id"];
-          let data = {
-            person: this.person,
-            attributesInfo: attributes
-          };
-          if (personId) {
-            this.updatePerson(data, personId, emitMessage);
-          } else {
-            this.addPerson(data, emitMessage);
-          }
-        } else {
-          this.setErrors();
-          this.resetForm();
-          this.redirectToErrors();
-        }
-      });
-    },
-
-    async updatePerson(data, personId, emitMessage) {
-      let newImageId = null;
-      if (this.person.newImageId) {
-        newImageId = this.person.newImageId;
-      }
-      delete this.person.newImageId;
-      delete this.person.images;
-
-      let oldImageId = await this.getOldImageId(personId);
-
-      console.log(newImageId, oldImageId);
-      if (newImageId) {
-        // a new image was added to the form
-        if (oldImageId) {
-          // an image was edited (PUT)
-          this.$http
-            .put(
-              `/api/v1/people/${personId}/images/${newImageId}?old=${oldImageId}`
-            )
-            .then(resp => {
-              console.log("PUT IMAGE ON PERSON", resp);
-              this.$http
-                .put(`/api/v1/people/persons/${personId}`, data)
-                .then(response => {
-                  this.$emit(emitMessage, response.data);
-                  this.resetForm();
-                  this.saveIsLoading = false;
-                })
-                .catch(err => {
-                  this.saveIsLoading = false;
-                  console.error("FALURE", err.response);
-                });
-            })
-            .catch(err => {
-              console.error("ERROR PUTTING IMAGE", err.response);
-            });
-        } else {
-          // an image was added (POST)
-          this.$http
-            .post(`/api/v1/people/${personId}/images/${newImageId}`)
-            .then(resp => {
-              console.log("POST IMAGE ON PERSON", resp);
-              this.$http
-                .put(`/api/v1/people/persons/${personId}`, data)
-                .then(response => {
-                  this.$emit(emitMessage, response.data);
-                  this.resetForm();
-                  this.saveIsLoading = false;
-                })
-                .catch(err => {
-                  this.saveIsLoading = false;
-                  console.error("FALURE", err.response);
-                });
-            })
-            .catch(err => {
-              console.error("ERROR POSTING IMAGE", err.response);
-            });
-        }
-      } else {
-        if (oldImageId) {
-          // an image was removed (DELETE)
-          this.$http
-            .delete(`/api/v1/people/${personId}/images/${oldImageId}`)
-            .then(resp => {
-              console.log("DELETED IMAGE ON PERSON", resp);
-              this.$http
-                .put(`/api/v1/people/persons/${personId}`, data)
-                .then(response => {
-                  this.$emit(emitMessage, response.data);
-                  this.resetForm();
-                  this.saveIsLoading = false;
-                })
-                .catch(err => {
-                  this.saveIsLoading = false;
-                  console.error("FALURE", err.response);
-                });
-            })
-            .catch(err => {
-              console.error("ERROR DELETING IMAGE", err.response);
-            });
-        } else {
-          // an image didn't happen (NOTHING)
-          this.$http
-            .put(`/api/v1/people/persons/${personId}`, data)
-            .then(response => {
-              this.$emit(emitMessage, response.data);
-              this.resetForm();
-              this.saveIsLoading = false;
-            })
-            .catch(err => {
-              this.saveIsLoading = false;
-              console.error("FALURE", err.response);
-            });
-        }
-      }
-    },
-
-    addPerson(data, emitMessage) {
-      let imageId = -1;
-      if (this.person.newImageId) {
-        imageId = this.person.newImageId;
-      }
-      delete this.person.newImageId;
-      this.$http
-        .post("/api/v1/people/persons", data)
-        .then(async response => {
-          if (imageId > -1) {
-            await this.addImage(response.data.id, imageId);
-          }
-          // if (this.account.username && this.account.password) {
-          //   this.addAccount(response.data.id).then(() => {
-          //     this.$emit(emitMessage, response.data);
-          //     this.resetForm();
-          //   });          }
-          else {
-            this.$emit(emitMessage, response.data);
-            this.resetForm();
-          }
-        })
-        .catch(err => {
-          this.resetForm();
-          console.error("FAILURE", err.response);
-        });
-    },
-
-    // addAccount(personId) {
-    //   return this.$http
-    //     .post("/api/v1/people/accounts", {
-    //       username: this.account.username,
-    //       password: this.account.password,
-    //       active: true,
-    //       personId: personId
-    //     })
-    //     .then(resp => {
-    //       console.log("ADDED", resp);
-    //     })
-    //     .catch(err => {
-    //       this.resetForm();
-    //       console.error("FAILURE", err.response);
-    //     });
-    //},
-
-    addImage(personId, imageId) {
-      return this.$http
-        .post(`/api/v1/people/${personId}/images/${imageId}`)
-        .then(resp => {
-          console.log("IMAGE ADDED TO PERSON", resp);
-        })
-        .catch(err => {
-          console.error("FAILURE TO ADD IMAGE", err.response);
-        });
-    },
-
-    getOldImageId(id) {
-      if (!id) {
-        return null;
-      }
-      return this.$http
-        .get(`/api/v1/people/persons/${id}?include_images=1`)
-        .then(resp => {
-          console.log(resp);
-          if (resp.data.images && resp.data.images.length > 0) {
-            return resp.data.images[0].image_id;
-          } else {
-            return null;
-          }
-        })
-        .catch(err => {
-          console.error("ERROR FETCHING IMAGE", err);
-          return null;
-        });
-    },
-
-    removeLocationFromDatabase() {
-      if (this.person.addressId !== 0 || this.person.addressId !== "") {
-        this.$http.post;
-      }
-    },
-
-    chooseImage(id) {
-      this.person.newImageId = id;
-      this.imageSaved = true;
-    },
-
-    deleteImage() {
-      this.showImageChooser = false;
-      delete this.person.newImageId;
-      this.person.images = [];
-      this.imageSaved = false;
-    },
-
-    cancelImageChooser() {
-      this.showImageChooser = false;
-    },
-
-    missingImage() {
-      this.imageSaved = false;
     }
   }
-};
+);
+
+function cancel() {
+  clear();
+  stepOneErrors.value = false;
+  stepTwoErrors.value = false;
+  stepThreeErrors.value = false;
+  resetForm();
+  emit("cancel");
+}
+
+function clear() {
+  for (let key of personKeys.value) {
+    person.value[key] = "";
+  }
+  if (attributeForm.value) {
+    attributeForm.value.clear();
+  }
+  showAddressForm.value = false;
+  showImageChooser.value = false;
+  addressWasSaved.value = false;
+}
+
+function next() {
+  currentStep.value++;
+}
+
+function previous() {
+  currentStep.value--;
+}
+
+function resetForm() {
+  saveIsLoading.value = false;
+  addMoreIsLoading.value = false;
+  currentStep.value = 1;
+}
+
+function addMore() {
+  addMoreIsLoading.value = true;
+  savePerson("added-another");
+}
+
+function save() {
+  saveIsLoading.value = true;
+  savePerson("saved");
+}
+
+function saveAddress(resp: any) {
+  person.value.addressId = resp.id;
+  addressWasSaved.value = true;
+  showAddressForm.value = false;
+}
+
+function changeAddressView(show: boolean) {
+  showAddressForm.value = show;
+}
+
+function savePerson(emitMessage: string) {
+  let attributes: any[] = [];
+  let personId = person.value.id;
+  for (let key in attributeFormData.value) {
+    attributes.push(attributeFormData.value[key]);
+  }
+  delete person.value["attributesInfo"];
+  delete person.value["accountInfo"];
+  delete person.value["id"];
+  let data = {
+    person: person.value,
+    attributesInfo: attributes
+  };
+  if (personId) {
+    updatePerson(data, personId, emitMessage);
+  } else {
+    addPerson(data, emitMessage);
+  }
+}
+
+async function updatePerson(data: any, personId: number, emitMessage: string) {
+  let newImageId: any = null;
+  if (person.value.newImageId) {
+    newImageId = person.value.newImageId;
+  }
+  delete person.value.newImageId;
+  delete person.value.images;
+
+  let oldImageId = await getOldImageId(personId);
+
+  console.log(newImageId, oldImageId);
+  if (newImageId) {
+    if (oldImageId) {
+      http
+        .put(`/api/v1/people/${personId}/images/${newImageId}?old=${oldImageId}`)
+        .then(resp => {
+          console.log("PUT IMAGE ON PERSON", resp);
+          http
+            .put(`/api/v1/people/persons/${personId}`, data)
+            .then(response => {
+              emit(emitMessage, response.data);
+              resetForm();
+              saveIsLoading.value = false;
+            })
+            .catch(err => {
+              saveIsLoading.value = false;
+              console.error("FALURE", err.response);
+            });
+        })
+        .catch(err => {
+          console.error("ERROR PUTTING IMAGE", err.response);
+        });
+    } else {
+      http
+        .post(`/api/v1/people/${personId}/images/${newImageId}`)
+        .then(resp => {
+          console.log("POST IMAGE ON PERSON", resp);
+          http
+            .put(`/api/v1/people/persons/${personId}`, data)
+            .then(response => {
+              emit(emitMessage, response.data);
+              resetForm();
+              saveIsLoading.value = false;
+            })
+            .catch(err => {
+              saveIsLoading.value = false;
+              console.error("FALURE", err.response);
+            });
+        })
+        .catch(err => {
+          console.error("ERROR POSTING IMAGE", err.response);
+        });
+    }
+  } else {
+    if (oldImageId) {
+      http
+        .delete(`/api/v1/people/${personId}/images/${oldImageId}`)
+        .then(resp => {
+          console.log("DELETED IMAGE ON PERSON", resp);
+          http
+            .put(`/api/v1/people/persons/${personId}`, data)
+            .then(response => {
+              emit(emitMessage, response.data);
+              resetForm();
+              saveIsLoading.value = false;
+            })
+            .catch(err => {
+              saveIsLoading.value = false;
+              console.error("FALURE", err.response);
+            });
+        })
+        .catch(err => {
+          console.error("ERROR DELETING IMAGE", err.response);
+        });
+    } else {
+      http
+        .put(`/api/v1/people/persons/${personId}`, data)
+        .then(response => {
+          emit(emitMessage, response.data);
+          resetForm();
+          saveIsLoading.value = false;
+        })
+        .catch(err => {
+          saveIsLoading.value = false;
+          console.error("FALURE", err.response);
+        });
+    }
+  }
+}
+
+function addPerson(data: any, emitMessage: string) {
+  let imageId = -1;
+  if (person.value.newImageId) {
+    imageId = person.value.newImageId;
+  }
+  delete person.value.newImageId;
+  http
+    .post("/api/v1/people/persons", data)
+    .then(async response => {
+      if (imageId > -1) {
+        await addImage(response.data.id, imageId);
+      }
+      emit(emitMessage, response.data);
+      resetForm();
+    })
+    .catch(err => {
+      resetForm();
+      console.error("FAILURE", err.response);
+    });
+}
+
+function addImage(personId: number, imageId: number) {
+  return http
+    .post(`/api/v1/people/${personId}/images/${imageId}`)
+    .then(resp => {
+      console.log("IMAGE ADDED TO PERSON", resp);
+    })
+    .catch(err => {
+      console.error("FAILURE TO ADD IMAGE", err.response);
+    });
+}
+
+function getOldImageId(id: number) {
+  if (!id) {
+    return null;
+  }
+  return http
+    .get(`/api/v1/people/persons/${id}?include_images=1`)
+    .then(resp => {
+      console.log(resp);
+      if (resp.data.images && resp.data.images.length > 0) {
+        return resp.data.images[0].image_id;
+      } else {
+        return null;
+      }
+    })
+    .catch(err => {
+      console.error("ERROR FETCHING IMAGE", err);
+      return null;
+    });
+}
+
+function chooseImage(id: number) {
+  person.value.newImageId = id;
+  imageSaved.value = true;
+}
+
+function deleteImage() {
+  showImageChooser.value = false;
+  delete person.value.newImageId;
+  person.value.images = [];
+  imageSaved.value = false;
+}
+
+function cancelImageChooser() {
+  showImageChooser.value = false;
+}
+
+function missingImage() {
+  imageSaved.value = false;
+}
 </script>

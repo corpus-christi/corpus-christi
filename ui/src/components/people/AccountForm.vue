@@ -3,7 +3,7 @@
     <!-- Title -->
     <v-card-title>
       <h3 class="headline">
-        {{ $t("person.settings", { person: this.fullName }) }}
+        {{ t("person.settings", { person: fullName }) }}
       </h3>
     </v-card-title>
     <div v-if="!rolesEnabled">
@@ -13,10 +13,8 @@
         <v-text-field
           v-if="addingAccount"
           v-model="username"
-          v-bind:label="$t('person.username')"
+          v-bind:label="t('person.username')"
           name="username"
-          v-validate="'required|alpha_dash|min:6'"
-          v-bind:error-messages="errors.collect('username')"
           prepend-icon="person"
           data-cy="new-account-username"
         ></v-text-field>
@@ -26,11 +24,8 @@
           v-model="password"
           type="password"
           ref="pwdField"
-          v-bind:label="$t('person.password')"
+          v-bind:label="t('person.password')"
           name="password"
-          v-validate="'required|min:8'"
-          data-vv-validate-on="change"
-          v-bind:error-messages="errors.collect('password')"
           prepend-icon="lock"
           data-cy="new-update-password"
         ></v-text-field>
@@ -38,30 +33,28 @@
         <v-text-field
           v-model="repeat_password"
           type="password"
-          v-bind:label="$t('person.repeat-password')"
+          v-bind:label="t('person.repeat-password')"
           name="repeat-password"
-          v-validate="'confirmed:pwdField|required'"
-          v-bind:error-messages="errors.collect('repeat-password')"
           prepend-icon="lock"
           data-cy="confirm-password"
         ></v-text-field>
       </v-card-text>
     </div>
     <div v-if="rolesEnabled">
-      <v-card-title>{{ $t("person.actions.assign-roles") }}</v-card-title>
+      <v-card-title>{{ t("person.actions.assign-roles") }}</v-card-title>
       <v-card-text>
         <v-select
           v-model="currentRoles"
           :items="translatedRoles"
-          v-bind:label="$t('person.account-info.roles')"
+          v-bind:label="t('person.account-info.roles')"
           chips
-          deletable-chips
+          closable-chips
           clearable
           multiple
           hide-selected
           return-object
           item-value="value"
-          item-text="text"
+          item-title="title"
           :menu-props="{ closeOnContentClick: true }"
           data-cy="account-form-roles"
         >
@@ -70,35 +63,35 @@
     </div>
     <v-card-actions>
       <v-spacer v-if="!person.accountInfo"></v-spacer>
-      <v-btn color="secondary" flat v-on:click="close" data-cy="cancel-button">
-        {{ $t("actions.cancel") }}
+      <v-btn color="secondary" variant="text" v-on:click="close" data-cy="cancel-button">
+        {{ t("actions.cancel") }}
       </v-btn>
       <v-spacer v-if="person.accountInfo"></v-spacer>
       <v-btn
         v-if="person.active && person.accountInfo && account.active"
         color="primary"
-        outline
+        variant="outlined"
         v-on:click="deactivateAccount"
         data-cy="deactivate-account"
       >
-        {{ $t("actions.deactivate-account") }}
+        {{ t("actions.deactivate-account") }}
       </v-btn>
       <v-btn
         v-if="person.active && person.accountInfo && !account.active"
         color="primary"
-        outline
+        variant="outlined"
         v-on:click="reactivateAccount"
         data-cy="reactivate-account"
       >
-        {{ $t("actions.activate-account") }}
+        {{ t("actions.activate-account") }}
       </v-btn>
       <v-btn
         color="primary"
-        raised
+        variant="elevated"
         v-on:click="confirm"
         data-cy="confirm-button"
       >
-        {{ $t("actions.confirm") }}
+        {{ t("actions.confirm") }}
       </v-btn>
     </v-card-actions>
 
@@ -106,119 +99,114 @@
   </v-card>
 </template>
 
-<script>
+<script setup lang="ts">
+import { ref, computed, watch } from "vue";
+import { useI18n } from "vue-i18n";
 import { isEmpty } from "lodash";
 
-export default {
-  name: "AccountForm",
-  props: {
-    person: { type: Object, required: true },
-    account: { type: Object, required: false },
-    rolesList: Array,
-    rolesEnabled: {
-      type: Boolean,
-      required: false
-    }
-  },
-  data() {
-    return {
-      username: "",
-      password: "",
-      repeat_password: "",
-      currentRoles: [],
-      snackbar: {
-        show: false,
-        text: ""
-      }
-    };
-  },
-  watch: {
-    person(new_person) {
-      if (isEmpty(new_person)) {
-        this.clear();
-      } else {
-        this.clearForm(new_person);
-      }
-    }
-  },
-  computed: {
-    // Are we adding an account (vs. updating an existing one)?
-    addingAccount() {
-      return isEmpty(this.account);
-    },
+const { t } = useI18n();
 
-    fullName() {
-      return `${this.person.firstName} ${this.person.lastName}`;
-    },
+const props = defineProps<{
+  person: any;
+  account?: any;
+  rolesList?: any[];
+  rolesEnabled?: boolean;
+}>();
 
-    title() {
-      return this.addingAccount
-        ? this.$t("person.actions.add-account")
-        : this.$t("person.actions.reset-password");
-    },
-    translatedRoles() {
-      return this.rolesList.map(element => {
-        return {
-          text: this.$t(element.text),
-          value: element.value
-        };
-      });
-    }
-  },
-  methods: {
-    confirm() {
-      this.$validator.validateAll().then(() => {
-        if (!this.errors.any()) {
-          if (this.addingAccount) {
-            this.$emit("addAccount", {
-              username: this.username,
-              password: this.password,
-              active: true,
-              personId: this.person.id
-            });
-          } else {
-            const roles = [];
-            for (const role of this.currentRoles) {
-              if (role.value) {
-                roles.push(role.value);
-              } else {
-                roles.push(role);
-              }
-            }
-            if (this.rolesEnabled) {
-              this.$emit("updateAccount", this.person.id, { roles: roles });
-            } else {
-              this.$emit("updateAccount", this.person.id, {
-                password: this.password
-              });
-            }
-          }
-          this.close();
-        }
-      });
-    },
-    clearForm(new_person) {
-      this.username = this.password = this.repeat_password = "";
-      if (this.person.active) {
-        this.currentRoles = [];
-        for (const role of new_person.roles) {
-          this.currentRoles.push(role.id);
-        }
-      }
-    },
-    deactivateAccount() {
-      this.$emit("deactivateAccount", this.account.id);
-      this.close();
-    },
-    reactivateAccount() {
-      this.$emit("reactivateAccount", this.account.id);
-      this.close();
-    },
-    close() {
-      this.$validator.reset();
-      this.clearForm(this.person);
-      this.$emit("close");
+const emit = defineEmits(["addAccount", "updateAccount", "deactivateAccount", "reactivateAccount", "close"]);
+
+const username = ref("");
+const password = ref("");
+const repeat_password = ref("");
+const currentRoles = ref<any[]>([]);
+const snackbar = ref({ show: false, text: "" });
+
+const addingAccount = computed(() => isEmpty(props.account));
+
+const fullName = computed(() => `${props.person.firstName} ${props.person.lastName}`);
+
+const title = computed(() =>
+  addingAccount.value
+    ? t("person.actions.add-account")
+    : t("person.actions.reset-password")
+);
+
+const translatedRoles = computed(() => {
+  if (!props.rolesList) return [];
+  return props.rolesList.map(element => ({
+    title: t(element.text),
+    value: element.value
+  }));
+});
+
+watch(
+  () => props.person,
+  (new_person) => {
+    if (isEmpty(new_person)) {
+      clearFields();
+    } else {
+      clearForm(new_person);
     }
   }
-};
+);
+
+function clearFields() {
+  username.value = "";
+  password.value = "";
+  repeat_password.value = "";
+  currentRoles.value = [];
+}
+
+function clearForm(new_person: any) {
+  username.value = "";
+  password.value = "";
+  repeat_password.value = "";
+  if (props.person.active) {
+    currentRoles.value = [];
+    for (const role of new_person.roles || []) {
+      currentRoles.value.push(role.id);
+    }
+  }
+}
+
+function confirm() {
+  if (addingAccount.value) {
+    emit("addAccount", {
+      username: username.value,
+      password: password.value,
+      active: true,
+      personId: props.person.id
+    });
+  } else {
+    const roles: any[] = [];
+    for (const role of currentRoles.value) {
+      if (role.value) {
+        roles.push(role.value);
+      } else {
+        roles.push(role);
+      }
+    }
+    if (props.rolesEnabled) {
+      emit("updateAccount", props.person.id, { roles: roles });
+    } else {
+      emit("updateAccount", props.person.id, { password: password.value });
+    }
+  }
+  close();
+}
+
+function deactivateAccount() {
+  emit("deactivateAccount", props.account.id);
+  close();
+}
+
+function reactivateAccount() {
+  emit("reactivateAccount", props.account.id);
+  close();
+}
+
+function close() {
+  clearForm(props.person);
+  emit("close");
+}
 </script>

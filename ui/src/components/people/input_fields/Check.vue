@@ -1,53 +1,45 @@
 <template>
   <v-container>
-    <span class="title">{{ $t(attribute.name) }}</span>
-    <v-layout row>
+    <span class="title">{{ t(attribute.name) }}</span>
+    <v-row>
       <v-checkbox
         v-for="(enumeratedValue, index) in attribute.enumerated_values"
         :key="index"
-        :label="$t(enumeratedValue.value)"
-        :name="$t(enumeratedValue.value)"
+        :label="t(enumeratedValue.value)"
+        :name="t(enumeratedValue.value)"
         :value="enumeratedValue.id"
         v-model="selected"
-        @change="
-          $emit('input', { stringValue: selected.toString(), enumValueId: 0 })
-        "
+        @update:model-value="emit('input', { stringValue: selected.toString(), enumValueId: 0 })"
       ></v-checkbox>
-    </v-layout>
+    </v-row>
   </v-container>
 </template>
 
-<script>
-export default {
-  name: "Check",
-  props: {
-    attribute: {
-      type: Object,
-      required: true
+<script setup lang="ts">
+import { ref, computed, watch } from "vue";
+import { useI18n } from "vue-i18n";
+
+const { t } = useI18n();
+
+const props = defineProps<{
+  attribute: any;
+}>();
+
+const emit = defineEmits(["input"]);
+
+const selected = ref<any[]>([]);
+
+const getAttributeValue = computed(() => props.attribute.value);
+
+watch(getAttributeValue, () => {
+  if (props.attribute.value) {
+    let value = props.attribute.value.split(",");
+    for (let index in value) {
+      value[index] = Number(value[index]);
     }
-  },
-  data() {
-    return {
-      selected: []
-    };
-  },
-  computed: {
-    getAttributeValue() {
-      return this.attribute.value;
-    }
-  },
-  watch: {
-    getAttributeValue() {
-      if (this.attribute.value) {
-        let value = this.attribute.value.split(",");
-        for (let index in value) {
-          value[index] = Number(value[index]);
-        }
-        this.selected = value;
-      } else {
-        this.selected = [];
-      }
-    }
+    selected.value = value;
+  } else {
+    selected.value = [];
   }
-};
+});
 </script>

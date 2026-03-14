@@ -10,129 +10,135 @@
   </div>
 </template>
 
-<script>
-import Date from "./Date.vue";
+<script setup lang="ts">
+import { ref, watch, onMounted } from "vue";
+import { inject } from "vue";
+import type { AxiosInstance } from "axios";
+import DateField from "./Date.vue";
 import Float from "./Float.vue";
 import Integer from "./Integer.vue";
-import String from "./String.vue";
+import StringField from "./String.vue";
 import Dropdown from "./Dropdown.vue";
 import Check from "./Check.vue";
 import Radio from "./Radio.vue";
 
-export default {
-  name: "AttributeForm",
-  components: { Date, Float, Integer, String, Dropdown, Check, Radio },
-  props: ["value", "existingAttributes", "personId"],
-  data() {
-    return {
-      formData: this.value || {},
-      attributes: []
-    };
-  },
-  watch: {
-    existingAttributes() {
-      if (this.existingAttributes && this.existingAttributes.length > 0) {
-        for (let attr of this.attributes) {
-          this.$set(
-            attr,
-            "value",
-            this.getExistingAttribute(attr.id.toString())
-          );
-        }
-      }
-    }
-  },
-  mounted() {
-    this.getAttributesInfo().then(() => {
-      this.attributes.sort((a, b) => {
-        return a.seq - b.seq;
-      });
-      this.setupAttributes(this.attributes);
-    });
-  },
-  methods: {
-    getAttributesInfo() {
-      return this.$http
-        .get("/api/v1/people/persons/fields")
-        .then(resp => {
-          this.attributes = resp.data.person_attributes;
-        })
-        .catch(err => console.error("FAILURE", err));
-    },
+const http = inject<AxiosInstance>("$http")!;
 
-    getExistingAttribute(attributeId) {
-      let idx = this.existingAttributes.findIndex(item => {
-        return item.attributeId == attributeId;
-      });
-      let existingAttribute = this.existingAttributes[idx];
-      return this.getStringOrEnumValue(existingAttribute);
-    },
+const props = defineProps<{
+  modelValue?: any;
+  existingAttributes?: any[];
+  personId?: any;
+}>();
 
-    getStringOrEnumValue(attr) {
-      if (attr.stringValue) {
-        return attr.stringValue;
-      } else if (attr.enumValueId) {
-        return attr.enumValueId;
-      }
-      return null;
-    },
+const emit = defineEmits(["input", "update:modelValue"]);
 
-    setupAttributes(attributes) {
-      for (let attr of attributes) {
-        this.$set(attr, "name", attr.nameI18n);
-        this.$set(attr, "type", this.componentType(attr.typeI18n));
-        this.$set(attr, "value", null);
-        for (let enumval of attr.enumerated_values) {
-          this.$set(enumval, "value", enumval.valueI18n);
-        }
-        this.$set(this.formData, attr.id.toString(), {
-          personId: this.personId ? this.personId : 0,
-          attributeId: attr.id,
-          enumValueId: 0,
-          stringValue: ""
-        });
-      }
-    },
+const formData = ref<any>(props.modelValue || {});
+const attributes = ref<any[]>([]);
 
-    updateForm(attributeId, attributeIdx, value) {
-      this.$set(this.formData, attributeId, {
-        personId: this.personId ? this.personId : 0,
-        attributeId: Number(attributeId),
-        enumValueId: value.enumValueId,
-        stringValue: value.stringValue
-      });
-      this.attributes[attributeIdx].value = this.getStringOrEnumValue(value);
-      this.$emit("input", this.formData);
-    },
-
-    componentType(typeI18n) {
-      switch (typeI18n) {
-        case "attribute.float":
-          return "Float";
-        case "attribute.integer":
-          return "Integer";
-        case "attribute.date":
-          return "Date";
-        case "attribute.string":
-          return "String";
-        case "attribute.dropdown":
-          return "Dropdown";
-        case "attribute.checkbox":
-          return "Check";
-        case "attribute.radio":
-          return "Radio";
-      }
-    },
-
-    clear() {
-      for (let idx in this.attributes) {
-        this.$set(this.attributes[idx], "value", null);
-        this.updateForm(this.attributes[idx].id.toString(), idx, {
-          enumValueId: 0,
-          stringValue: ""
-        });
+watch(
+  () => props.existingAttributes,
+  () => {
+    if (props.existingAttributes && props.existingAttributes.length > 0) {
+      for (let attr of attributes.value) {
+        attr.value = getExistingAttribute(attr.id.toString());
       }
     }
   }
-};
+);
+
+function getAttributesInfo() {
+  return http
+    .get("/api/v1/people/persons/fields")
+    .then(resp => {
+      attributes.value = resp.data.person_attributes;
+    })
+    .catch(err => console.error("FAILURE", err));
+}
+
+function getExistingAttribute(attributeId: string) {
+  if (!props.existingAttributes) return null;
+  let idx = props.existingAttributes.findIndex(item => {
+    return item.attributeId == attributeId;
+  });
+  let existingAttribute = props.existingAttributes[idx];
+  return getStringOrEnumValue(existingAttribute);
+}
+
+function getStringOrEnumValue(attr: any) {
+  if (attr.stringValue) {
+    return attr.stringValue;
+  } else if (attr.enumValueId) {
+    return attr.enumValueId;
+  }
+  return null;
+}
+
+function setupAttributes(attrs: any[]) {
+  for (let attr of attrs) {
+    attr.name = attr.nameI18n;
+    attr.type = componentType(attr.typeI18n);
+    attr.value = null;
+    for (let enumval of attr.enumerated_values) {
+      enumval.value = enumval.valueI18n;
+    }
+    formData.value[attr.id.toString()] = {
+      personId: props.personId ? props.personId : 0,
+      attributeId: attr.id,
+      enumValueId: 0,
+      stringValue: ""
+    };
+  }
+}
+
+function updateForm(attributeId: string, attributeIdx: number, value: any) {
+  formData.value[attributeId] = {
+    personId: props.personId ? props.personId : 0,
+    attributeId: Number(attributeId),
+    enumValueId: value.enumValueId,
+    stringValue: value.stringValue
+  };
+  attributes.value[attributeIdx].value = getStringOrEnumValue(value);
+  emit("input", formData.value);
+  emit("update:modelValue", formData.value);
+}
+
+function componentType(typeI18n: string) {
+  switch (typeI18n) {
+    case "attribute.float":
+      return Float;
+    case "attribute.integer":
+      return Integer;
+    case "attribute.date":
+      return DateField;
+    case "attribute.string":
+      return StringField;
+    case "attribute.dropdown":
+      return Dropdown;
+    case "attribute.checkbox":
+      return Check;
+    case "attribute.radio":
+      return Radio;
+  }
+}
+
+function clear() {
+  for (let idx in attributes.value) {
+    attributes.value[idx].value = null;
+    updateForm(attributes.value[idx].id.toString(), Number(idx), {
+      enumValueId: 0,
+      stringValue: ""
+    });
+  }
+}
+
+defineExpose({ clear });
+
+onMounted(() => {
+  getAttributesInfo().then(() => {
+    attributes.value.sort((a, b) => {
+      return a.seq - b.seq;
+    });
+    setupAttributes(attributes.value);
+  });
+});
 </script>
