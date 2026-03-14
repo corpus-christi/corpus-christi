@@ -34,7 +34,7 @@ CC helps churches manage their ministry operations across multiple languages and
 ## Prerequisites
 
 - **Node.js** 18 LTS or later
-- **Yarn** (classic or modern)
+- **pnpm** (`npm install -g pnpm`)
 - **Python** 3.7–3.9
 - **PostgreSQL** 12 or later
 - **Bash** (Linux/macOS native; Windows users should use WSL or Cygwin)
@@ -97,7 +97,7 @@ flask account new --first="Your" --last="Name" username password
 
 ```bash
 cd ui
-yarn install
+pnpm install
 ```
 
 ### 5. Run the Application
@@ -114,7 +114,7 @@ source ./bin/set-up-bash.sh
 **Terminal 2 — UI dev server:**
 ```bash
 cd ui
-yarn dev
+pnpm dev
 ```
 
 Then open [http://localhost:8080](http://localhost:8080) in your browser.
@@ -127,13 +127,13 @@ Then open [http://localhost:8080](http://localhost:8080) in your browser.
 
 | Command | Description |
 |---------|-------------|
-| `yarn dev` | Start the Vite dev server with HMR |
-| `yarn build` | Type-check and build for production |
-| `yarn preview` | Preview the production build locally |
-| `yarn test:unit` | Run unit tests with Vitest |
-| `yarn test:e2e` | Run end-to-end tests with Cypress |
-| `yarn lint` | Lint and auto-fix source files |
-| `yarn localize` | Regenerate `i18n/cc-i18n.json` from YAML source files |
+| `pnpm dev` | Start the Vite dev server with HMR |
+| `pnpmbuild` | Type-check and build for production |
+| `pnpmpreview` | Preview the production build locally |
+| `pnpmtest:unit` | Run unit tests with Vitest |
+| `pnpmtest:e2e` | Run end-to-end tests with Cypress |
+| `pnpmlint` | Lint and auto-fix source files |
+| `pnpmlocalize` | Regenerate `i18n/cc-i18n.json` from YAML source files |
 
 The UI dev server proxies all `/api` requests to `http://localhost:5000` (the Flask API).
 
@@ -221,7 +221,7 @@ Localization data lives in `ui/i18n/yaml/` as YAML files. After editing them, re
 
 ```bash
 cd ui
-yarn localize
+pnpm localize
 ```
 
 The generated file `ui/i18n/cc-i18n.json` is what the app reads at runtime.
