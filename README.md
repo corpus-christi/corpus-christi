@@ -50,23 +50,6 @@ A single-page application built with [Vue 3](https://vuejs.org/) and [Vuetify 3]
 | Build tool | [Vite](https://vitejs.dev/) |
 | Package manager | [pnpm](https://pnpm.io/) |
 
-**Key source layout:**
-
-```
-ui/src/
-├── components/     # Reusable UI components (tables, forms, dialogs)
-├── pages/          # Top-level route views
-├── stores/         # Pinia stores (auth.ts)
-├── plugins/        # Plugin setup: Vuetify, vue-i18n, Axios, Google Maps
-├── router.ts       # Client-side routing
-├── main.ts         # App entry point
-└── App.vue         # Root component
-
-ui/i18n/
-├── yaml/           # Developer-friendly localization source files
-└── cc-i18n.json    # Compiled JSON consumed at runtime (generated)
-```
-
 The Vite dev server proxies all `/api` requests to `http://localhost:5000`.
 
 ### Backend (`api/`)
@@ -86,32 +69,6 @@ A REST API built with [FastAPI](https://fastapi.tiangolo.com/) and [SQLAlchemy 2
 | CLI | [Typer](https://typer.tiangolo.com/) (`uv run cc-cli`) |
 | Package manager | [uv](https://docs.astral.sh/uv/) |
 | Python | 3.13 |
-
-**Key source layout:**
-
-```
-api/
-├── src/
-│   ├── __init__.py         # FastAPI app factory; registers all routers
-│   ├── db.py               # Engine, SessionLocal, get_db dependency
-│   ├── auth/               # JWT login, token blacklist, auth dependencies
-│   ├── people/             # Persons, roles, attributes
-│   ├── places/             # Countries, locations, addresses, areas
-│   ├── groups/             # Home groups, meetings, attendance
-│   ├── courses/            # Courses, offerings, diplomas, enrollment
-│   ├── events/             # Events, assets, teams, participants
-│   ├── teams/              # Teams and team members
-│   ├── assets/             # Asset management
-│   ├── images/             # Image upload and association
-│   ├── emails/             # Outgoing email
-│   ├── i18n/               # Locale and translation data API
-│   └── shared/             # Common helpers and dependencies
-├── migrations/             # Alembic migrations
-├── cc-api.py               # uvicorn entry point
-├── cli.py                  # Typer CLI (cc-cli)
-├── config.py               # Pydantic Settings (reads from .env)
-└── pyproject.toml          # Dependencies and project config
-```
 
 Each module under `src/` follows the same structure:
 - `__init__.py` — exports the `APIRouter`
@@ -138,7 +95,7 @@ In Vue components:
 
 CC is fully internationalized. No user-visible text is hardcoded.
 
-Localization data lives in `ui/i18n/yaml/` as developer-friendly YAML:
+Localization data lives in `ui/i18n/yaml/` as YAML keyed by dotted path then locale:
 
 ```yaml
 person:
@@ -148,13 +105,7 @@ person:
       es: Nombre de pila
 ```
 
-After editing, compile to JSON:
-```bash
-cd ui && pnpm localize
-```
-
-In Vue templates: `{{ $t('person.name.first') }}`
-In `<script setup>`: `const { t } = useI18n(); t('person.name.first')`
+Compile to runtime JSON with `pnpm localize` (see [Common Commands](#ui)). In templates: `{{ $t('person.name.first') }}`; in `<script setup>`: `const { t } = useI18n()`.
 
 ---
 
