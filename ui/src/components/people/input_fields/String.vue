@@ -1,22 +1,22 @@
 <template>
   <div>
     <v-text-field
-      :label="$t(attribute.name)"
-      :name="$t(attribute.name)"
-      :value="attribute.value"
-      @input="$emit('input', { stringValue: $event, enumValueId: 0 })"
+      :label="t(attribute.name)"
+      :name="t(attribute.name)"
+      :model-value="attribute.value"
+      @update:model-value="emit('input', { stringValue: $event, enumValueId: 0 })"
     ></v-text-field>
   </div>
 </template>
 
-<script>
-export default {
-  name: "String",
-  props: {
-    attribute: {
-      type: Object,
-      required: true
-    }
-  }
-};
+<script setup lang="ts">
+import { useI18n } from "vue-i18n";
+
+const { t } = useI18n();
+
+const props = defineProps<{
+  attribute: any;
+}>();
+
+const emit = defineEmits(["input"]);
 </script>
