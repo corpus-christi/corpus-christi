@@ -19,7 +19,7 @@ Learn how to contribute to CC.
 
 You have to know about these things.
 
-1. [Development Environment](develop.md) - **START HERE** download, install, and run the software
+1. [Development Setup](../README.md#development-setup) - **START HERE** in the root README
 1. [Tool Chain](tool-chain.md)
 1. [Command-Line Interface](command-line-interface.md)
 

@@ -2,159 +2,306 @@
 
 Corpus Christi (CC) is an open-source, internationalized church management suite developed at the [Center for Missions Computing](http://missionscomputing.org/) at [Taylor University](https://www.taylor.edu/).
 
-## Overview
+CC helps churches manage their ministry operations across multiple languages and locales. It is built as a full-stack web application with a REST API backend and a Vue single-page application frontend.
 
-CC helps churches manage their ministry operations across multiple languages and locales. It is built as a full-stack web application with a REST API backend and a single-page frontend.
+---
 
-### Modules
+## Modules
 
 | Module | Description |
 |--------|-------------|
+| **People** | Member accounts, roles, and organizational hierarchies |
 | **Groups** | Home church / small group management, meetings, and attendance |
 | **Courses** | Training course catalog, offerings, enrollment, and diplomas |
 | **Events** | Event planning with asset, team, and participant coordination |
-| **People** | Member accounts, roles, and organizational hierarchies |
 | **Places** | Geographic locations, addresses, and areas |
 | **Assets** | Resource tracking for events |
 | **Teams** | Team management for event participation |
 
-### Tech Stack
+---
 
-| Layer | Technology |
-|-------|-----------|
-| Frontend | [Vue 3](https://vuejs.org/) + [Vuetify 3](https://vuetifyjs.com/) + [Pinia](https://pinia.vuejs.org/) |
-| Build | [Vite](https://vitejs.dev/) |
-| i18n | [vue-i18n 9](https://vue-i18n.intlify.dev/) |
-| Backend | [Flask](https://flask.palletsprojects.com/) (Python) |
-| Database | [PostgreSQL](https://www.postgresql.org/) |
-| Auth | JSON Web Tokens (JWT) |
+## Architecture
+
+CC is a two-tier web application. The frontend and backend are developed and deployed independently, communicating over a JSON REST API.
+
+```
+Browser
+  └── Vue 3 SPA (Vite dev server / static build)
+        │  HTTP + JWT
+        ▼
+  FastAPI (uvicorn)
+        │  SQLAlchemy 2
+        ▼
+  PostgreSQL
+```
+
+### Frontend (`ui/`)
+
+A single-page application built with [Vue 3](https://vuejs.org/) and [Vuetify 3](https://vuetifyjs.com/).
+
+| Concern | Technology |
+|---------|-----------|
+| Framework | Vue 3 (`<script setup lang="ts">`) |
+| UI component library | Vuetify 3 |
+| State management | [Pinia](https://pinia.vuejs.org/) |
+| Routing | [Vue Router 4](https://router.vuejs.org/) |
+| HTTP client | [Axios](https://axios-http.com/) (injected as `$http` / `$httpNoAuth`) |
+| Internationalization | [vue-i18n 9](https://vue-i18n.intlify.dev/) |
+| Build tool | [Vite](https://vitejs.dev/) |
+| Package manager | [pnpm](https://pnpm.io/) |
+
+**Key source layout:**
+
+```
+ui/src/
+├── components/     # Reusable UI components (tables, forms, dialogs)
+├── pages/          # Top-level route views
+├── stores/         # Pinia stores (auth.ts)
+├── plugins/        # Plugin setup: Vuetify, vue-i18n, Axios, Google Maps
+├── router.ts       # Client-side routing
+├── main.ts         # App entry point
+└── App.vue         # Root component
+
+ui/i18n/
+├── yaml/           # Developer-friendly localization source files
+└── cc-i18n.json    # Compiled JSON consumed at runtime (generated)
+```
+
+The Vite dev server proxies all `/api` requests to `http://localhost:5000`.
+
+### Backend (`api/`)
+
+A REST API built with [FastAPI](https://fastapi.tiangolo.com/) and [SQLAlchemy 2](https://docs.sqlalchemy.org/).
+
+| Concern | Technology |
+|---------|-----------|
+| Framework | FastAPI |
+| Server | uvicorn |
+| ORM | SQLAlchemy 2 (`Mapped[]`, `mapped_column()`) |
+| Schema / validation | Pydantic v2 |
+| Database migrations | Alembic |
+| Authentication | JWT via `python-jose` + `OAuth2PasswordBearer` |
+| Password hashing | passlib (bcrypt) |
+| Email | fastapi-mail |
+| CLI | [Typer](https://typer.tiangolo.com/) (`uv run cc-cli`) |
+| Package manager | [uv](https://docs.astral.sh/uv/) |
+| Python | 3.13 |
+
+**Key source layout:**
+
+```
+api/
+├── src/
+│   ├── __init__.py         # FastAPI app factory; registers all routers
+│   ├── db.py               # Engine, SessionLocal, get_db dependency
+│   ├── auth/               # JWT login, token blacklist, auth dependencies
+│   ├── people/             # Persons, roles, attributes
+│   ├── places/             # Countries, locations, addresses, areas
+│   ├── groups/             # Home groups, meetings, attendance
+│   ├── courses/            # Courses, offerings, diplomas, enrollment
+│   ├── events/             # Events, assets, teams, participants
+│   ├── teams/              # Teams and team members
+│   ├── assets/             # Asset management
+│   ├── images/             # Image upload and association
+│   ├── emails/             # Outgoing email
+│   ├── i18n/               # Locale and translation data API
+│   └── shared/             # Common helpers and dependencies
+├── migrations/             # Alembic migrations
+├── cc-api.py               # uvicorn entry point
+├── cli.py                  # Typer CLI (cc-cli)
+├── config.py               # Pydantic Settings (reads from .env)
+└── pyproject.toml          # Dependencies and project config
+```
+
+Each module under `src/` follows the same structure:
+- `__init__.py` — exports the `APIRouter`
+- `api.py` — route handlers
+- `models.py` — SQLAlchemy models + Pydantic schemas
+- `test_*.py` — pytest tests
+
+### Authentication
+
+CC uses JSON Web Tokens (JWT):
+
+1. The UI sends `username` + `password` to `POST /api/v1/auth/login`
+2. The API validates credentials and returns a JWT
+3. The UI stores the JWT in Pinia state and `localStorage`
+4. All subsequent requests include `Authorization: Bearer <token>`
+5. The API validates the token and checks it against the token blacklist on every protected request
+6. On a 401 response, the UI clears the token and redirects to login
+
+In Vue components:
+- `inject('$http')` — authenticated requests
+- `inject('$httpNoAuth')` — unauthenticated requests (login, public endpoints)
+
+### Internationalization
+
+CC is fully internationalized. No user-visible text is hardcoded.
+
+Localization data lives in `ui/i18n/yaml/` as developer-friendly YAML:
+
+```yaml
+person:
+  name:
+    first:
+      en: First Name
+      es: Nombre de pila
+```
+
+After editing, compile to JSON:
+```bash
+cd ui && pnpm localize
+```
+
+In Vue templates: `{{ $t('person.name.first') }}`
+In `<script setup>`: `const { t } = useI18n(); t('person.name.first')`
 
 ---
 
 ## Prerequisites
 
-- **Node.js** 18 LTS or later
-- **pnpm** (`npm install -g pnpm`)
-- **Python** 3.7–3.9
-- **PostgreSQL** 12 or later
-- **Bash** (Linux/macOS native; Windows users should use WSL or Cygwin)
+| Tool | Version | Purpose |
+|------|---------|---------|
+| [Node.js](https://nodejs.org/) | 18 LTS or later | UI runtime |
+| [pnpm](https://pnpm.io/) | current | UI package manager |
+| [uv](https://docs.astral.sh/uv/) | current | Python package manager |
+| [Python](https://www.python.org/) | 3.13 | API runtime (managed by uv) |
+| [PostgreSQL](https://www.postgresql.org/) | 14 or later | Database |
+
+Windows users should use [WSL](https://docs.microsoft.com/en-us/windows/wsl/install-win10) or [Cygwin](https://www.cygwin.com/) for a bash shell. See [doc/postgres-windows.md](doc/postgres-windows.md) for Postgres on WSL.
 
 ---
 
-## Quick Start
+## Development Setup
 
-### 1. Clone the Repository
+### 1. Clone
 
 ```bash
 git clone https://github.com/corpus-christi/corpus-christi.git
 cd corpus-christi
 ```
 
-### 2. Set Up the Database
-
-You can run PostgreSQL locally or via Docker.
+### 2. Set Up PostgreSQL
 
 **Option A — Docker (recommended):**
 ```bash
-cd api
-docker-compose up --detach
+cd api && docker-compose up --detach
 ```
-This starts a Postgres container pre-configured with the default credentials.
 
-**Option B — Local PostgreSQL:**
+**Option B — Local Postgres:**
 ```bash
 createuser arco
 createdb --owner=arco cc-dev
 ```
+Other database names: `cc-test` (testing), `cc-staging`, `cc-prod`.
 
-### 3. Set Up the API
+### 3. Configure the API
+
+Copy the sample environment file and fill in your values:
+```bash
+cd api
+cp .env.sample .env
+```
+
+Key variables:
+```
+PSQL_USER=arco
+PSQL_PASS=password
+PSQL_HOST=localhost
+PSQL_DB=cc-dev
+JWT_SECRET_KEY=your-secret-key
+SECRET_KEY=your-secret-key
+CC_ENV=dev
+```
+
+Or set `DATABASE_URL` directly to override all `PSQL_*` vars:
+```
+DATABASE_URL=postgresql://arco:password@localhost/cc-dev
+```
+
+The `.env` file is in `.gitignore` — never commit it.
+
+### 4. Install API Dependencies
+
+Install [uv](https://docs.astral.sh/uv/) if you don't have it:
+```bash
+curl -LsSf https://astral.sh/uv/install.sh | sh
+```
+
+Then install all dependencies (uv manages the virtual environment automatically):
+```bash
+cd api
+uv sync --extra dev
+```
+
+### 5. Initialize the Database
 
 ```bash
 cd api
-python3 -m venv venv
-source venv/bin/activate        # Windows: source venv/Scripts/activate
-pip install -r requirements.txt
-```
-
-Configure your shell for Flask (activates the venv and sets `FLASK_APP`):
-```bash
-source ./bin/set-up-bash.sh
-```
-
-Initialize the database and load seed data:
-```bash
-flask db migrate
-flask db upgrade
-flask data load-all
+uv run alembic upgrade head
+uv run cc-cli app load-all
 ```
 
 Create a development account:
 ```bash
-flask account new --first="Your" --last="Name" username password
+uv run cc-cli people new-account --first="Your" --last="Name" username password
 ```
 
-### 4. Set Up the UI
+### 6. Install UI Dependencies
 
 ```bash
 cd ui
 pnpm install
 ```
 
-### 5. Run the Application
+Install the [Vue DevTools](https://github.com/vuejs/vue-devtools) browser extension for Chrome/Firefox.
 
-Open **two terminals** — one for each server.
+### 7. Run the Application
+
+Open two terminals:
 
 **Terminal 1 — API server:**
 ```bash
 cd api
-source ./bin/set-up-bash.sh
-./bin/run-dev-server.sh
+uv run uvicorn cc-api:app --reload --port 5000
 ```
+Interactive API docs available at [http://localhost:5000/docs](http://localhost:5000/docs).
 
 **Terminal 2 — UI dev server:**
 ```bash
 cd ui
 pnpm dev
 ```
-
-Then open [http://localhost:8080](http://localhost:8080) in your browser.
+Open the URL printed by Vite (typically [http://localhost:8080](http://localhost:8080)).
 
 ---
 
-## Development
+## Common Commands
 
-### UI Development
-
-| Command | Description |
-|---------|-------------|
-| `pnpm dev` | Start the Vite dev server with HMR |
-| `pnpmbuild` | Type-check and build for production |
-| `pnpmpreview` | Preview the production build locally |
-| `pnpmtest:unit` | Run unit tests with Vitest |
-| `pnpmtest:e2e` | Run end-to-end tests with Cypress |
-| `pnpmlint` | Lint and auto-fix source files |
-| `pnpmlocalize` | Regenerate `i18n/cc-i18n.json` from YAML source files |
-
-The UI dev server proxies all `/api` requests to `http://localhost:5000` (the Flask API).
-
-### API Development
+### API
 
 | Command | Description |
 |---------|-------------|
-| `flask run` | Start the development API server |
-| `pytest` | Run the full API test suite |
-| `flask db upgrade` | Apply pending database migrations |
-| `flask db migrate -m "message"` | Generate a new migration from model changes |
-| `flask data load-all` | Load seed/fixture data into the database |
+| `uv run uvicorn cc-api:app --reload --port 5000` | Start dev server |
+| `uv run pytest` | Run test suite |
+| `uv run pytest -m smoke` | Run smoke tests only |
+| `uv run alembic upgrade head` | Apply pending migrations |
+| `uv run alembic revision --autogenerate -m "msg"` | Generate migration from model changes |
+| `uv run cc-cli app load-all` | Load seed data |
+| `uv run cc-cli app reset-db` | Drop and recreate all tables |
+| `uv add <package>` | Add a dependency |
 
-### Database Connection
+### UI
 
-By default CC connects to a local Postgres database. You can override this with environment variables:
-
-```bash
-export DEV_DB_URL="postgresql://USER:PASSWORD@HOST/DBNAME"
-export TEST_DB_URL="postgresql://USER:PASSWORD@HOST/cc-test"
-```
+| Command | Description |
+|---------|-------------|
+| `pnpm dev` | Start Vite dev server with HMR |
+| `pnpm build` | Type-check and build for production |
+| `pnpm preview` | Preview the production build |
+| `pnpm test:unit` | Run unit tests with Vitest |
+| `pnpm test:e2e` | Run end-to-end tests with Cypress |
+| `pnpm lint` | Lint and auto-fix |
+| `pnpm localize` | Regenerate `i18n/cc-i18n.json` from YAML sources |
 
 ---
 
@@ -162,98 +309,68 @@ export TEST_DB_URL="postgresql://USER:PASSWORD@HOST/cc-test"
 
 ```
 corpus-christi/
-├── api/                    # Flask REST API
-│   ├── bin/                # Utility shell scripts
+├── api/                    # FastAPI REST API (Python 3.13)
+│   ├── src/                # Application source
+│   │   ├── auth/           # Authentication and JWT
+│   │   ├── people/         # People, roles, attributes
+│   │   ├── places/         # Locations, countries, areas
+│   │   ├── groups/         # Home groups and meetings
+│   │   ├── courses/        # Courses, offerings, diplomas
+│   │   ├── events/         # Events and coordination
+│   │   ├── teams/          # Teams
+│   │   ├── assets/         # Assets
+│   │   ├── images/         # Image uploads
+│   │   ├── emails/         # Email sending
+│   │   ├── i18n/           # Translation data API
+│   │   └── shared/         # Common utilities
 │   ├── migrations/         # Alembic database migrations
-│   ├── src/                # API source modules
-│   │   ├── auth/           # Authentication endpoints
-│   │   ├── groups/         # Home groups module
-│   │   ├── courses/        # Courses and offerings
-│   │   ├── events/         # Event management
-│   │   ├── people/         # People and accounts
-│   │   ├── places/         # Locations and geography
-│   │   ├── i18n/           # Internationalization data API
-│   │   └── boilerplate/    # Code generation tool (boil.py)
-│   ├── config.py           # Flask configuration
-│   ├── requirements.txt    # Python dependencies
+│   ├── cc-api.py           # uvicorn entry point
+│   ├── cli.py              # Typer CLI (cc-cli)
+│   ├── config.py           # Pydantic Settings
+│   ├── pyproject.toml      # Dependencies and project config
 │   └── docker-compose.yaml # PostgreSQL container
 │
 ├── ui/                     # Vue 3 single-page application
-│   ├── i18n/               # Localization YAML source files + generated JSON
-│   ├── public/             # Static assets served directly
-│   ├── src/
-│   │   ├── components/     # Reusable UI components
-│   │   ├── pages/          # Top-level route views
-│   │   ├── stores/         # Pinia state stores (auth.ts)
-│   │   ├── plugins/        # Vue plugin setup (vuetify, i18n, axios, maps)
-│   │   ├── models/         # TypeScript data models (Account, Locale)
-│   │   ├── utils/          # Utility functions (date formatting, geocoding)
-│   │   ├── router.ts       # Vue Router configuration
-│   │   ├── main.ts         # Application entry point
-│   │   └── App.vue         # Root component
-│   ├── tests/
-│   │   └── e2e/            # Cypress end-to-end tests
-│   ├── vite.config.ts      # Vite + Vitest configuration
-│   └── package.json        # Node dependencies and scripts
+│   ├── i18n/               # Localization YAML sources + compiled JSON
+│   ├── public/             # Static files served directly
+│   └── src/
+│       ├── components/     # Reusable UI components
+│       ├── pages/          # Top-level route views
+│       ├── stores/         # Pinia state (auth.ts)
+│       ├── plugins/        # Plugin setup (Vuetify, i18n, Axios, Maps)
+│       ├── router.ts       # Vue Router configuration
+│       └── main.ts         # App entry point
 │
 ├── doc/                    # Extended documentation
-└── ansible/                # Infrastructure/deployment automation
+└── ansible/                # Deployment automation
 ```
 
 ---
 
-## Internationalization
+## Visual Studio Code
 
-CC is fully internationalized from the ground up. No user-visible text is hardcoded — everything goes through [vue-i18n](https://vue-i18n.intlify.dev/).
+Recommended extensions:
+- `ms-python.python` — Python language support
+- `charliermarsh.ruff` — Linter/formatter
+- `Vue.volar` — Vue 3 language support
 
-**In templates:**
-```html
-<span>{{ $t('person.name.first') }}</span>
+Point VS Code to the uv-managed interpreter:
 ```
-
-**In `<script setup>`:**
-```ts
-const { t } = useI18n()
-t('person.name.first')
+api/.venv/bin/python
 ```
-
-Localization data lives in `ui/i18n/yaml/` as YAML files. After editing them, regenerate the compiled JSON:
-
-```bash
-cd ui
-pnpm localize
-```
-
-The generated file `ui/i18n/cc-i18n.json` is what the app reads at runtime.
-
----
-
-## Authentication
-
-CC uses JSON Web Tokens (JWT). The flow:
-
-1. User submits username and password on the login page
-2. The API validates credentials and returns a JWT
-3. The UI stores the JWT in Pinia state and `localStorage`
-4. All authenticated API requests include the JWT as an `Authorization: Bearer <token>` header
-5. On a 401 response, the UI clears the JWT and redirects to the login page
-
-In components, use the provided axios instances:
-- `inject('$http')` — authenticated requests (includes JWT header)
-- `inject('$httpNoAuth')` — unauthenticated requests (login, public endpoints)
 
 ---
 
 ## Documentation
 
-See the [`doc/`](doc/README.md) directory for extended documentation including:
+See the [`doc/`](doc/README.md) directory for:
 
-- [`develop.md`](doc/develop.md) — Detailed development environment setup
-- [`data-model.md`](doc/data-model.md) — Database schema and data model
+- [`data-model.md`](doc/data-model.md) — Database schema
 - [`testing.md`](doc/testing.md) — Testing approach and conventions
 - [`coding.md`](doc/coding.md) — Code style and conventions
-- [`stories.md`](doc/stories.md) — User stories
 - [`tool-chain.md`](doc/tool-chain.md) — Tool chain details
+- [`stories.md`](doc/stories.md) — User stories
+- [`sdm.md`](doc/sdm.md) — Software development methodology
 
 ---
 
@@ -262,4 +379,4 @@ See the [`doc/`](doc/README.md) directory for extended documentation including:
 1. Fork the repository and create a feature branch
 2. Follow the coding conventions in [`doc/coding.md`](doc/coding.md)
 3. Write tests for new functionality
-4. Submit a pull request against the `development` branch
+4. Submit a pull request against the `main` branch
