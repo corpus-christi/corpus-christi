@@ -3,157 +3,140 @@
     <v-card-title data-cy="course-editor-title">
       <span class="headline">{{ title }}</span>
     </v-card-title>
-    <v-card-text> <CourseForm ref="form" :course="course" /> </v-card-text>
+    <v-card-text> <CourseForm ref="form" :course="course" :editMode="editMode" :initialData="course" @cancel="cancel" @save="handleSave" /> </v-card-text>
     <v-card-actions data-cy="course-editor-actions">
-      <v-btn color="secondary" flat :disabled="saving" v-on:click="cancel">
-        {{ $t("actions.cancel") }}
+      <v-btn color="secondary" variant="text" :disabled="saving" v-on:click="cancel">
+        {{ t("actions.cancel") }}
       </v-btn>
       <v-spacer></v-spacer>
       <v-btn
         color="primary"
-        raised
         :disabled="saving"
         :loading="saving"
         v-on:click="save"
       >
-        {{ $t("actions.save") }}
+        {{ t("actions.save") }}
       </v-btn>
     </v-card-actions>
   </v-card>
 </template>
 
-<script>
+<script setup lang="ts">
+import { ref, computed, watch } from "vue";
+import { useI18n } from "vue-i18n";
+import { inject } from "vue";
+import type { AxiosInstance } from "axios";
 import { isEmpty, cloneDeep } from "lodash";
-import CourseForm from "./CourseForm";
+import CourseForm from "./CourseForm.vue";
 
-export default {
-  name: "CourseEditor",
-  components: {
-    CourseForm
-  },
-  props: {
-    editMode: {
-      type: Boolean,
-      required: true
-    },
-    initialData: {
-      type: Object,
-      required: true
-    }
-  },
-  data: function() {
-    return {
-      course: {},
-      saving: false
-    };
-  },
-  computed: {
-    title() {
-      return this.editMode ? this.$t("actions.edit") : this.$t("courses.new");
-    }
-  },
+const { t } = useI18n();
+const http = inject<AxiosInstance>("$http")!;
 
-  watch: {
-    // Make sure data stays in sync with any changes to `initialData` from parent.
-    initialData(courseProp) {
-      if (isEmpty(courseProp)) {
-        this.clear();
-      } else {
-        this.course = courseProp;
-      }
-    }
-  },
+const props = defineProps<{
+  editMode: boolean;
+  initialData: Record<string, any>;
+}>();
 
-  methods: {
-    // Abandon ship.
-    cancel() {
-      this.clear();
-      this.$emit("cancel");
-    },
+const emit = defineEmits(["cancel", "save"]);
 
-    // Clear the forms.
-    clear() {
-      this.course = {};
-      this.$refs.form.$validator.reset();
-    },
+const course = ref<Record<string, any>>({});
+const saving = ref(false);
 
-    // Trigger a save event, returning the updated `Course`.
-    save() {
-      this.$refs.form.$validator.validateAll().then(() => {
-        if (!this.$refs.form.errors.any()) {
-          this.saving = true;
-          let course = cloneDeep(this.course);
-          this.saveCourse(course);
-        }
-      });
-    },
+const title = computed(() =>
+  props.editMode ? t("actions.edit") : t("courses.new")
+);
 
-    saveCourse(course) {
-      let courseAttrs = {
-        description: course.description,
-        name: course.name
-      };
-
-      if (this.editMode) {
-        let promises = [];
-        promises.push(
-          this.$http
-            .patch(`/api/v1/courses/courses/${course.id}`, courseAttrs)
-            .then(resp => {
-              console.log("EDITED", resp);
-              return resp;
-            })
-        );
-        promises.push(
-          this.$http.patch(
-            `/api/v1/courses/courses/${course.id}/prerequisites`,
-            { prerequisites: course.prerequisites.map(prereq => prereq.id) } // API expects array of IDs
-          )
-        );
-
-        Promise.all(promises)
-          .then(resps => {
-            let newCourse = resps[0].data;
-            newCourse.prerequisites = course.prerequisites; // Re-attach prereqs so they show up in UI
-            this.$emit("save", newCourse);
-          })
-          .catch(err => {
-            console.error("FALURE", err.response);
-            this.$emit("save", err);
-          })
-          .finally(() => {
-            this.saving = false;
-          });
-      } else {
-        // All new courses are active
-        courseAttrs.active = true;
-        let newCourse;
-        this.$http
-          .post("/api/v1/courses/courses", courseAttrs)
-          .then(resp => {
-            console.log("ADDED", resp);
-            newCourse = resp.data;
-            newCourse.prerequisites = course.prerequisites; // Re-attach prereqs so they show up in UI
-
-            // Now that course created, add prerequisites to it
-            return this.$http.patch(
-              `/api/v1/courses/courses/${newCourse.id}/prerequisites`,
-              { prerequisites: course.prerequisites.map(prereq => prereq.id) } // API expects array of IDs
-            );
-          })
-          .then(resp => {
-            console.log("PREREQS", resp);
-            this.$emit("save", newCourse);
-          })
-          .catch(err => {
-            console.error("FAILURE", err);
-            this.$emit("save", err);
-          })
-          .finally(() => {
-            this.saving = false;
-          });
-      }
-    }
+watch(() => props.initialData, (courseProp) => {
+  if (isEmpty(courseProp)) {
+    clear();
+  } else {
+    course.value = courseProp;
   }
-};
+});
+
+function cancel() {
+  clear();
+  emit("cancel");
+}
+
+function clear() {
+  course.value = {};
+}
+
+function handleSave(savedCourse: any) {
+  emit("save", savedCourse);
+}
+
+function save() {
+  saving.value = true;
+  let courseData = cloneDeep(course.value);
+  saveCourse(courseData);
+}
+
+function saveCourse(courseData: Record<string, any>) {
+  let courseAttrs = {
+    description: courseData.description,
+    name: courseData.name
+  };
+
+  if (props.editMode) {
+    let promises: Promise<any>[] = [];
+    promises.push(
+      http
+        .patch(`/api/v1/courses/courses/${courseData.id}`, courseAttrs)
+        .then(resp => {
+          console.log("EDITED", resp);
+          return resp;
+        })
+    );
+    promises.push(
+      http.patch(`/api/v1/courses/courses/${courseData.id}/prerequisites`, {
+        prerequisites: courseData.prerequisites
+          ? courseData.prerequisites.map((prereq: any) => prereq.id)
+          : []
+      })
+    );
+
+    Promise.all(promises)
+      .then(resps => {
+        let newCourse = resps[0].data;
+        newCourse.prerequisites = courseData.prerequisites;
+        emit("save", newCourse);
+      })
+      .catch(err => {
+        console.error("FAILURE", err.response);
+        emit("save", err);
+      })
+      .finally(() => {
+        saving.value = false;
+      });
+  } else {
+    (courseAttrs as any).active = true;
+    let newCourse: any;
+    http
+      .post("/api/v1/courses/courses", courseAttrs)
+      .then(resp => {
+        console.log("ADDED", resp);
+        newCourse = resp.data;
+        newCourse.prerequisites = courseData.prerequisites;
+
+        return http.patch(`/api/v1/courses/courses/${newCourse.id}/prerequisites`, {
+          prerequisites: courseData.prerequisites
+            ? courseData.prerequisites.map((prereq: any) => prereq.id)
+            : []
+        });
+      })
+      .then(resp => {
+        console.log("PREREQS", resp);
+        emit("save", newCourse);
+      })
+      .catch(err => {
+        console.error("FAILURE", err);
+        emit("save", err);
+      })
+      .finally(() => {
+        saving.value = false;
+      });
+  }
+}
 </script>

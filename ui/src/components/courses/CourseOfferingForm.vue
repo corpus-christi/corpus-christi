@@ -8,158 +8,144 @@
         <!-- description -->
         <v-textarea
           v-model="courseOffering.description"
-          v-bind:label="$t('courses.description')"
+          v-bind:label="t('courses.description')"
           name="description"
           rows="3"
           data-cy="course-offering-description"
-          v-validate="'required'"
-          v-bind:error-messages="errors.collect('description')"
+          :error-messages="descriptionErrors"
         ></v-textarea>
 
-        <v-flex xs7 md7>
+        <v-col cols="7" md="7">
           <v-text-field
             v-model="courseOffering.maxSize"
-            v-bind:label="$t('courses.max-size')"
+            v-bind:label="t('courses.max-size')"
             name="max-size"
             type="number"
-            v-validate="'required'"
-            v-bind:error-messages="errors.collect('max-size')"
+            :error-messages="maxSizeErrors"
             data-cy="course-offering-max-size"
           ></v-text-field>
-        </v-flex>
+        </v-col>
       </form>
     </v-card-text>
     <v-card-actions>
-      <v-btn color="secondary" flat :disabled="saving" v-on:click="cancel">
-        {{ $t("actions.cancel") }}
+      <v-btn color="secondary" variant="text" :disabled="saving" v-on:click="cancel">
+        {{ t("actions.cancel") }}
       </v-btn>
       <v-spacer></v-spacer>
       <v-btn
         color="primary"
-        raised
         :disabled="saving"
         :loading="saving"
         v-on:click="save"
-        >{{ $t("actions.save") }}</v-btn
+        >{{ t("actions.save") }}</v-btn
       >
     </v-card-actions>
   </v-card>
 </template>
 
-<script>
+<script setup lang="ts">
+import { ref, computed, watch } from "vue";
+import { useI18n } from "vue-i18n";
+import { inject } from "vue";
+import type { AxiosInstance } from "axios";
 import { isEmpty, cloneDeep } from "lodash";
 
-export default {
-  name: "CourseOfferingForm",
-  data: function() {
-    return {
-      saving: false,
+const { t } = useI18n();
+const http = inject<AxiosInstance>("$http")!;
 
-      courseOffering: {}
-    };
-  },
-  computed: {
-    title() {
-      return this.editMode
-        ? this.$t("actions.edit")
-        : this.$t("courses.new-offering");
-    }
-  },
+const props = defineProps<{
+  editMode: boolean;
+  initialData: Record<string, any>;
+  course: Record<string, any>;
+}>();
 
-  watch: {
-    // Make sure data stays in sync with any changes to `initialData` from parent.
-    initialData(courseProp) {
-      if (isEmpty(courseProp)) {
-        this.clear();
-      } else {
-        this.courseOffering = courseProp;
-      }
-    }
-  },
+const emit = defineEmits(["cancel", "save"]);
 
-  props: {
-    editMode: {
-      type: Boolean,
-      required: true
-    },
-    initialData: {
-      type: Object,
-      required: true
-    },
-    course: {
-      type: Object,
-      required: true
-    }
-  },
+const saving = ref(false);
+const courseOffering = ref<Record<string, any>>({});
+const descriptionErrors = ref<string[]>([]);
+const maxSizeErrors = ref<string[]>([]);
 
-  methods: {
-    // Abandon ship.
-    cancel() {
-      this.clear();
-      this.$emit("cancel");
-    },
+const title = computed(() =>
+  props.editMode ? t("actions.edit") : t("courses.new-offering")
+);
 
-    // Clear the forms.
-    clear() {
-      this.courseOffering = {};
-      this.$validator.reset();
-    },
-
-    // Save the record and trigger a save event, returning the updated `Course Offering`.
-    save() {
-      this.$validator.validateAll().then(() => {
-        if (!this.errors.any()) {
-          this.saving = true;
-          let courseOffering = cloneDeep(this.courseOffering);
-          courseOffering.courseId = this.course.id;
-          this.saveCourseOffering(courseOffering);
-        }
-      });
-    },
-
-    saveCourseOffering(courseOffering) {
-      if (this.editMode) {
-        // Hang on to the ID of the record being updated.
-        const courseOfferingId = courseOffering.id;
-
-        // Get rid of the ID; not for consumption by endpoint.
-        delete courseOffering.id;
-
-        this.$http
-          .patch(
-            `/api/v1/courses/course_offerings/${courseOfferingId}`,
-            courseOffering
-          )
-          .then(resp => {
-            console.log("EDITED", resp);
-            courseOffering = resp.data;
-            this.$emit("save", courseOffering);
-          })
-          .catch(err => {
-            console.error("FALURE", err.response);
-            this.$emit("save", err);
-          })
-          .finally(() => {
-            this.saving = false;
-          });
-      } else {
-        courseOffering.active = true;
-        this.$http
-          .post("/api/v1/courses/course_offerings", courseOffering)
-          .then(resp => {
-            console.log("ADDED", resp);
-            courseOffering = resp.data;
-            this.$emit("save", courseOffering);
-          })
-          .catch(err => {
-            console.error("FAILURE", err.response);
-            this.$emit("save", err);
-          })
-          .finally(() => {
-            this.saving = false;
-          });
-      }
-    }
+watch(() => props.initialData, (courseProp) => {
+  if (isEmpty(courseProp)) {
+    clear();
+  } else {
+    courseOffering.value = courseProp;
   }
-};
+});
+
+function cancel() {
+  clear();
+  emit("cancel");
+}
+
+function clear() {
+  courseOffering.value = {};
+  descriptionErrors.value = [];
+  maxSizeErrors.value = [];
+}
+
+function validateForm(): boolean {
+  descriptionErrors.value = [];
+  maxSizeErrors.value = [];
+  let valid = true;
+  if (!courseOffering.value.description) {
+    descriptionErrors.value = [t("validations.required")];
+    valid = false;
+  }
+  if (!courseOffering.value.maxSize) {
+    maxSizeErrors.value = [t("validations.required")];
+    valid = false;
+  }
+  return valid;
+}
+
+function save() {
+  if (validateForm()) {
+    saving.value = true;
+    let offering = cloneDeep(courseOffering.value);
+    offering.courseId = props.course.id;
+    saveCourseOffering(offering);
+  }
+}
+
+function saveCourseOffering(offering: Record<string, any>) {
+  if (props.editMode) {
+    const courseOfferingId = offering.id;
+    delete offering.id;
+
+    http
+      .patch(`/api/v1/courses/course_offerings/${courseOfferingId}`, offering)
+      .then(resp => {
+        console.log("EDITED", resp);
+        emit("save", resp.data);
+      })
+      .catch(err => {
+        console.error("FAILURE", err.response);
+        emit("save", err);
+      })
+      .finally(() => {
+        saving.value = false;
+      });
+  } else {
+    offering.active = true;
+    http
+      .post("/api/v1/courses/course_offerings", offering)
+      .then(resp => {
+        console.log("ADDED", resp);
+        emit("save", resp.data);
+      })
+      .catch(err => {
+        console.error("FAILURE", err.response);
+        emit("save", err);
+      })
+      .finally(() => {
+        saving.value = false;
+      });
+  }
+}
 </script>

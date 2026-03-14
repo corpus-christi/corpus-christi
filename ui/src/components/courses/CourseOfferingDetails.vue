@@ -1,105 +1,83 @@
 <template>
-  <v-layout>
-    <v-flex xs12 sm12>
+  <v-row>
+    <v-col cols="12" sm="12">
       <v-card>
         <template v-if="pageLoaded">
           <v-container fill-height fluid>
-            <v-layout column>
-              <v-flex xs9 sm9 align-end flexbox>
-                <span class="headline">{{ courseOffering.course.name }}</span>
-              </v-flex>
+            <v-col>
+              <v-col cols="9" sm="9" class="align-end">
+                <span class="headline">{{ courseOffering.course?.name }}</span>
+              </v-col>
               <v-card-text class="pa-4">
-                <b>{{ $t("courses.description") }}:</b>
+                <b>{{ t("courses.description") }}:</b>
                 <div class="ml-2">{{ courseOffering.description }}</div>
-                <b>{{ $t("courses.enrolled") }}:</b>
+                <b>{{ t("courses.enrolled") }}:</b>
                 <div class="ml-2">
                   {{ studentsAmt + " / " + courseOffering.maxSize }}
                 </div>
               </v-card-text>
-            </v-layout>
+            </v-col>
           </v-container>
         </template>
-        <v-layout v-else justify-center height="500px">
+        <v-row v-else justify="center" style="height: 500px;">
           <div class="ma-5 pa-5">
             <v-progress-circular
               indeterminate
               color="primary"
             ></v-progress-circular>
           </div>
-        </v-layout>
+        </v-row>
       </v-card>
-    </v-flex>
-  </v-layout>
+    </v-col>
+  </v-row>
 </template>
 
-<script>
-import { mapGetters } from "vuex";
+<script setup lang="ts">
+import { ref, onMounted } from "vue";
+import { useI18n } from "vue-i18n";
+import { inject } from "vue";
+import type { AxiosInstance } from "axios";
+import { useAuthStore } from "@/stores/auth";
 
-export default {
-  name: "CourseOfferingDetails",
+const { t } = useI18n();
+const http = inject<AxiosInstance>("$http")!;
+const authStore = useAuthStore();
 
-  mounted() {
-    this.pageLoaded = false;
-    const id = this.offeringId;
+const props = defineProps<{
+  offeringId?: any;
+}>();
 
-    this.$http
-      .get(`/api/v1/courses/course_offerings/${id}/students`)
-      .then(resp => {
-        //TODO make call in parent or Promise.all
-        this.studentsAmt = resp.data.filter(student => student.active).length;
-        this.$http.get(`/api/v1/courses/course_offerings/${id}`).then(resp => {
-          this.courseOffering = resp.data;
-        });
-      });
+const courseOffering = ref<Record<string, any>>({});
+const studentsAmt = ref(0);
+const snackbar = ref({ show: false, text: "" });
+const pageLoaded = ref(false);
 
-    this.$http.get(`/api/v1/courses/course_offerings/${id}`).then(resp => {
-      this.courseOffering = resp.data;
-      this.pageLoaded = true;
+function getDisplayDate(ts: any) {
+  let date = new Date(ts);
+  return date.toLocaleTimeString(authStore.currentLanguageCode, {
+    year: "numeric",
+    month: "numeric",
+    day: "numeric",
+    hour: "2-digit",
+    minute: "2-digit"
+  });
+}
+
+onMounted(() => {
+  pageLoaded.value = false;
+  const id = props.offeringId;
+
+  http
+    .get(`/api/v1/courses/course_offerings/${id}/students`)
+    .then(resp => {
+      studentsAmt.value = resp.data.filter((student: any) => student.active).length;
     });
-  },
 
-  computed: {
-    ...mapGetters(["currentLanguageCode"])
-  },
-
-  data() {
-    return {
-      courseOffering: {},
-      courseOfferingDialog: {
-        show: false,
-        editMode: false,
-        saving: false,
-        courseOffering: {}
-      },
-      studentsAmt: 0,
-      snackbar: {
-        show: false,
-        text: ""
-      },
-      pageLoaded: false
-    };
-  },
-  props: {
-    offeringId: null
-  },
-  methods: {
-    getDisplayDate(ts) {
-      let date = new Date(ts);
-      return date.toLocaleTimeString(this.currentLanguageCode, {
-        year: "numeric",
-        month: "numeric",
-        day: "numeric",
-        hour: "2-digit",
-        minute: "2-digit"
-      });
-    },
-
-    showSnackbar(message) {
-      this.snackbar.text = message;
-      this.snackbar.show = true;
-    }
-  }
-};
+  http.get(`/api/v1/courses/course_offerings/${id}`).then(resp => {
+    courseOffering.value = resp.data;
+    pageLoaded.value = true;
+  });
+});
 </script>
 
 <style scoped>

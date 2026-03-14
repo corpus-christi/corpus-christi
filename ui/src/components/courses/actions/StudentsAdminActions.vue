@@ -1,56 +1,61 @@
 <template>
-  <v-layout align-center justify-end>
-    <v-tooltip bottom v-if="!student.confirmed">
-      <v-btn
-        flat
-        icon
-        outline
-        color="primary"
-        slot="activator"
-        v-bind:small="displayContext === 'compact'"
-        @click="emitAction('confirm')"
-      >
-        <v-icon v-bind:small="displayContext === 'compact'">done</v-icon>
-      </v-btn>
-      <span>{{ $t("actions.confirm") }}</span>
+  <v-row align="center" justify="end" no-gutters>
+    <v-tooltip location="bottom" v-if="!student.confirmed">
+      <template #activator="{ props }">
+        <v-btn
+          variant="outlined"
+          icon
+          color="primary"
+          v-bind="props"
+          :size="displayContext === 'compact' ? 'small' : 'default'"
+          @click="emitAction('confirm')"
+        >
+          <v-icon :size="displayContext === 'compact' ? 'small' : 'default'">done</v-icon>
+        </v-btn>
+      </template>
+      <span>{{ t("actions.confirm") }}</span>
     </v-tooltip>
-    <v-tooltip bottom>
-      <v-btn
-        flat
-        icon
-        outline
-        color="primary"
-        slot="activator"
-        v-bind:small="displayContext === 'compact'"
-        @click="emitAction(student.active ? 'deactivate' : 'activate')"
-      >
-        <v-icon v-bind:small="displayContext === 'compact'">
-          {{ student.active ? "archive" : "undo" }}
-        </v-icon>
-      </v-btn>
+    <v-tooltip location="bottom">
+      <template #activator="{ props }">
+        <v-btn
+          variant="outlined"
+          icon
+          color="primary"
+          v-bind="props"
+          :size="displayContext === 'compact' ? 'small' : 'default'"
+          @click="emitAction(student.active ? 'deactivate' : 'activate')"
+        >
+          <v-icon :size="displayContext === 'compact' ? 'small' : 'default'">
+            {{ student.active ? "archive" : "undo" }}
+          </v-icon>
+        </v-btn>
+      </template>
       <span>{{
-        $t(
+        t(
           student.active
             ? "actions.tooltips.archive"
             : "actions.tooltips.unarchive"
         )
       }}</span>
     </v-tooltip>
-  </v-layout>
+  </v-row>
 </template>
 
-<script>
-export default {
-  props: {
-    student: Object,
-    displayContext: String
-  },
-  methods: {
-    emitAction(actionName) {
-      this.$emit("action", actionName);
-    }
-  }
-};
+<script setup lang="ts">
+import { useI18n } from "vue-i18n";
+
+const { t } = useI18n();
+
+const props = defineProps<{
+  student: Record<string, any>;
+  displayContext?: string;
+}>();
+
+const emit = defineEmits(["action"]);
+
+function emitAction(actionName: string) {
+  emit("action", actionName);
+}
 </script>
 
 <style></style>
