@@ -15,7 +15,7 @@ refer to `doc/sdm.md`.
     - [UI Dependencies](#ui-dependencies)
     - [Vue Dev Tools](#vue-dev-tools)
     - [API Dependencies](#api-dependencies)
-  - [Bash Setup for Flask](#bash-setup-for-flask)
+  - [Environment Configuration](#environment-configuration)
   - [Database Setup](#database-setup)
     - [PostgreSQL](#postgresql)
     - [Create Database User and Database](#create-database-user-and-database)
@@ -36,9 +36,10 @@ refer to `doc/sdm.md`.
 
 The development tool chain requires the following software.
 
-  - [Python](https://www.python.org/) 3.7 to before 3.8 (greater than version 3.7, less than version 3.8)
-  - [Node](https://nodejs.org/) 10 LTS or later
-  - [Yarn](https://yarnpkg.com/) current version
+  - [Python](https://www.python.org/) 3.11 or later
+  - [uv](https://docs.astral.sh/uv/) — Python package and project manager
+  - [Node](https://nodejs.org/) 18 LTS or later
+  - [pnpm](https://pnpm.io/) — Node package manager
   - [Bash](https://www.gnu.org/software/bash/) current version
 
 Windows additional downloads:
@@ -70,11 +71,10 @@ we'll refer to the top-level directory as `corpus-christi`
 
 ### UI Dependencies
 
-Install the UI dependencies, of which there are _many_.
-Installation takes several minutes.
+Install the UI dependencies using pnpm:
 ```bash
 $ cd corpus-christi/ui
-$ yarn
+$ pnpm install
 ```
 
 ### Vue Dev Tools
@@ -88,61 +88,46 @@ and the native extension.
 
 ### API Dependencies
 
-1. Create a Python virtual environment; you only need to do this once
-    ```bash
-    $ cd corpus-christi/api
-    $ python3 -m venv venv
-    ```
-    - Note that the `python3` command may not have the correct version.  If you have errors with this, run `python3 --version`, if that is not the desired version, try running `python --version`.  If this is your desired version, replace `python3` with `python` in the above bash commands.  If you are still struggling (and using Windows), you will need to adjust the [environmental variables](https://www.architectryan.com/2018/08/31/how-to-change-environment-variables-on-windows-10/) and update PATH by finding the location of where python is downloaded.  Open the base python folder, copy that path/link and add it to PATH in the system variables.
-
-1. Activate the virtual environment;
-   you need to do this _whenever_ you start a new shell
-   in which you want to work on CC.
-    ```bash
-    $ source venv/bin/activate
-    ```
-      - Note that if this is causing errors, try `source venv/Scripts/activate`
-
-1. Check that your virtual environment is set up properly
-    ```bash
-    $ which pip
-    ```
-    should respond with a path that is _inside_ the virtual environment.
-1. Install the required Python packages
-    ```bash
-    $ pip install -r requirements.txt
-    ```
-
-Note that when you are done interacting with the API,
-you can _deactivate_ your virtual environment
-by entering this simple command
+The API uses [uv](https://docs.astral.sh/uv/) for dependency management.
+First, install uv if you haven't already:
 ```bash
-$ deactivate
+$ curl -LsSf https://astral.sh/uv/install.sh | sh
 ```
-This will remove the virtual environment from your shell.
 
-## Bash Setup for Flask
-
-Flask (on which the API is written)
-includes a handy utility command
-called `flask`.
-To make it easy to use this command during development,
-set up your `bash` shell
-as follows:
+Then install all API dependencies (uv creates and manages the virtual environment automatically):
 ```bash
 $ cd corpus-christi/api
-$ source ./bin/set-up-bash.sh
+$ uv sync --extra dev
 ```
-This script will
-1. Activate your virtual environment;
-   no need to separately `source the` `activate` command
-1. Configure Flask properly for development
-1. Allow you to run the `flask` command from the command line.
 
-  - If errors, open the file and change line three to source ./venv/Scripts/activate
+That's it — no manual virtual environment setup required.
+To run any command in the managed environment, prefix it with `uv run`:
+```bash
+$ uv run pytest
+$ uv run uvicorn cc-api:app --reload
+```
 
-Do this whenever you start a new `bash`
-in which you intend to work with the API.
+## Environment Configuration
+
+The API is configured via environment variables (no `private.py` required).
+Copy the sample file and fill in your values:
+```bash
+$ cd corpus-christi/api
+$ cp .env.sample .env
+```
+
+Key variables in `.env`:
+```
+PSQL_USER=arco
+PSQL_PASS=password
+PSQL_HOST=localhost
+PSQL_DB=cc-dev
+JWT_SECRET_KEY=your-secret-key
+SECRET_KEY=your-flask-secret
+CC_ENV=dev
+```
+
+The `.env` file is listed in `.gitignore` — never commit it.
 
 ## Database Setup
 
@@ -263,71 +248,44 @@ Important notes:
 
 ### Database Connection
 
-The values that you supply for Postgres user, password, host, etc.
-should match the values supplied in the `api/private.py` file.
-A default file is included with the CC repository
-that should work with the default configuration.
-Update it as appropriate for your use case.
+Set the database connection via environment variables in your `.env` file
+(see [Environment Configuration](#environment-configuration)):
 
-If you are configuring CC for production use,
-*do not* commit the updated `private.py` file
-to a public Git repository!
-In an attempt to avoid accidental commits
-of private data,
-`private.py` is listed in the CC `.gitignore` file.
-Still, use caution!
-
-**During development and testing**,
-you can override the database connection 
-by defining environment variables in `bash`.
-For example:
-```bash
-export DEV_DB_URL="postgresql://PSQL_USER:PSQL_PASS@PSQL_HOST/PSQL_DB"
 ```
-tells CC how to connect to your development database (the `DEV` part of the environment variable)
-where:
-   * `PSQL_USER` is your Postgres user name
-   * `PSQL_PASS` is your Postgres password
-     (if you haven't set a password, omit this field _and_ the colon
-     that separates it from `PSQL_USER`)
-   * `PSQL_HOST` is the host where the Postgres server is running
-     (DNS name or `localhost` if running on your workstation)
-   * `PSQL_DB` is your Postgres database name
+PSQL_USER=arco
+PSQL_PASS=password
+PSQL_HOST=localhost
+PSQL_DB=cc-dev
+```
 
-Similarly, you can define `TEST_DB_URL` for your test database (for use with `pytest`)
-or `PROD_DB_URL` for your production database.
+For testing, set `PSQL_DB=cc-test` or override with `DATABASE_URL` directly:
+```
+DATABASE_URL=postgresql://arco:password@localhost/cc-test
+```
 
 ### Database Initialization
 
-- Windows: run the rest of the commands in bash and not WSL.  Make sure the `api/private.py` has the correct password (password used in psql).  If errors, check the postgreSQL WSL installation tutorial [Tips/Debugging](./postgres-windows.md) section for help. 
-
-Use the `flask` command to initialize your development database:
+Run Alembic migrations and load seed data using the CLI:
 ```bash
-$ flask db migrate
-$ flask db upgrade
-$ flask data load-all
+$ cd corpus-christi/api
+$ uv run alembic upgrade head
+$ uv run cc-cli app load-all
 ```
 
-To completely reset the database during development,
-the script `bin/reset-db.sh` may be of use.
-
-Once the database is initialized,
-create a CC test account for yourself.
+To completely reset the database during development:
 ```bash
-$ flask account new --first="Fred" --last="Ziffle" username password
+$ uv run cc-cli app reset-db
+```
+
+Once the database is initialized, create a CC account for yourself:
+```bash
+$ uv run cc-cli people new-account --first="Fred" --last="Ziffle" username password
 ```
 where
-- `--first` is the user's first name
-- `--last` is the user's last name
-- `username` is the user name of the account
-- `password` is the password to be associated with the account
-The `--first` and `--last` flags are _optional_.
-To include a first or last name with blanks or other
-characters special to the shell,
-enclose it in quotes. For example:
-```bash
-$ flask account new --first="Billy Bob" --last="Smith" bbob bob-pass
-```
+- `--first` is the user's first name (optional)
+- `--last` is the user's last name (optional)
+- `username` is the username for the account
+- `password` is the password for the account
 
 ## Run CC
 
@@ -339,73 +297,62 @@ The servers produce useful debugging information
 when things go haywire.
 
 1. Start the API server
-   (be sure you have [set up your shell](#bash-setup-for-flask))
-    ```base
+    ```bash
     $ cd corpus-christi/api
-    $ ./bin/run-dev-server.sh
+    $ uv run uvicorn cc-api:app --reload --port 5000
     ```
-   You should see a few lines indicating that
-   Flask is serving the application.
-   (You can also use `flask` directly; the script above is just
-   a thin wrapper around the `flask` command.)
-1. **In a separate shell**, start the Vue CLI service
+   You should see uvicorn start and report the address it is serving on.
+   The interactive API docs are available at `http://localhost:5000/docs`.
+
+1. **In a separate shell**, start the Vue dev server
     ```bash
     $ cd corpus-christi/ui
-    $ yarn serve
+    $ pnpm dev
     ```
-   You should see the application being built
-   then a `Compiled successfully` message
-   and the URLs where you can connect to the UI.
+   You should see Vite build the app and print the local URL to connect to the UI.
 
 ## Source Code Structure
 
 The structure of the CC source code is as follows:
 
-- `api/` - RESTful API server based on [Flask](http://flask.pocoo.org/).
+- `api/` - RESTful API server based on [FastAPI](https://fastapi.tiangolo.com/).
     - `bin/` - Utility executables
     - `migrations/` - database migrations created by Alembic
     - `src/` - Main API source;
       Directories within `src` contain subsets of the API
-      divided into managable modules.
+      divided into manageable modules.
       The common structure within each module
       is documented under `i18n`.
-      - `auth/` - Authentication endpoints
+      - `auth/` - Authentication endpoints and JWT dependencies
       - `boilerplate/` - See [Boilerplate details](#boilerplate)
       - `etc/` - Endpoints that don't fit anywhere else.
       - `groups/` - Endpoints for the home groups module
       - `i18n/` - API endpoints for Internationalization;
         like most directories under `src`,
         contains the following files:
-        - `__init__.py` marks this directory as a Python _package_;
-          includes initialization code to help integrate
-          this package into the overall application
-        - `api.py` contains the portion of the API endpoints
-          for this module
-        - `models.py` implements database _models_
-          (in the Model-View-Controller sense)
-          based on SQLAlchemy and Marshmallow.
-        - `test_i18n.py` contains tests for this package,
+        - `__init__.py` marks this directory as a Python _package_
+          and exports the FastAPI `APIRouter`
+        - `api.py` contains the API route handlers for this module
+        - `models.py` implements database _models_ using SQLAlchemy 2
+          and Pydantic v2 schemas for request/response validation.
+        - `test_i18n.py` contains tests for this package
           using the Pytest library.
-          Note that the file is named consistently
-          with the package name.
        - `people/` - API for the people and accounts
        - `places/` - API for locations and countries
-       - `roles/` - API for CC roles
-       - `shared/` - Common API functions
-       - `__init__.py` - Marks `src` as a Python package.
-         This is where all API initialization takes place.
+       - `shared/` - Common API functions and dependencies
+       - `__init__.py` - Marks `src` as a Python package;
+         creates the FastAPI application and registers all routers.
        - `conftest.py` - Contains configuration for testing the API
          using [Pytest](https://docs.pytest.org/en/latest/contents.html#toc)
-       - `db.py` - Configuration information for database access
-         using [SQL Alchemy](https://www.sqlalchemy.org/)
+         and FastAPI's `TestClient`.
+       - `db.py` - SQLAlchemy 2 engine, session factory,
+         and `get_db` dependency.
        - `test_basics.py` - Basic tests not related to a particular endpoint.
-     - `cc-api.py` - Top-level Python file for the API.
-       Also implements extensions to the `flask` command.
-     - `config.py` - Configuration of various Flask
-       parameters for use in development, testing, and production.
-     - `Makefile` - Handy command-line commands
-     - `pytest.ini` - Configuration for the `pytest` test suite.
-     - `requirements.txt` - Python packages required for the API
+     - `cc-api.py` - Top-level entry point; exposes the FastAPI `app` for uvicorn.
+     - `cli.py` - Typer CLI entry point (`uv run cc-cli`).
+     - `config.py` - Pydantic Settings; reads configuration from environment variables.
+     - `pyproject.toml` - Project metadata, dependencies, and tool configuration.
+     - `uv.lock` - Locked dependency versions for reproducible installs.
 - `doc/` - Project-wide documentation
 - `ui/` - User interface - [Vue](https://vuejs.org/) single-page web app
   - `assets/` - Graphics files, other static asset files
@@ -631,15 +578,14 @@ Using the wrong client results an an exception from the endpoint.
 
 For development with Visual Studio Code,
 consider installing the `ms-python.python` extension.
-To make full use of the extension,
-be sure to install Python modules as follows
-_in the virtual environment_.
+uv manages the virtual environment at `api/.venv` —
+point VS Code to that interpreter:
+```
+corpus-christi/api/.venv/bin/python
+```
 
-1. `pip install pylint`
-1. `pip install autopep8`
-
-Note that, as of this writing,
-you must run these `install` commands manually.
-Choosing `Install` from the VS Code popup
-installs them in the wrong place.
+Useful extensions:
+- `ms-python.python` — Python language support
+- `ms-python.pylint` — Linting
+- `charliermarsh.ruff` — Fast linter/formatter (replaces autopep8)
 
