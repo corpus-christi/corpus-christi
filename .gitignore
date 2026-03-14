@@ -8,3 +8,4 @@
 # Other
 *.swp
 .claude/
+api/.env
