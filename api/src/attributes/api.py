@@ -1,194 +1,233 @@
-from flask import request
-from flask.json import jsonify
-from flask_jwt_extended import jwt_required
-from marshmallow import ValidationError
+from typing import Any, Dict, List, Optional
 
-from . import attributes
-from .models import Attribute, AttributeSchema, EnumeratedValue, EnumeratedValueSchema
-from .. import db
+from fastapi import APIRouter, Depends, HTTPException
+from pydantic import BaseModel
+from sqlalchemy import select
+from sqlalchemy.orm import Session
+
+from ..db import get_db
+from ..auth.dependencies import get_current_user
+from .models import Attribute, AttributeRead, EnumeratedValue, EnumeratedValueRead, PersonAttribute
+
+router = APIRouter()
+
+
+class AttributeCreateRequest(BaseModel):
+    attribute: Dict[str, Any]
+    enumeratedValues: List[Dict[str, Any]] = []
+
 
 # ---- Attribute
 
-attribute_schema = AttributeSchema()
-enumerated_value_schema = EnumeratedValueSchema(exclude=['id'])
-enumerated_value_schema_with_id = EnumeratedValueSchema()
+@router.post("/attributes", response_model=AttributeRead, status_code=201)
+def create_attribute(
+    payload: AttributeCreateRequest,
+    db: Session = Depends(get_db),
+    _=Depends(get_current_user)
+):
+    attr_data = payload.attribute
+    new_attribute = Attribute(
+        name_i18n=attr_data.get('nameI18n') or attr_data.get('name_i18n'),
+        type_i18n=attr_data.get('typeI18n') or attr_data.get('type_i18n'),
+        seq=attr_data.get('seq'),
+        active=attr_data.get('active', True),
+    )
+    db.add(new_attribute)
+    db.flush()
+
+    for ev_data in payload.enumeratedValues:
+        ev = EnumeratedValue(
+            attribute_id=new_attribute.id,
+            value_i18n=ev_data.get('valueI18n') or ev_data.get('value_i18n'),
+            active=ev_data.get('active', True),
+        )
+        db.add(ev)
+
+    db.commit()
+    db.refresh(new_attribute)
+    return new_attribute
 
 
-@attributes.route('/attributes', methods=['POST'])
-@jwt_required
-def create_attribute():
-    try:
-        valid_attribute = attribute_schema.load(request.json['attribute'])
-        valid_enumerated_values = enumerated_value_schema.load(
-            request.json['enumeratedValues'], many=True)
-    except ValidationError as err:
-        return jsonify(err.messages), 422
-
-    new_attribute = Attribute(**valid_attribute)
-    db.session.add(new_attribute)
-    db.session.commit()
-
-    for enumerated_value in valid_enumerated_values:
-        enumerated_value = EnumeratedValue(**enumerated_value)
-        enumerated_value.attribute_id = new_attribute.id
-        db.session.add(enumerated_value)
-
-    db.session.commit()
-    result = db.session.query(Attribute).filter_by(id=new_attribute.id).first()
-    result.enumerated_values = result.enumerated_values
-    return jsonify(attribute_schema.dump(result)), 201
+@router.get("/attributes", response_model=list[AttributeRead])
+def read_all_attributes(
+    db: Session = Depends(get_db),
+    _=Depends(get_current_user)
+):
+    return db.execute(select(Attribute).where(Attribute.active == True)).scalars().all()
 
 
-@attributes.route('/attributes')
-@jwt_required
-def read_all_attributes():
-    result = db.session.query(Attribute).filter_by(active=True).all()
-    return jsonify(attribute_schema.dump(result, many=True))
+@router.get("/attributes/{attribute_id}", response_model=AttributeRead)
+def read_one_attribute(
+    attribute_id: int,
+    db: Session = Depends(get_db),
+    _=Depends(get_current_user)
+):
+    result = db.get(Attribute, attribute_id)
+    if result is None:
+        raise HTTPException(status_code=404, detail=f"Attribute {attribute_id} not found")
+    return result
 
 
-@attributes.route('/attributes/<attribute_id>')
-@jwt_required
-def read_one_attribute(attribute_id):
-    result = db.session.query(Attribute).filter_by(id=attribute_id).first()
-    return jsonify(attribute_schema.dump(result))
+@router.patch("/attributes/{attribute_id}", response_model=AttributeRead)
+def update_attribute(
+    attribute_id: int,
+    payload: AttributeCreateRequest,
+    db: Session = Depends(get_db),
+    _=Depends(get_current_user)
+):
+    attr_data = payload.attribute
+    attribute = db.get(Attribute, attribute_id)
+    if attribute is None:
+        raise HTTPException(status_code=404, detail=f"Attribute {attribute_id} not found")
+
+    update_enumerated_values = [ev for ev in payload.enumeratedValues if 'id' in ev]
+    new_enumerated_values = [ev for ev in payload.enumeratedValues if 'id' not in ev]
+
+    for new_ev in new_enumerated_values:
+        ev = EnumeratedValue(
+            attribute_id=attribute_id,
+            value_i18n=new_ev.get('valueI18n') or new_ev.get('value_i18n'),
+            active=new_ev.get('active', True),
+        )
+        db.add(ev)
+
+    for update_ev in update_enumerated_values:
+        old_ev = db.execute(
+            select(EnumeratedValue).where(
+                EnumeratedValue.attribute_id == attribute_id,
+                EnumeratedValue.id == update_ev['id']
+            )
+        ).scalar_one_or_none()
+        if old_ev is not None:
+            old_ev.value_i18n = update_ev.get('valueI18n') or update_ev.get('value_i18n')
+
+    for key, val in attr_data.items():
+        mapped_key = {'nameI18n': 'name_i18n', 'typeI18n': 'type_i18n'}.get(key, key)
+        if hasattr(attribute, mapped_key):
+            setattr(attribute, mapped_key, val)
+
+    db.commit()
+    db.refresh(attribute)
+    return attribute
 
 
-@attributes.route('/attributes/<attribute_id>', methods=['PATCH'])
-@jwt_required
-def update_attribute(attribute_id):
-    update_enumerated_values = []
-    new_enumerated_values = []
-
-    try:
-        valid_attribute = attribute_schema.load(request.json['attribute'])
-        for enumerated_value in request.json['enumeratedValues']:
-            if 'id' in enumerated_value.keys():
-                update_enumerated_values.append(
-                    enumerated_value_schema_with_id.load(enumerated_value))
-            else:
-                new_enumerated_values.append(
-                    enumerated_value_schema.load(enumerated_value))
-    except ValidationError as err:
-        return jsonify(err.messages), 422
-
-    for new_enumerated_value in new_enumerated_values:
-        new_enumerated_value = EnumeratedValue(**new_enumerated_value)
-        new_enumerated_value.attribute_id = attribute_id
-        db.session.add(new_enumerated_value)
-
-    for update_enumerated_value in update_enumerated_values:
-        old_enumerated_value = db.session.query(EnumeratedValue).filter_by(
-            attribute_id=attribute_id, id=update_enumerated_value['id']).first()
-        if old_enumerated_value is not None:
-            setattr(old_enumerated_value, 'value_i18n',
-                    update_enumerated_value['value_i18n'])
-
-    attribute = db.session.query(Attribute).filter_by(id=attribute_id).first()
-
-    for key, val in valid_attribute.items():
-        setattr(attribute, key, val)
-
-    db.session.commit()
-    result = db.session.query(Attribute).filter_by(id=attribute.id).first()
-    result.enumerated_values = result.enumerated_values
-    return jsonify(attribute_schema.dump(attribute))
+@router.patch("/attributes/deactivate/{attribute_id}", response_model=AttributeRead)
+def deactivate_attribute(
+    attribute_id: int,
+    db: Session = Depends(get_db),
+    _=Depends(get_current_user)
+):
+    attribute = db.get(Attribute, attribute_id)
+    if attribute is None:
+        raise HTTPException(status_code=404, detail=f"Attribute {attribute_id} not found")
+    attribute.active = False
+    db.commit()
+    db.refresh(attribute)
+    return attribute
 
 
-@attributes.route('/attributes/deactivate/<attribute_id>', methods=['PATCH'])
-@jwt_required
-def deactivate_attribute(attribute_id):
-    attribute = db.session.query(Attribute).filter_by(id=attribute_id).first()
-
-    setattr(attribute, 'active', False)
-
-    db.session.commit()
-
-    return jsonify(attribute_schema.dump(attribute))
-
-
-@attributes.route('/attributes/activate/<attribute_id>', methods=['PATCH'])
-@jwt_required
-def activate_attribute(attribute_id):
-    attribute = db.session.query(Attribute).filter_by(id=attribute_id).first()
-
-    setattr(attribute, 'active', True)
-
-    db.session.commit()
-
-    return jsonify(attribute_schema.dump(attribute))
+@router.patch("/attributes/activate/{attribute_id}", response_model=AttributeRead)
+def activate_attribute(
+    attribute_id: int,
+    db: Session = Depends(get_db),
+    _=Depends(get_current_user)
+):
+    attribute = db.get(Attribute, attribute_id)
+    if attribute is None:
+        raise HTTPException(status_code=404, detail=f"Attribute {attribute_id} not found")
+    attribute.active = True
+    db.commit()
+    db.refresh(attribute)
+    return attribute
 
 
 # ---- EnumeratedValue
 
-
-@attributes.route('/enumerated_values', methods=['POST'])
-@jwt_required
-def create_enumerated_value():
-    try:
-        valid_enumerated_value = enumerated_value_schema.load(request.json)
-    except ValidationError as err:
-        return jsonify(err.messages), 422
-
-    new_enumerated_value = EnumeratedValue(**valid_enumerated_value)
-    db.session.add(new_enumerated_value)
-    db.session.commit()
-    return jsonify(enumerated_value_schema.dump(new_enumerated_value)), 201
-
-
-@attributes.route('/enumerated_values')
-@jwt_required
-def read_all_enumerated_values():
-    result = db.session.query(EnumeratedValue).all()
-    return jsonify(enumerated_value_schema.dump(result, many=True))
+@router.post("/enumerated_values", response_model=EnumeratedValueRead, status_code=201)
+def create_enumerated_value(
+    payload: Dict[str, Any],
+    db: Session = Depends(get_db),
+    _=Depends(get_current_user)
+):
+    ev = EnumeratedValue(
+        attribute_id=payload.get('attributeId') or payload.get('attribute_id'),
+        value_i18n=payload.get('valueI18n') or payload.get('value_i18n'),
+        active=payload.get('active', True),
+    )
+    db.add(ev)
+    db.commit()
+    db.refresh(ev)
+    return ev
 
 
-@attributes.route('/enumerated_values/<enumerated_value_id>')
-@jwt_required
-def read_one_enumerated_value(enumerated_value_id):
-    result = db.session.query(EnumeratedValue).filter_by(
-        id=enumerated_value_id).first()
-    return jsonify(enumerated_value_schema.dump(result))
+@router.get("/enumerated_values", response_model=list[EnumeratedValueRead])
+def read_all_enumerated_values(
+    db: Session = Depends(get_db),
+    _=Depends(get_current_user)
+):
+    return db.execute(select(EnumeratedValue)).scalars().all()
 
 
-@attributes.route('/enumerated_values/<enumerated_value_id>', methods=['PATCH'])
-@jwt_required
-def update_enumerated_value(enumerated_value_id):
-    try:
-        valid_enumerated_value = enumerated_value_schema.load(request.json)
-    except ValidationError as err:
-        return jsonify(err.messages), 422
-
-    enumerated_value = db.session.query(
-        EnumeratedValue).filter_by(id=enumerated_value_id).first()
-
-    for key, val in valid_enumerated_value.items():
-        setattr(enumerated_value, key, val)
-
-    db.session.commit()
-    return jsonify(enumerated_value_schema.dump(enumerated_value))
+@router.get("/enumerated_values/{enumerated_value_id}", response_model=EnumeratedValueRead)
+def read_one_enumerated_value(
+    enumerated_value_id: int,
+    db: Session = Depends(get_db),
+    _=Depends(get_current_user)
+):
+    result = db.get(EnumeratedValue, enumerated_value_id)
+    if result is None:
+        raise HTTPException(status_code=404, detail=f"EnumeratedValue {enumerated_value_id} not found")
+    return result
 
 
-@attributes.route('/enumerated_values/deactivate/<enumerated_value_id>', methods=['PATCH'])
-@jwt_required
-def deactivate_enumerated_value(enumerated_value_id):
-    enumerated_value = db.session.query(
-        EnumeratedValue).filter_by(id=enumerated_value_id).first()
+@router.patch("/enumerated_values/{enumerated_value_id}", response_model=EnumeratedValueRead)
+def update_enumerated_value(
+    enumerated_value_id: int,
+    payload: Dict[str, Any],
+    db: Session = Depends(get_db),
+    _=Depends(get_current_user)
+):
+    ev = db.get(EnumeratedValue, enumerated_value_id)
+    if ev is None:
+        raise HTTPException(status_code=404, detail=f"EnumeratedValue {enumerated_value_id} not found")
 
-    setattr(enumerated_value, 'active', False)
+    if 'valueI18n' in payload:
+        ev.value_i18n = payload['valueI18n']
+    if 'value_i18n' in payload:
+        ev.value_i18n = payload['value_i18n']
+    if 'active' in payload:
+        ev.active = payload['active']
 
-    db.session.commit()
+    db.commit()
+    db.refresh(ev)
+    return ev
 
-    return jsonify(enumerated_value_schema.dump(enumerated_value))
+
+@router.patch("/enumerated_values/deactivate/{enumerated_value_id}", response_model=EnumeratedValueRead)
+def deactivate_enumerated_value(
+    enumerated_value_id: int,
+    db: Session = Depends(get_db),
+    _=Depends(get_current_user)
+):
+    ev = db.get(EnumeratedValue, enumerated_value_id)
+    if ev is None:
+        raise HTTPException(status_code=404, detail=f"EnumeratedValue {enumerated_value_id} not found")
+    ev.active = False
+    db.commit()
+    db.refresh(ev)
+    return ev
 
 
-@attributes.route('/enumerated_values/activate/<enumerated_value_id>', methods=['PATCH'])
-@jwt_required
-def activate_enumerated_value(enumerated_value_id):
-    enumerated_value = db.session.query(
-        EnumeratedValue).filter_by(id=enumerated_value_id).first()
-
-    setattr(enumerated_value, 'active', True)
-
-    db.session.commit()
-
-    return jsonify(enumerated_value_schema.dump(enumerated_value))
+@router.patch("/enumerated_values/activate/{enumerated_value_id}", response_model=EnumeratedValueRead)
+def activate_enumerated_value(
+    enumerated_value_id: int,
+    db: Session = Depends(get_db),
+    _=Depends(get_current_user)
+):
+    ev = db.get(EnumeratedValue, enumerated_value_id)
+    if ev is None:
+        raise HTTPException(status_code=404, detail=f"EnumeratedValue {enumerated_value_id} not found")
+    ev.active = True
+    db.commit()
+    db.refresh(ev)
+    return ev

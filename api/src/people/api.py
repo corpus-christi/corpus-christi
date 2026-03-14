@@ -1,649 +1,631 @@
-from flask import request
-from flask.json import jsonify
-from flask_jwt_extended import jwt_required
-from marshmallow import ValidationError
+from typing import Any, Dict, List, Optional
 
-from . import people
-from .models import Person, Role, PersonSchema, RoleSchema, Manager, ManagerSchema
-from .. import db
-from ..attributes.models import Attribute, AttributeSchema, EnumeratedValue, \
-    EnumeratedValueSchema, PersonAttribute, PersonAttributeSchema
+from fastapi import APIRouter, Depends, HTTPException, Query
+from pydantic import BaseModel
+from sqlalchemy import select
+from sqlalchemy.orm import Session
+
+from ..db import get_db
+from ..auth.dependencies import get_current_user
+from .models import Person, PersonRead, PersonCreate, PersonUpdate, Role, RoleRead, Manager, ManagerCreate, ManagerRead
+from ..attributes.models import Attribute, EnumeratedValue, PersonAttribute
 from ..auth.blacklist_helpers import revoke_tokens_of_account
 from ..courses.models import Student
 from ..events.models import EventPerson, EventParticipant
 from ..images.models import Image, ImagePerson
 from ..teams.models import TeamMember
 
-# removed  Account, AccountSchema, from line seven after person and before role
+router = APIRouter()
+
+
 # ---- Person
 
-person_schema = PersonSchema()
-person_attribute_schema = PersonAttributeSchema()
-attribute_schema = AttributeSchema(exclude=['active'])
-enumerated_value_schema = EnumeratedValueSchema(exclude=['active'])
-
-
-@people.route('/persons/fields', methods=['GET'])
-def read_person_fields():
-    response = {'person': [], 'person_attributes': []} 
+@router.get("/persons/fields")
+def read_person_fields(db: Session = Depends(get_db)):
+    response = {'person': [], 'person_attributes': []}
 
     person_columns = Person.__table__.columns
-    attributes = db.session.query(Attribute).filter_by(active=True).all()
-    enumerated_values = db.session.query(
-        EnumeratedValue).filter_by(active=True).all()
-    attributes = attribute_schema.dump(attributes, many=True)
-    enumerated_values = enumerated_value_schema.dump(
-        enumerated_values, many=True)
+    attributes = db.execute(select(Attribute).where(Attribute.active == True)).scalars().all()
+    enumerated_values = db.execute(select(EnumeratedValue).where(EnumeratedValue.active == True)).scalars().all()
 
     for c in person_columns:
-        response['person'].append(
-            {c.name: str(c.type), 'required': not c.nullable})
+        response['person'].append({c.name: str(c.type), 'required': not c.nullable})
 
     for a in attributes:
-        a[a['nameI18n']] = [x for x in enumerated_values if x['attributeId'] == a['id']]
-        response['person_attributes'].append(a)
+        attr_dict = {
+            'id': a.id,
+            'nameI18n': a.name_i18n,
+            'typeI18n': a.type_i18n,
+            'seq': a.seq,
+            'active': a.active,
+        }
+        attr_dict[a.name_i18n] = [
+            {'id': ev.id, 'attributeId': ev.attribute_id, 'valueI18n': ev.value_i18n, 'active': ev.active}
+            for ev in enumerated_values if ev.attribute_id == a.id
+        ]
+        response['person_attributes'].append(attr_dict)
 
-    return jsonify(response)
-
-
-@people.route('/persons', methods=['POST'])
-def create_person():
-    request.json['person']['active'] = True
-
-    for key, value in request.json['person'].items(): #don't know why value needs to be here, but without it we get an internal server error when this function is called
-        if request.json['person'][key] is "" or request.json['person'][key] is 0:
-            request.json['person'][key] = None
-
-    try:
-        valid_person = person_schema.load(request.json['person'], partial=True)
-        valid_person_attributes = person_attribute_schema.load(
-            request.json['attributesInfo'], many=True)
-    except ValidationError as err:
-        print(err)
-        #print(valid_person)
-        return jsonify(err.messages), 422
-
-    new_person = Person(**valid_person)
-  #  db.session.commit()
-    print(new_person)
-
-    public_user_role = db.session.query(Role).filter_by(id=1).first() ##FIXME don't filter by id = 1
-    new_person.roles.append(public_user_role)
-    db.session.add(new_person)
-
-    for person_attribute in valid_person_attributes:
-        if (person_attribute['enum_value_id'] is 0):
-            person_attribute['enum_value_id'] = None
-        person_attribute = PersonAttribute(**person_attribute)
-        person_attribute.person_id = new_person.id
-        db.session.add(person_attribute)
-
-    db.session.commit()
-    result = db.session.query(Person).filter_by(id=new_person.id).first()
-    result.attributesInfo = result.person_attributes
-
-    return jsonify(person_schema.dump(result)), 201
-
-#account info needs to be looked into more, is currently commented out because it isn't needed since the merge, not sure about this function now
-@people.route('/persons')
-@jwt_required
-def read_all_persons():
-    result = db.session.query(Person).all()
-    for r in result:
-        r.attributesInfo = r.person_attributes
-#         r.accountInfo = r.person #info is irrelavant since the merge of account and person
-#         if r.person:
-#             r.accountInfo.roles = r.person.roles
-
-    return jsonify(person_schema.dump(result, many=True))
+    return response
 
 
-@people.route('/persons/<person_id>')
-@jwt_required
-def read_one_person(person_id):
-    result = db.session.query(Person).filter_by(id=person_id).first()
+class PersonCreateRequest(BaseModel):
+    person: Dict[str, Any]
+    attributesInfo: List[Dict[str, Any]] = []
+
+
+@router.post("/persons", response_model=PersonRead, status_code=201)
+def create_person(
+    payload: PersonCreateRequest,
+    db: Session = Depends(get_db)
+):
+    person_data = payload.person
+    person_data['active'] = True
+
+    # Clean empty strings
+    for key, value in list(person_data.items()):
+        if value == "" or value == 0:
+            person_data[key] = None
+
+    # Map camelCase to snake_case
+    field_map = {
+        'firstName': 'first_name',
+        'lastName': 'last_name',
+        'secondLastName': 'second_last_name',
+        'addressId': 'address_id',
+    }
+    mapped_data = {}
+    for k, v in person_data.items():
+        mapped_key = field_map.get(k, k)
+        mapped_data[mapped_key] = v
+
+    # Handle password hashing
+    if 'password' in mapped_data:
+        from werkzeug.security import generate_password_hash
+        mapped_data['password_hash'] = generate_password_hash(mapped_data.pop('password'))
+
+    new_person = Person(**{k: v for k, v in mapped_data.items() if hasattr(Person, k)})
+
+    public_user_role = db.get(Role, 1)
+    if public_user_role:
+        new_person.roles.append(public_user_role)
+    db.add(new_person)
+    db.flush()
+
+    for person_attribute in payload.attributesInfo:
+        if person_attribute.get('enumValueId') == 0:
+            person_attribute['enumValueId'] = None
+        pa = PersonAttribute(
+            person_id=new_person.id,
+            attribute_id=person_attribute.get('attributeId') or person_attribute.get('attribute_id'),
+            enum_value_id=person_attribute.get('enumValueId') or person_attribute.get('enum_value_id'),
+            string_value=person_attribute.get('stringValue') or person_attribute.get('string_value'),
+        )
+        db.add(pa)
+
+    db.commit()
+    db.refresh(new_person)
+    return new_person
+
+
+@router.get("/persons", response_model=list[PersonRead])
+def read_all_persons(
+    db: Session = Depends(get_db),
+    _=Depends(get_current_user)
+):
+    return db.execute(select(Person)).scalars().all()
+
+
+@router.get("/persons/username/{username}", response_model=PersonRead)
+def read_one_person_by_username(
+    username: str,
+    db: Session = Depends(get_db),
+    _=Depends(get_current_user)
+):
+    result = db.execute(
+        select(Person).where(Person.username == username)
+    ).scalar_one_or_none()
     if result is None:
-        return 'Person specified was NOT found', 404
-    result.attributesInfo = result.person_attributes
-#not needed hopefully?    result.accountInfo = result.person #? I think that is a reference to the account table, now swapped to result.person
-    return jsonify(person_schema.dump(result))
+        raise HTTPException(status_code=404, detail="Person specified was NOT found")
+    return result
 
 
-@people.route('/persons/<person_id>', methods=['PUT'])
-@jwt_required
-def update_person(person_id):
-    try:
-        valid_person = person_schema.load(request.json['person'], partial=True)
-        valid_person_attributes = person_attribute_schema.load(
-            request.json['attributesInfo'], many=True)
-    except ValidationError as err:
-        print(err)
-        return jsonify(err.messages), 422
-    for new_person_attribute in valid_person_attributes:
-        old_person_attribute = db.session.query(PersonAttribute).filter_by(
-            person_id=person_id, attribute_id=new_person_attribute['attribute_id']).first()
-        if old_person_attribute is not None:
-            value = None
-            if 'string_value' in new_person_attribute:
-                value = new_person_attribute['string_value']
-            setattr(old_person_attribute, 'string_value',
-                    value)
-            value = None
-            if 'enum_value_id' in new_person_attribute:
-                value = new_person_attribute['enum_value_id']
-            setattr(old_person_attribute, 'enum_value_id',
-                    value)
+@router.get("/persons/{person_id}", response_model=PersonRead)
+def read_one_person(
+    person_id: int,
+    db: Session = Depends(get_db),
+    _=Depends(get_current_user)
+):
+    result = db.get(Person, person_id)
+    if result is None:
+        raise HTTPException(status_code=404, detail="Person specified was NOT found")
+    return result
+
+
+class PersonUpdateRequest(BaseModel):
+    person: Dict[str, Any]
+    attributesInfo: List[Dict[str, Any]] = []
+
+
+@router.put("/persons/{person_id}", response_model=PersonRead)
+def update_person(
+    person_id: int,
+    payload: PersonUpdateRequest,
+    db: Session = Depends(get_db),
+    _=Depends(get_current_user)
+):
+    field_map = {
+        'firstName': 'first_name',
+        'lastName': 'last_name',
+        'secondLastName': 'second_last_name',
+        'addressId': 'address_id',
+    }
+
+    for new_person_attribute in payload.attributesInfo:
+        attr_id = new_person_attribute.get('attributeId') or new_person_attribute.get('attribute_id')
+        old_pa = db.execute(
+            select(PersonAttribute).where(
+                PersonAttribute.person_id == person_id,
+                PersonAttribute.attribute_id == attr_id
+            )
+        ).scalar_one_or_none()
+        if old_pa is not None:
+            old_pa.string_value = new_person_attribute.get('stringValue') or new_person_attribute.get('string_value')
+            old_pa.enum_value_id = new_person_attribute.get('enumValueId') or new_person_attribute.get('enum_value_id')
         else:
-            new_person_attribute = PersonAttribute(**new_person_attribute)
-            new_person_attribute.person_id = person_id
-            db.session.add(new_person_attribute)
+            pa = PersonAttribute(
+                person_id=person_id,
+                attribute_id=attr_id,
+                enum_value_id=new_person_attribute.get('enumValueId') or new_person_attribute.get('enum_value_id'),
+                string_value=new_person_attribute.get('stringValue') or new_person_attribute.get('string_value'),
+            )
+            db.add(pa)
 
-    person = db.session.query(Person).filter_by(id=person_id).first()
+    person = db.get(Person, person_id)
     if person is None:
-        return 'Person specified was NOT found', 404
+        raise HTTPException(status_code=404, detail="Person specified was NOT found")
 
+    person_data = payload.person
+    for k, v in person_data.items():
+        mapped_key = field_map.get(k, k)
+        if mapped_key != 'roles' and hasattr(person, mapped_key):
+            setattr(person, mapped_key, v)
+
+    db.commit()
+    db.refresh(person)
+    return person
+
+
+@router.put("/persons/deactivate/{person_id}", response_model=PersonRead)
+def deactivate_person(
+    person_id: int,
+    db: Session = Depends(get_db),
+    _=Depends(get_current_user)
+):
+    person = db.get(Person, person_id)
     if person is None:
-        return jsonify("Person does not exist"), 404
-
-    for key, val in valid_person.items():
-        if key != 'roles':
-            # print('key: %s', key)
-            setattr(person, key, val)
-
-    db.session.commit()
-
-    result = db.session.query(Person).filter_by(id=person_id).first()
-    result.attributesInfo = result.person_attributes
-    return jsonify(person_schema.dump(result))
+        raise HTTPException(status_code=404, detail="Person specified was NOT found")
+    person.active = False
+    db.commit()
+    db.refresh(person)
+    return person
 
 
-@people.route('/persons/deactivate/<person_id>', methods=['PUT'])
-@jwt_required
-def deactivate_person(person_id):
-    person = db.session.query(Person).filter_by(id=person_id).first()
+@router.put("/persons/activate/{person_id}", response_model=PersonRead)
+def activate_person(
+    person_id: int,
+    db: Session = Depends(get_db),
+    _=Depends(get_current_user)
+):
+    person = db.get(Person, person_id)
     if person is None:
-        return 'Person specified was NOT found', 404
-
-    ## I don't think any of this is needed since it is a part of person now
-    # if person.account:
-    #     account = db.session.query(Account).filter_by(
-    #         id=person.account.id).first()
-    #     if account is None:
-    #         return 'Account specified was NOT found', 404
-    #     setattr(account, 'active', False)
-    setattr(person, 'active', False)
-
-    db.session.commit()
-
-    return jsonify(person_schema.dump(person))
+        raise HTTPException(status_code=404, detail="Person does not exist")
+    person.active = True
+    db.commit()
+    db.refresh(person)
+    return person
 
 
-@people.route('/persons/activate/<person_id>', methods=['PUT'])
-@jwt_required
-def activate_person(person_id):
-    person = db.session.query(Person).filter_by(id=person_id).first()
+@router.delete("/persons/delete/{person_id}", status_code=204)
+def delete_person(
+    person_id: int,
+    db: Session = Depends(get_db),
+    _=Depends(get_current_user)
+):
+    person = db.get(Person, person_id)
     if person is None:
-        return jsonify("person does not exist"), 404
-    setattr(person, 'active', True)
+        raise HTTPException(status_code=404, detail="Person not found")
 
-    db.session.commit()
+    db.execute(select(TeamMember).where(TeamMember.member_id == person_id))
+    for tm in db.execute(select(TeamMember).where(TeamMember.member_id == person_id)).scalars().all():
+        db.delete(tm)
+    for ep in db.execute(select(EventParticipant).where(EventParticipant.person_id == person_id)).scalars().all():
+        db.delete(ep)
+    for ep in db.execute(select(EventPerson).where(EventPerson.person_id == person_id)).scalars().all():
+        db.delete(ep)
+    for s in db.execute(select(Student).where(Student.student_id == person_id)).scalars().all():
+        db.delete(s)
+    for pa in db.execute(select(PersonAttribute).where(PersonAttribute.person_id == person_id)).scalars().all():
+        db.delete(pa)
 
-    return jsonify(person_schema.dump(person))
+    db.delete(person)
+    db.commit()
 
 
-@people.route('/persons/delete/<person_id>', methods=['DELETE'])
-@jwt_required
-def delete_person(person_id):
-    person = db.session.query(Person).filter_by(id=person_id).first()
+# ---- Accounts (compat endpoints)
 
+@router.patch("/accounts/{person_id}", response_model=PersonRead)
+def update_account(
+    person_id: int,
+    payload: Dict[str, Any],
+    db: Session = Depends(get_db),
+    _=Depends(get_current_user)
+):
+    person = db.get(Person, person_id)
     if person is None:
-        return jsonify(msg="Person not found"), 404
+        raise HTTPException(status_code=404, detail="Person specified was NOT found")
 
-    db.session.query(TeamMember).filter_by(member_id=person_id).delete()
-    db.session.query(EventParticipant).filter_by(person_id=person_id).delete()
-    db.session.query(EventPerson).filter_by(person_id=person_id).delete()
-    db.session.query(Student).filter_by(student_id=person_id).delete()
-  #  db.session.query(Account).filter_by(person_id=person_id).delete() #won't matter, no longer a table
-    db.session.query(PersonAttribute).filter_by(person_id=person_id).delete()
-    # TODO delete the roles tied to a person
-    # TODO delete any instance of Class_Attendance that references deleted class_meeting
-    # db.session.query(ClassMeeting).filter_by(teacher=person_id).delete()
-    db.session.delete(person)
-    db.session.commit()
-    return jsonify(msg=f"Person {person_id} was deleted."), 204
+    roles_to_add = payload.pop('roles', None)
 
-
-# ---- Account # possibly no longer needed
-#-----------------------------------------------------------------------------------------------------------------------
-person_schema2 = PersonSchema()
-#-----------------------------------------------------------------------------------------------------------------------
-
-# @people.route('/accounts', methods=['POST'])
-# def create_account():
-#     request.json["active"] = True
-#     try:
-#         valid_account = account_schema.load(request.json)
-#     except ValidationError as err:
-#         print("ERR", err)
-#         return jsonify(err.messages), 422
-
-#     public_user_role = db.session.query(Role).filter_by(id=1).first()
-
-#     new_account = Account(**valid_account)
-#     new_account.active = True
-#     new_account.roles.append(public_user_role)
-#     db.session.add(new_account)
-#     db.session.commit()
-#     return jsonify(account_schema.dump(new_account)), 201
-
-##replaced by read all people?
-# @people.route('/accounts')
-# @jwt_required
-# def read_all_accounts():
-#     result = db.session.query(Account).all()
-#     return jsonify(account_schema.dump(result, many=True))
-
-# #no longer needed as it will be linked to the person_id
-# @people.route('/accounts/<account_id>')
-# @jwt_required
-# def read_one_account(account_id):
-#     """Read one account by ID."""
-#     result = db.session.query(Account).filter_by(id=account_id).first()
-#     if result is None:
-#         return 'Account specified was NOT found', 404
-#     return jsonify(account_schema.dump(result))
-
-
-@people.route('/persons/username/<username>')
-@jwt_required
-def read_one_person_by_username(username): #account was seperate before it got merged with the person table account -> person
-    """Read one person by its (unique) user name."""
-    result = db.session.query(Person).filter_by(username=username).first()
-    if result is None:
-        return 'Person specified was NOT found', 404
-    return jsonify(person_schema2.dump(result))
-
-#TEMPORARY REMOVAL
-# #not sure how neccesary this next function is
-# @people.route('/persons/<person_id>/account')
-# @jwt_required
-# def read_person_account(person_id):
-#     account = db.session.query(Account).filter_by(person_id=person_id).first()
-#     if account is None:
-#         return 'Account specified was NOT found', 404
-#     return jsonify(account_schema.dump(account))
-
-#changed account and accounts to person and persons
-@people.route('/role/<role_id>/persons') 
-@jwt_required
-def get_persons_by_role(role_id):
-    role = db.session.query(Role).filter_by(id=role_id).first()
-    if role is None:
-        return 'Role specified was NOT found', 404
-    return jsonify(person_schema2.dump(role.persons, many=True))
-
-##COME BACK TO THIS/ATTEMPTING A BANDAID SOLUTION ON ALL PARTS AFTER THIS TO ONLY CHANGE THE BACKEND WHILE BREAKING AS LITTLE UI AND API CALLS AS POSSIBLE
-#----------------------------------------------------------------------------------------------------------------------------------------------------------------
-@people.route('/accounts/<person_id>', methods=['PATCH'])
-@jwt_required
-def update_account(person_id):
-    try:
-        account_request = request.json.copy()
-        account_request.pop('roles', None)
-        person_schema2.load(account_request, partial=True)
-    except ValidationError as err:
-        return jsonify(err.messages), 422
-
-    person = db.session.query(Person).filter_by(id=person_id).first()
-    if person is None:
-        return 'Person specified was NOT found', 404
-
-    roles_to_add = []
-    if 'roles' in request.json:
-        roles_to_add = request.json['roles']
-
-    # Only these fields can be meaningfully updated.
-    for field in 'password', 'username', 'active':
-        if field in request.json:
-            setattr(person, field, request.json[field])
+    for field in ('password', 'username', 'active'):
+        if field in payload:
+            if field == 'password':
+                person.password = payload[field]
+            else:
+                setattr(person, field, payload[field])
 
     if roles_to_add is not None:
         role_objects = []
-        for role in roles_to_add:
-            role_object = db.session.query(Role).filter_by(id=role).first()
-            role_objects.append(role_object)
-        revoke_tokens_of_account(person.id)
+        for role_id in roles_to_add:
+            role_object = db.get(Role, role_id)
+            if role_object:
+                role_objects.append(role_object)
+        revoke_tokens_of_account(db, person.id)
+        person.roles = role_objects
 
-    person.roles = role_objects
+    db.commit()
+    db.refresh(person)
+    return person
 
-    db.session.commit()
-    return jsonify(person_schema2.dump(person))
-#----------------------------------------------------------------------------------------------------------------------------------------------------------------
 
-@people.route('/accounts/deactivate/<account_id>', methods=['PUT'])
-@jwt_required
-def deactivate_account(person_id):
-    person = db.session.query(Person).filter_by(id=person_id).first()
+@router.put("/accounts/deactivate/{account_id}", response_model=PersonRead)
+def deactivate_account(
+    account_id: int,
+    db: Session = Depends(get_db),
+    _=Depends(get_current_user)
+):
+    person = db.get(Person, account_id)
     if person is None:
-        return 'Person specified was NOT found', 404
-
-    setattr(person, 'active', False)
-
-    db.session.commit()
-
-    return jsonify(person_schema2.dump(person))
+        raise HTTPException(status_code=404, detail="Person specified was NOT found")
+    person.active = False
+    db.commit()
+    db.refresh(person)
+    return person
 
 
-@people.route('/accounts/activate/<account_id>', methods=['PUT'])
-@jwt_required
-def activate_account(person_id):
-    person = db.session.query(Person).filter_by(id=person_id).first()
+@router.put("/accounts/activate/{account_id}", response_model=PersonRead)
+def activate_account(
+    account_id: int,
+    db: Session = Depends(get_db),
+    _=Depends(get_current_user)
+):
+    person = db.get(Person, account_id)
     if person is None:
-        return 'Person specified was NOT found', 404
-
-    setattr(person, 'active', True)
-
-    db.session.commit()
-
-    return jsonify(person_schema2.dump(person))
+        raise HTTPException(status_code=404, detail="Person specified was NOT found")
+    person.active = True
+    db.commit()
+    db.refresh(person)
+    return person
 
 
-@people.route('/accounts/<account_id>/confirm')
-@jwt_required
-# @authorize(['role.superuser, role.infrastructure']) # <-- Only these people can confirm an account
-def confirm_user_account(person_id):
-    """ Confirm a user's account (ADMIN ACTION ONLY) """
-    person = db.session.query(Person).filter_by(id=person_id).first()
+@router.get("/accounts/{account_id}/confirm", response_model=PersonRead)
+def confirm_user_account(
+    account_id: int,
+    db: Session = Depends(get_db),
+    _=Depends(get_current_user)
+):
+    person = db.get(Person, account_id)
     if person is None:
-        return 'Person to confirm was NOT found', 404
+        raise HTTPException(status_code=404, detail="Person to confirm was NOT found")
+    person.confirmed = True
+    db.commit()
+    db.refresh(person)
+    return person
 
-    setattr(person, 'confirmed', True)
 
-    db.session.commit()
+@router.get("/role/{role_id}/persons", response_model=list[PersonRead])
+def get_persons_by_role(
+    role_id: int,
+    db: Session = Depends(get_db),
+    _=Depends(get_current_user)
+):
+    role = db.get(Role, role_id)
+    if role is None:
+        raise HTTPException(status_code=404, detail="Role specified was NOT found")
+    return role.persons
 
-    return jsonify(person_schema2.dump(person))
 
-#end of first major bandaid area
-#------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 # ---- Roles
 
-
-role_schema = RoleSchema()
-
-
-@people.route('/role', methods=['POST'])
-@jwt_required
-def create_role():
-    try:
-        valid_role = role_schema.load(request.json)
-    except ValidationError as err:
-        return jsonify(err.messages), 422
-
-    new_role = Role(**valid_role)
-    db.session.add(new_role)
-    db.session.commit()
-    return jsonify(role_schema.dump(new_role)), 201
+@router.post("/role", response_model=RoleRead, status_code=201)
+def create_role(
+    payload: Dict[str, Any],
+    db: Session = Depends(get_db),
+    _=Depends(get_current_user)
+):
+    new_role = Role(
+        name_i18n=payload.get('nameI18n') or payload.get('name_i18n'),
+        active=payload.get('active', True)
+    )
+    db.add(new_role)
+    db.commit()
+    db.refresh(new_role)
+    return new_role
 
 
-@people.route('/role')
-@jwt_required
-def read_all_roles():
-    result = db.session.query(Role).all()
-    return jsonify(role_schema.dump(result, many=True))
+@router.get("/role", response_model=list[RoleRead])
+def read_all_roles(
+    db: Session = Depends(get_db),
+    _=Depends(get_current_user)
+):
+    return db.execute(select(Role)).scalars().all()
 
-#maybe will replace with a person call or path, not sure yet
-@people.route('/role/account/<account_id>')
-@jwt_required
-def get_roles_for_account(person_id):
-    person = db.session.query(Person).filter_by(id=person_id).first()
+
+@router.get("/role/account/{account_id}")
+def get_roles_for_account(
+    account_id: int,
+    db: Session = Depends(get_db),
+    _=Depends(get_current_user)
+):
+    person = db.get(Person, account_id)
     if person is None:
-        return jsonify("persons does not exist"), 404
-    result = []
-    for role in person.roles:
-        role = role_schema.dump(role)
-        result.append(role["nameI18n"])
-    return jsonify(result)
+        raise HTTPException(status_code=404, detail="Person does not exist")
+    return [r.name_i18n for r in person.roles]
 
 
-@people.route('/role/<role_id>')
-@jwt_required
-def read_one_role(role_id):
-    result = db.session.query(Role).filter_by(id=role_id).first()
+@router.get("/role/{role_id}", response_model=RoleRead)
+def read_one_role(
+    role_id: int,
+    db: Session = Depends(get_db),
+    _=Depends(get_current_user)
+):
+    result = db.get(Role, role_id)
     if result is None:
-        return jsonify("Role does not exist"), 404
-    return jsonify(role_schema.dump(result))
+        raise HTTPException(status_code=404, detail="Role does not exist")
+    return result
 
 
-@people.route('/role/<role_id>', methods=['PATCH'])
-@jwt_required
-def update_role(role_id):
-    try:
-        valid_role = role_schema.load(request.json)
-    except ValidationError as err:
-        return jsonify(err.messages), 422
-
-    role = db.session.query(Role).filter_by(id=role_id).first()
+@router.patch("/role/{role_id}", response_model=RoleRead)
+def update_role(
+    role_id: int,
+    payload: Dict[str, Any],
+    db: Session = Depends(get_db),
+    _=Depends(get_current_user)
+):
+    role = db.get(Role, role_id)
     if role is None:
-        return 'Role specified was NOT found', 404
+        raise HTTPException(status_code=404, detail="Role does not exist")
+    if 'nameI18n' in payload:
+        role.name_i18n = payload['nameI18n']
+    if 'name_i18n' in payload:
+        role.name_i18n = payload['name_i18n']
+    if 'active' in payload:
+        role.active = payload['active']
+    db.commit()
+    db.refresh(role)
+    return role
 
+
+@router.put("/role/activate/{role_id}", response_model=RoleRead)
+def activate_role(
+    role_id: int,
+    db: Session = Depends(get_db),
+    _=Depends(get_current_user)
+):
+    role = db.get(Role, role_id)
     if role is None:
-        return jsonify("Role does not exist"), 404
-
-    for key, val in valid_role.items():
-        setattr(role, key, val)
-
-    db.session.commit()
-    return jsonify(role_schema.dump(role))
+        raise HTTPException(status_code=404, detail="Role not found")
+    role.active = True
+    db.commit()
+    db.refresh(role)
+    return role
 
 
-@people.route('/role/activate/<role_id>', methods=['PUT'])
-@jwt_required
-def activate_role(role_id):
-    role = db.session.query(Role).filter_by(id=role_id).first()
-    setattr(role, 'active', True)
-    db.session.commit()
-    return jsonify(role_schema.dump(role))
+@router.put("/role/deactivate/{role_id}", response_model=RoleRead)
+def deactivate_role(
+    role_id: int,
+    db: Session = Depends(get_db),
+    _=Depends(get_current_user)
+):
+    role = db.get(Role, role_id)
+    if role is None:
+        raise HTTPException(status_code=404, detail="Role not found")
+    role.active = False
+    db.commit()
+    db.refresh(role)
+    return role
 
 
-@people.route('/role/deactivate/<role_id>', methods=['PUT'])
-@jwt_required
-def deactivate_role(role_id):
-    role = db.session.query(Role).filter_by(id=role_id).first()
-
-    setattr(role, 'active', False)
-
-    db.session.commit()
-
-    return jsonify(role_schema.dump(role))
-
-#link role to person instead of account
-@people.route('/role/<account_id>&<role_id>', methods=['POST'])
-@jwt_required
-def add_role_to_account(person_id, role_id):
-    person = db.session.query(Person).filter_by(id=person_id).first()
-
+@router.post("/role/{account_id}&{role_id}")
+def add_role_to_account(
+    account_id: int,
+    role_id: int,
+    db: Session = Depends(get_db),
+    _=Depends(get_current_user)
+):
+    person = db.get(Person, account_id)
     if person is None:
-        return 'Person not found', 404
+        raise HTTPException(status_code=404, detail="Person not found")
 
-    role_to_add = db.session.query(Role).filter_by(id=role_id).first()
+    role_to_add = db.get(Role, role_id)
+    if role_to_add is None:
+        raise HTTPException(status_code=404, detail="Role not found")
 
     person.roles.append(role_to_add)
-    db.session.add(person)
-    db.session.commit()
+    db.commit()
+    revoke_tokens_of_account(db, person.id)
 
-    revoke_tokens_of_account(person.id)
+    roles = db.execute(
+        select(Role)
+        .join(Person.roles)
+        .where(Person.id == account_id, Role.active == True)
+    ).scalars().all()
+    return [r.name_i18n for r in roles]
 
-    user_roles = []
-    roles = db.session.query(Role).join(Person, Role.persons).filter_by(
-        id=person_id).filter_by(active=True).all()
-    for r in roles:
-        user_roles.append(role_schema.dump(r)['nameI18n'])
 
-    return jsonify(user_roles)
-
-#remove role from person instead of account
-@people.route('/role/<account_id>&<role_id>', methods=['DELETE'])
-@jwt_required
-def remove_role_from_account(person_id, role_id):
-    person = db.session.query(Person).filter_by(id=person_id).first()
+@router.delete("/role/{account_id}&{role_id}")
+def remove_role_from_account(
+    account_id: int,
+    role_id: int,
+    db: Session = Depends(get_db),
+    _=Depends(get_current_user)
+):
+    person = db.get(Person, account_id)
     if person is None:
-        return 'Person not found', 404
+        raise HTTPException(status_code=404, detail="Person not found")
 
-    role_to_remove = db.session.query(Role).filter_by(id=role_id).first()
+    role_to_remove = db.get(Role, role_id)
     if role_to_remove is None:
-        return 'Role specified was NOT found', 404
+        raise HTTPException(status_code=404, detail="Role specified was NOT found")
 
     if role_to_remove not in person.roles:
-        return 'That Person does not have that role', 404
+        raise HTTPException(status_code=404, detail="That Person does not have that role")
 
     person.roles.remove(role_to_remove)
-    db.session.commit()
-    revoke_tokens_of_account(person_id)
-
-    #this part was already commented out
-    #--------------------------------------------
-    # user_roles = []
-    # roles = db.session.query(Role).join(Person, Role.person).filter_by(id=person_id).filter_by(active=True).all()
-    # for r in roles:
-    #     user_roles.append(role_schema.dump(r)['nameI18n'])
-    #
-    # return jsonify(user_roles)
-    #--------------------------------------------
-    return jsonify(role_schema.dump(role_to_remove))
+    db.commit()
+    revoke_tokens_of_account(db, account_id)
+    return {'id': role_to_remove.id, 'nameI18n': role_to_remove.name_i18n, 'active': role_to_remove.active}
 
 
 # ---- Manager
 
-manager_schema = ManagerSchema()
+@router.post("/manager", response_model=ManagerRead, status_code=201)
+def create_manager(
+    payload: ManagerCreate,
+    db: Session = Depends(get_db),
+    _=Depends(get_current_user)
+):
+    new_manager = Manager(**payload.model_dump())
+    db.add(new_manager)
+    db.commit()
+    db.refresh(new_manager)
+    return new_manager
 
 
-@people.route('/manager', methods=['POST'])
-@jwt_required
-def create_manager():
-    try:
-        valid_manager = manager_schema.load(request.json)
-    except ValidationError as err:
-        return jsonify(err.messages), 422
-
-    new_manager = Manager(**valid_manager)
-    db.session.add(new_manager)
-    db.session.commit()
-    return jsonify(manager_schema.dump(new_manager)), 201
-
-
-@people.route('/manager')
-@jwt_required
-def read_all_managers():
-    show_unique_persons_only = request.args.get('show_unique_persons_only')
-
-    # Remove duplicate persons
+@router.get("/manager", response_model=list[ManagerRead])
+def read_all_managers(
+    show_unique_persons_only: Optional[str] = Query(None),
+    db: Session = Depends(get_db),
+    _=Depends(get_current_user)
+):
     if show_unique_persons_only == 'Y':
-        result = db.session.query(Manager).distinct(Manager.person_id).all()
-    else:
-        result = db.session.query(Manager)
-
-    return jsonify(manager_schema.dump(result, many=True))
+        return db.execute(select(Manager).distinct(Manager.person_id)).scalars().all()
+    return db.execute(select(Manager)).scalars().all()
 
 
-@people.route('/manager/<manager_id>')
-@jwt_required
-def read_one_manager(manager_id):
-    result = db.session.query(Manager).filter_by(id=manager_id).first()
+@router.get("/manager/{manager_id}", response_model=ManagerRead)
+def read_one_manager(
+    manager_id: int,
+    db: Session = Depends(get_db),
+    _=Depends(get_current_user)
+):
+    result = db.get(Manager, manager_id)
     if result is None:
-        return jsonify("Manager does not exist"), 404
-    return jsonify(manager_schema.dump(result))
+        raise HTTPException(status_code=404, detail="Manager does not exist")
+    return result
 
 
-@people.route('/manager/<manager_id>', methods=['PATCH'])
-@jwt_required
-def update_manager(manager_id):
-    try:
-        valid_manager = manager_schema.load(request.json)
-    except ValidationError as err:
-        return jsonify(err.messages), 422
-
-    manager = db.session.query(Manager).filter_by(id=manager_id).first()
-
-    for key, val in valid_manager.items():
-        setattr(manager, key, val)
-
-    db.session.commit()
-    return jsonify(manager_schema.dump(manager))
-
-
-@people.route('/manager/<manager_id>', methods=['DELETE'])
-@jwt_required
-def delete_manager(manager_id):
-    manager = db.session.query(Manager).filter_by(id=manager_id).first()
-
+@router.patch("/manager/{manager_id}", response_model=ManagerRead)
+def update_manager(
+    manager_id: int,
+    payload: ManagerCreate,
+    db: Session = Depends(get_db),
+    _=Depends(get_current_user)
+):
+    manager = db.get(Manager, manager_id)
     if manager is None:
-        return 'Manager not found', 404
+        raise HTTPException(status_code=404, detail="Manager not found")
+    for key, val in payload.model_dump().items():
+        setattr(manager, key, val)
+    db.commit()
+    db.refresh(manager)
+    return manager
 
+
+@router.delete("/manager/{manager_id}", status_code=204)
+def delete_manager(
+    manager_id: int,
+    db: Session = Depends(get_db),
+    _=Depends(get_current_user)
+):
+    manager = db.get(Manager, manager_id)
+    if manager is None:
+        raise HTTPException(status_code=404, detail="Manager not found")
     for subordinate in manager.subordinates:
-        setattr(subordinate, 'manager_id', None)
-
-    db.session.delete(manager)
-    db.session.commit()
-
-    return jsonify(manager_schema.dump(manager)), 204
+        subordinate.manager_id = None
+    db.delete(manager)
+    db.commit()
 
 
 # ---- Image
 
-@people.route('/<person_id>/images/<image_id>', methods=['POST'])
-@jwt_required
-def add_people_images(person_id, image_id):
-    person = db.session.query(Person).filter_by(id=person_id).first()
-    image = db.session.query(Image).filter_by(id=image_id).first()
-
-    person_image = db.session.query(ImagePerson).filter_by(person_id=person_id, image_id=image_id).first()
+@router.post("/{person_id}/images/{image_id}", status_code=201)
+def add_people_images(
+    person_id: int,
+    image_id: int,
+    db: Session = Depends(get_db),
+    _=Depends(get_current_user)
+):
+    person = db.get(Person, person_id)
+    image = db.get(Image, image_id)
 
     if not person:
-        return jsonify(f"Person with id #{person_id} does not exist."), 404
-
+        raise HTTPException(status_code=404, detail=f"Person with id #{person_id} does not exist.")
     if not image:
-        return jsonify(f"Image with id #{image_id} does not exist."), 404
+        raise HTTPException(status_code=404, detail=f"Image with id #{image_id} does not exist.")
 
-    # If image is already attached to the person
+    person_image = db.execute(
+        select(ImagePerson).where(ImagePerson.person_id == person_id, ImagePerson.image_id == image_id)
+    ).scalar_one_or_none()
     if person_image:
-        return jsonify(f"Image with id#{image_id} is already attached to person with id#{person_id}."), 422
-    else:
-        new_entry = ImagePerson(
-            **{'person_id': person_id, 'image_id': image_id})
-        db.session.add(new_entry)
-        db.session.commit()
+        raise HTTPException(status_code=422, detail=f"Image with id#{image_id} is already attached to person with id#{person_id}.")
 
-    return jsonify(f"Image with id #{image_id} successfully added to Person with id #{person_id}."), 201
+    new_entry = ImagePerson(person_id=person_id, image_id=image_id)
+    db.add(new_entry)
+    db.commit()
+    return f"Image with id #{image_id} successfully added to Person with id #{person_id}."
 
 
-@people.route('/<person_id>/images/<image_id>', methods=['PUT'])
-@jwt_required
-def put_people_images(person_id, image_id):
-    # check for old image id in parameter list (?old=<id>)
-    old_image_id = request.args['old']
+@router.put("/{person_id}/images/{image_id}")
+def put_people_images(
+    person_id: int,
+    image_id: int,
+    old: Optional[str] = Query(None),
+    db: Session = Depends(get_db),
+    _=Depends(get_current_user)
+):
+    old_image_id = old
     new_image_id = image_id
 
-    if old_image_id == 'false':
-        post_resp = add_people_images(person_id, new_image_id)
-        return jsonify({'deleted': 'No image to delete', 'posted': str(post_resp[0].data, "utf-8")})
+    if old_image_id == 'false' or old_image_id is None:
+        add_people_images(person_id, new_image_id, db)
+        return {'deleted': 'No image to delete', 'posted': f'Image {new_image_id} added'}
     else:
-        del_resp = delete_person_image(person_id, old_image_id)
-        post_resp = add_people_images(person_id, new_image_id)
+        delete_person_image(person_id, int(old_image_id), db)
+        add_people_images(person_id, new_image_id, db)
+        return {'deleted': f'Image {old_image_id} removed', 'posted': f'Image {new_image_id} added'}
 
-        return jsonify({'deleted': del_resp[0], 'posted': str(post_resp[0].data, "utf-8")})
 
-
-@people.route('/<person_id>/images/<image_id>', methods=['DELETE'])
-@jwt_required
-def delete_person_image(person_id, image_id):
-    person_image = db.session.query(ImagePerson).filter_by(
-        person_id=person_id, image_id=image_id).first()
-
+@router.delete("/{person_id}/images/{image_id}", status_code=204)
+def delete_person_image(
+    person_id: int,
+    image_id: int,
+    db: Session = Depends(get_db),
+    _=Depends(get_current_user)
+):
+    person_image = db.execute(
+        select(ImagePerson).where(ImagePerson.person_id == person_id, ImagePerson.image_id == image_id)
+    ).scalar_one_or_none()
     if not person_image:
-        return jsonify(f"Image with id #{image_id} is not assigned to Person with id #{person_id}."), 404
-
-    db.session.delete(person_image)
-    db.session.commit()
-
-    # 204 codes don't respond with any content
-    return 'Successfully removed image', 204
+        raise HTTPException(status_code=404, detail=f"Image with id #{image_id} is not assigned to Person with id #{person_id}.")
+    db.delete(person_image)
+    db.commit()
