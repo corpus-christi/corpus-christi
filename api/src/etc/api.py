@@ -1,21 +1,19 @@
 import os
 from datetime import datetime
 
-from flask import jsonify
-from src.auth.utils import jwt_not_required
+from fastapi import APIRouter
 
-from . import etc
+router = APIRouter()
 
 
-@etc.route('/ping')
-@jwt_not_required
+@router.get("/ping")
 def ping():
     """Basic smoke test that application server is running."""
-    return jsonify({
+    return {
         'ping': 'pong',
         'os': os.name,
         'cwd': os.getcwd(),
         'pid': os.getpid(),
-        'now': datetime.now(),
-        'utc': datetime.utcnow()
-    })
+        'now': datetime.now().isoformat(),
+        'utc': datetime.utcnow().isoformat(),
+    }

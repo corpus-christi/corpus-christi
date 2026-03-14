@@ -1,13 +1,15 @@
-from marshmallow import fields, Schema
+from typing import List, Optional
+
+from pydantic import BaseModel
 
 
 # ---- Email Schema
 
-class EmailSchema(Schema):
-    subject = fields.String()
-    body = fields.String()
-    recipients = fields.List(fields.String(), required=True)
-    cc = fields.List(fields.String())
-    bcc = fields.List(fields.String())
-    managerName = fields.String()
-    managerEmail = fields.String()
+class EmailSchema(BaseModel):
+    subject: Optional[str] = None
+    body: Optional[str] = None
+    recipients: List[str]
+    cc: Optional[List[str]] = None
+    bcc: Optional[List[str]] = None
+    managerName: Optional[str] = None
+    managerEmail: Optional[str] = None

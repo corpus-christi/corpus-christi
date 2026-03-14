@@ -1,41 +1,56 @@
-import os
-
 import pytest
-from flask.testing import FlaskClient
-from flask_jwt_extended import create_access_token
+from fastapi.testclient import TestClient
+from sqlalchemy import create_engine
+from sqlalchemy.orm import sessionmaker
 
-from . import db, create_app
-
-
-class AuthClient(FlaskClient):
-    def __init__(self, *args, **kwargs):
-        self.sqla = db.session
-        super().__init__(*args, **kwargs)
-
-    def open(self, *args, **kwargs):
-        access_token = create_access_token(identity='test-user')
-        kwargs['headers'] = {"AUTHORIZATION": f"Bearer {access_token}"}
-        return super().open(*args, **kwargs)
+from . import create_app
+from .db import Base, get_db
+from .auth.dependencies import create_access_token
 
 
-def client_factory(client_class):
-    app = create_app(os.getenv('CC_CONFIG') or 'test')
-    app.testing = True  # Make sure exceptions percolate out
-    app.test_client_class = client_class
+TEST_DATABASE_URL = "sqlite:///:memory:"
 
-    db.drop_all()
-    db.create_all()
 
-    with app.test_request_context():
-        with app.test_client() as client:
-            yield client
+def make_test_engine():
+    return create_engine(
+        TEST_DATABASE_URL,
+        connect_args={"check_same_thread": False},
+    )
+
+
+def client_factory(authenticated: bool = True):
+    engine = make_test_engine()
+    TestingSessionLocal = sessionmaker(bind=engine, expire_on_commit=False)
+
+    Base.metadata.drop_all(bind=engine)
+    Base.metadata.create_all(bind=engine)
+
+    app = create_app()
+
+    def override_get_db():
+        with TestingSessionLocal() as session:
+            yield session
+
+    app.dependency_overrides[get_db] = override_get_db
+
+    client = TestClient(app, raise_server_exceptions=True)
+
+    if authenticated:
+        token = create_access_token(data={"sub": "test-user", "roles": []})
+        client.headers.update({"Authorization": f"Bearer {token}"})
+
+    return client, engine, TestingSessionLocal
 
 
 @pytest.fixture
 def auth_client():
-    yield from client_factory(AuthClient)
+    client, engine, session_factory = client_factory(authenticated=True)
+    yield client, session_factory()
+    Base.metadata.drop_all(bind=engine)
 
 
 @pytest.fixture
 def plain_client():
-    yield from client_factory(FlaskClient)
+    client, engine, session_factory = client_factory(authenticated=False)
+    yield client, session_factory()
+    Base.metadata.drop_all(bind=engine)

@@ -1,17 +1,7 @@
-import os
-
-from commands.people import create_account_cli
-from commands.app import create_app_cli
-from commands.courses import create_course_cli
-from commands.events import create_event_cli
-from commands.faker import create_faker_cli
-
+import uvicorn
 from src import create_app
 
-app = create_app(os.getenv('CC_CONFIG') or 'default')
+app = create_app()
 
-create_account_cli(app)
-create_app_cli(app)
-create_course_cli(app)
-create_event_cli(app)
-create_faker_cli(app)
+if __name__ == '__main__':
+    uvicorn.run("cc-api:app", host="0.0.0.0", port=5000, reload=True)
