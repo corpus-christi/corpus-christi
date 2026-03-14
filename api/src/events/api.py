@@ -1,514 +1,386 @@
+import os
 from datetime import datetime, timedelta
+from typing import Optional
 
-from flask import request
-from flask.json import jsonify
-from flask_jwt_extended import jwt_required
-from flask_mail import Message
-from marshmallow import ValidationError
+from fastapi import APIRouter, Depends, HTTPException, Query
+from sqlalchemy import select
+from sqlalchemy.orm import Session
 
-from . import events
-from .models import Event, EventPerson, EventAsset, EventParticipant, EventTeam, EventGroup, EventSchema, \
-    EventPersonSchema, EventParticipantSchema
-from .. import db, mail, translate
-from src.shared.helpers import modify_entity, get_exclusion_list
+from ..db import get_db
+from ..auth.dependencies import get_current_user
+from .models import (
+    Event, EventCreate, EventUpdate, EventRead,
+    EventAsset, EventTeam, EventPerson, EventPersonCreate,
+    EventParticipant, EventParticipantCreate, EventGroup,
+    EventSchema, EventPersonSchema, EventParticipantSchema,
+)
 from ..groups.models import Group, Member
 from ..images.models import Image, ImageEvent
 from ..people.models import Person
 
+router = APIRouter()
+
 
 # ---- Event
 
-@events.route('/', methods=['POST'])
-@jwt_required
-def create_event():
-    event_schema = EventSchema(
-        exclude=get_exclusion_list(request.args, ['assets', 'participants', 'persons', 'teams', 'images', 'groups']))
-    try:
-        valid_event = event_schema.load(request.json)
-    except ValidationError as err:
-        return jsonify(err.messages), 422
-
-    new_event = Event(**valid_event)
-    db.session.add(new_event)
-    db.session.commit()
-    return jsonify(event_schema.dump(new_event)), 201
+@router.post("/", status_code=201)
+def create_event(payload: EventCreate, db: Session = Depends(get_db), _=Depends(get_current_user)):
+    new_event = Event(**payload.model_dump())
+    db.add(new_event)
+    db.commit()
+    db.refresh(new_event)
+    return EventSchema().dump(new_event)
 
 
-@events.route('/')
-def read_all_events():
-    event_schema = EventSchema(
-        exclude=get_exclusion_list(request.args, ['assets', 'participants', 'persons', 'teams', 'images', 'groups']))
-    query = db.session.query(Event)
+@router.get("/")
+def read_all_events(
+    return_group: Optional[str] = Query(None),
+    start: Optional[str] = Query(None),
+    end: Optional[str] = Query(None),
+    title: Optional[str] = Query(None),
+    location_id: Optional[int] = Query(None),
+    sort: Optional[str] = Query(None),
+    db: Session = Depends(get_db),
+):
+    query = select(Event)
 
-    # -- return_inactives --
-    # Filter events based on active status
-    # True - see all events, False or missing - see only active events
-    return_group = request.args.get('return_group')
     if return_group == 'inactive':
-        query = query.filter_by(active=False)
+        query = query.where(Event.active == False)
     elif return_group in ('all', 'both'):
-        pass  # Don't filter
+        pass
     else:
-        query = query.filter_by(active=True)
+        query = query.where(Event.active == True)
 
-    # -- start, end --
-    # Filter events to be greater than the start date and/or earlier than the end date (inclusive)
-    start_filter = request.args.get('start')
-    end_filter = request.args.get('end')
-    if start_filter:
-        query = query.filter(Event.start > (datetime.strptime(start_filter, '%Y-%m-%d') - timedelta(days=1)))
-    if end_filter:
-        query = query.filter(Event.end < (datetime.strptime(end_filter, '%Y-%m-%d') + timedelta(days=1)))
+    if start:
+        query = query.where(Event.start > (datetime.strptime(start, '%Y-%m-%d') - timedelta(days=1)))
+    if end:
+        query = query.where(Event.end < (datetime.strptime(end, '%Y-%m-%d') + timedelta(days=1)))
+    if title:
+        query = query.where(Event.title.like(f"%{title}%"))
+    if location_id:
+        query = query.where(Event.location_id == location_id)
 
-    # -- title --
-    # Filter events on a wildcard title string
-    title_filter = request.args.get('title')
-    if title_filter:
-        query = query.filter(Event.title.like(f"%{title_filter}%"))
-
-    # -- location --
-    # Filter events on a wildcard location string?
-    location_filter = request.args.get('location_id')
-    if location_filter:
-        query = query.filter_by(location_id=location_filter)
-
-    # Sorting
-    sort_filter = request.args.get('sort')
-    if sort_filter:
+    if sort:
         sort_column = None
-        if sort_filter[:5] == 'start':
+        if sort[:5] == 'start':
             sort_column = Event.start
-        elif sort_filter[:3] == 'end':
+        elif sort[:3] == 'end':
             sort_column = Event.end
-        elif sort_filter[:5] == 'title':
+        elif sort[:5] == 'title':
             sort_column = Event.title
+        if sort_column is not None:
+            if sort[-4:] == 'desc':
+                sort_column = sort_column.desc()
+            query = query.order_by(sort_column)
 
-        if sort_filter[-4:] == 'desc' and sort_column:
-            sort_column = sort_column.desc()
-
-        query = query.order_by(sort_column)
-
-    result = query.all()
-
-    return jsonify(event_schema.dump(result, many=True))
+    result = db.execute(query).scalars().all()
+    return EventSchema().dump(result, many=True)
 
 
-@events.route('/<event_id>')
-@jwt_required
-def read_one_event(event_id):
-    event_schema = EventSchema(
-        exclude=get_exclusion_list(request.args, ['assets', 'participants', 'persons', 'teams', 'images', 'groups']))
-    event = db.session.query(Event).filter_by(id=event_id).first()
-
+@router.get("/{event_id}")
+def read_one_event(event_id: int, db: Session = Depends(get_db), _=Depends(get_current_user)):
+    event = db.get(Event, event_id)
     if not event:
-        return jsonify(f"Event with id #{event_id} does not exist."), 404
-
-    return jsonify(event_schema.dump(event))
-
-
-@events.route('/<event_id>', methods=['PUT'])
-@jwt_required
-def replace_event(event_id):
-    event_schema = EventSchema()
-    try:
-        valid_event = event_schema.load(request.json)
-    except ValidationError as err:
-        return jsonify(err.messages), 422
-
-    event_schema = EventSchema(
-        exclude=get_exclusion_list(request.args, ['assets', 'participants', 'persons', 'teams', 'images', 'groups']))
-
-    return modify_entity(Event, event_schema, event_id, valid_event)
+        raise HTTPException(status_code=404, detail=f"Event with id #{event_id} does not exist.")
+    return EventSchema().dump(event)
 
 
-@events.route('/<event_id>', methods=['PATCH'])
-@jwt_required
-def update_event(event_id):
-    event_schema = EventSchema()
-    try:
-        valid_attributes = event_schema.load(request.json, partial=True)
-    except ValidationError as err:
-        return jsonify(err.messages), 422
-
-    event_schema = EventSchema(
-        exclude=get_exclusion_list(request.args, ['assets', 'participants', 'persons', 'teams', 'images', 'groups']))
-
-    return modify_entity(Event, event_schema, event_id, valid_attributes)
-
-
-@events.route('/<event_id>', methods=['DELETE'])
-@jwt_required
-def delete_event(event_id):
-    event = db.session.query(Event).filter_by(id=event_id).first()
-
+@router.put("/{event_id}")
+def replace_event(event_id: int, payload: EventCreate, db: Session = Depends(get_db), _=Depends(get_current_user)):
+    event = db.get(Event, event_id)
     if not event:
-        return jsonify(f"Event with id #{event_id} does not exist."), 404
+        raise HTTPException(status_code=404, detail=f"Event with id #{event_id} does not exist.")
+    for key, val in payload.model_dump().items():
+        setattr(event, key, val)
+    db.commit()
+    db.refresh(event)
+    return EventSchema().dump(event)
 
+
+@router.patch("/{event_id}")
+def update_event(event_id: int, payload: EventUpdate, db: Session = Depends(get_db), _=Depends(get_current_user)):
+    event = db.get(Event, event_id)
+    if not event:
+        raise HTTPException(status_code=404, detail=f"Event with id #{event_id} does not exist.")
+    for key, val in payload.model_dump(exclude_unset=True).items():
+        setattr(event, key, val)
+    db.commit()
+    db.refresh(event)
+    return EventSchema().dump(event)
+
+
+@router.delete("/{event_id}", status_code=204)
+def delete_event(event_id: int, db: Session = Depends(get_db), _=Depends(get_current_user)):
+    event = db.get(Event, event_id)
+    if not event:
+        raise HTTPException(status_code=404, detail=f"Event with id #{event_id} does not exist.")
     setattr(event, 'active', False)
-    db.session.commit()
-
-    # 204 codes don't respond with any content
-    return "Deleted successfully", 204
+    db.commit()
 
 
-@events.route('/<event_id>/assets/<asset_id>', methods=['POST', 'PUT', 'PATCH'])
-@jwt_required
-def add_asset_to_event(event_id, asset_id):
-    event = db.session.query(Event).filter_by(id=event_id).first()
-    asset_events = db.session.query(Event).join(EventAsset).filter_by(asset_id=asset_id).all()
+# ---- Assets
 
+@router.post("/{event_id}/assets/{asset_id}")
+def add_asset_to_event(event_id: int, asset_id: int, db: Session = Depends(get_db), _=Depends(get_current_user)):
+    event = db.get(Event, event_id)
     if not event:
-        return jsonify(f"Event with id #{event_id} does not exist."), 404
+        raise HTTPException(status_code=404, detail=f"Event with id #{event_id} does not exist.")
 
-    # Make sure asset isn't already booked in the current event
-    # Make sure asset isn't booked in another event during that time 
+    asset_events = db.execute(
+        select(Event).join(EventAsset).where(EventAsset.asset_id == asset_id)
+    ).scalars().all()
+
     for asset_event in asset_events:
-        if event.start <= asset_event.start < event.end \
-                or asset_event.start <= event.start < asset_event.end \
-                or event.start < asset_event.end <= event.end \
-                or asset_event.start < event.end <= asset_event.end:
-            return jsonify(f"Asset with id #{asset_id} is unavailable for Event with id #{event_id}."), 422
+        if (event.start <= asset_event.start < event.end
+                or asset_event.start <= event.start < asset_event.end
+                or event.start < asset_event.end <= event.end
+                or asset_event.start < event.end <= asset_event.end):
+            raise HTTPException(status_code=422, detail=f"Asset with id #{asset_id} is unavailable for Event with id #{event_id}.")
 
-    new_entry = EventAsset(**{'event_id': event_id, 'asset_id': asset_id})
-    db.session.add(new_entry)
-    db.session.commit()
+    new_entry = EventAsset(event_id=event_id, asset_id=asset_id)
+    db.add(new_entry)
+    db.commit()
+    return f"Asset with id #{asset_id} successfully booked for Event with id #{event_id}."
 
-    return jsonify(f"Asset with id #{asset_id} successfully booked for Event with id #{event_id}.")
 
-
-@events.route('/<event_id>/assets/<asset_id>', methods=['DELETE'])
-@jwt_required
-def remove_asset_from_event(event_id, asset_id):
-    event_asset = db.session.query(EventAsset).filter_by(event_id=event_id).filter_by(asset_id=asset_id).first()
-
+@router.delete("/{event_id}/assets/{asset_id}", status_code=204)
+def remove_asset_from_event(event_id: int, asset_id: int, db: Session = Depends(get_db), _=Depends(get_current_user)):
+    event_asset = db.execute(
+        select(EventAsset).where(EventAsset.event_id == event_id, EventAsset.asset_id == asset_id)
+    ).scalar_one_or_none()
     if not event_asset:
-        return jsonify(f"Asset with id #{asset_id} is not booked for Event with id #{event_id}."), 404
-
-    db.session.delete(event_asset)
-    db.session.commit()
-
-    # 204 codes don't respond with any content
-    return 'Successfully un-booked', 204
+        raise HTTPException(status_code=404, detail=f"Asset with id #{asset_id} is not booked for Event with id #{event_id}.")
+    db.delete(event_asset)
+    db.commit()
 
 
-@events.route('/<event_id>/teams/<team_id>', methods=['POST', 'PUT', 'PATCH'])
-@jwt_required
-def add_event_team(event_id, team_id):
-    event = db.session.query(Event).filter_by(id=event_id).first()
-    event_teams = db.session.query(Event).join(EventTeam).filter_by(team_id=team_id).all()
+# ---- Teams
 
+@router.post("/{event_id}/teams/{team_id}")
+def add_event_team(event_id: int, team_id: int, db: Session = Depends(get_db), _=Depends(get_current_user)):
+    event = db.get(Event, event_id)
     if not event:
-        return jsonify(f"Event with id #{event_id} does not exist."), 404
+        raise HTTPException(status_code=404, detail=f"Event with id #{event_id} does not exist.")
 
-    # Make sure asset isn't already booked in the current event
-    # Make sure asset isn't booked in another event during that time
-    event_start = event.start
-    event_end = event.end
-
-    is_overlap = False
+    event_teams = db.execute(
+        select(Event).join(EventTeam).where(EventTeam.team_id == team_id)
+    ).scalars().all()
 
     for event_team in event_teams:
-        if event_start <= event_team.start < event_end or event_start < event_team.end <= event_end \
-                or event_team.start <= event_start < event_team.end or event_team.start < event.end <= event_team.end:
-            is_overlap = True
-            break
+        if (event.start <= event_team.start < event.end
+                or event.start < event_team.end <= event.end
+                or event_team.start <= event.start < event_team.end
+                or event_team.start < event.end <= event_team.end):
+            raise HTTPException(status_code=422, detail=f"Team with id #{team_id} is unavailable for Event with id #{event_id}.")
 
-    if is_overlap:
-        return jsonify(f"Team with id #{team_id} is unavailable for Event with id #{event_id}."), 422
-    else:
-        new_entry = EventTeam(**{'event_id': event_id, 'team_id': team_id})
-        db.session.add(new_entry)
-        db.session.commit()
-
-        return jsonify(f"Team with id #{team_id} successfully booked for Event with id #{event_id}.")
+    new_entry = EventTeam(event_id=event_id, team_id=team_id)
+    db.add(new_entry)
+    db.commit()
+    return f"Team with id #{team_id} successfully booked for Event with id #{event_id}."
 
 
-@events.route('/<event_id>/teams/<team_id>', methods=['DELETE'])
-@jwt_required
-def delete_event_team(event_id, team_id):
-    event_team = db.session.query(EventTeam).filter_by(team_id=team_id).filter_by(event_id=event_id).first()
-
+@router.delete("/{event_id}/teams/{team_id}", status_code=204)
+def delete_event_team(event_id: int, team_id: int, db: Session = Depends(get_db), _=Depends(get_current_user)):
+    event_team = db.execute(
+        select(EventTeam).where(EventTeam.team_id == team_id, EventTeam.event_id == event_id)
+    ).scalar_one_or_none()
     if not event_team:
-        return jsonify(f"Team with id #{team_id} is not assigned to Event with id #{event_id}."), 404
-
-    db.session.delete(event_team)
-    db.session.commit()
-
-    # 204 codes don't respond with any content
-    return 'Successfully removed team member', 204
+        raise HTTPException(status_code=404, detail=f"Team with id #{team_id} is not assigned to Event with id #{event_id}.")
+    db.delete(event_team)
+    db.commit()
 
 
-@events.route('/<event_id>/individuals/<person_id>', methods=['POST', 'PUT'])
-@jwt_required
-def add_event_persons(event_id, person_id):
-    event_person_schema = EventPersonSchema(exclude=['event'])
-    try:
-        valid_description = event_person_schema.load(request.json, partial=('event_id', 'person_id'))
-    except ValidationError as err:
-        return jsonify(err.messages), 422
+# ---- Individuals (EventPerson)
 
-    event = db.session.query(Event).filter_by(id=event_id).first()
-    event_people = db.session.query(Event).join(EventPerson).filter_by(person_id=person_id).all()
-
+@router.post("/{event_id}/individuals/{person_id}")
+def add_event_persons(event_id: int, person_id: int, payload: EventPersonCreate, db: Session = Depends(get_db), _=Depends(get_current_user)):
+    event = db.get(Event, event_id)
     if not event:
-        return jsonify(f"Event with id #{event_id} does not exist."), 404
+        raise HTTPException(status_code=404, detail=f"Event with id #{event_id} does not exist.")
 
-    # Make sure individual isn't already booked in the current event
-    # Make sure individual isn't booked in another event during that time
-    event_start = event.start
-    event_end = event.end
-
-    is_overlap = False
+    event_people = db.execute(
+        select(Event).join(EventPerson).where(EventPerson.person_id == person_id)
+    ).scalars().all()
 
     for event_person in event_people:
-        if event_start <= event_person.start < event_end or event_start < event_person.end <= event_end \
-                or event_person.start <= event_start < event_person.end or event_person.start < event.end <= event_person.end:
-            is_overlap = True
-            break
+        if (event.start <= event_person.start < event.end
+                or event.start < event_person.end <= event.end
+                or event_person.start <= event.start < event_person.end
+                or event_person.start < event.end <= event_person.end):
+            raise HTTPException(status_code=422, detail=f"Person with id #{person_id} is unavailable for Event with id #{event_id}.")
 
-    if is_overlap:
-        return jsonify(f"Person with id #{person_id} is unavailable for Event with id #{event_id}."), 422
-    else:
-        new_entry = EventPerson(
-            **{'event_id': event_id, 'person_id': person_id, 'description': valid_description['description']})
-        db.session.add(new_entry)
-        db.session.commit()
-
-        return jsonify(f"Person with id #{person_id} successfully booked for Event with id #{event_id}.")
+    new_entry = EventPerson(event_id=event_id, person_id=person_id, description=payload.description)
+    db.add(new_entry)
+    db.commit()
+    return f"Person with id #{person_id} successfully booked for Event with id #{event_id}."
 
 
-@events.route('/<event_id>/individuals/<person_id>', methods=['PATCH'])
-@jwt_required
-def modify_event_person(event_id, person_id):
-    event_person_schema = EventPersonSchema(exclude=['event'])
-    try:
-        valid_description = event_person_schema.load(request.json, partial=('event_id', 'person_id'))
-    except ValidationError as err:
-        return jsonify(err.messages), 422
-
-    event_person = db.session.query(EventPerson).filter_by(person_id=person_id).filter_by(event_id=event_id).first()
-
+@router.patch("/{event_id}/individuals/{person_id}")
+def modify_event_person(event_id: int, person_id: int, payload: EventPersonCreate, db: Session = Depends(get_db), _=Depends(get_current_user)):
+    event_person = db.execute(
+        select(EventPerson).where(EventPerson.person_id == person_id, EventPerson.event_id == event_id)
+    ).scalar_one_or_none()
     if not event_person:
-        return jsonify(f"Person with id #{person_id} is not associated with Event with id #{event_id}."), 404
-
-    setattr(event_person, 'description', valid_description['description'])
-    db.session.commit()
-
-    return jsonify(event_person_schema.dump(event_person))
+        raise HTTPException(status_code=404, detail=f"Person with id #{person_id} is not associated with Event with id #{event_id}.")
+    setattr(event_person, 'description', payload.description)
+    db.commit()
+    return EventPersonSchema().dump(event_person)
 
 
-@events.route('/<event_id>/individuals/<person_id>', methods=['DELETE'])
-@jwt_required
-def delete_event_persons(event_id, person_id):
-    event_person = db.session.query(EventPerson).filter_by(person_id=person_id).filter_by(event_id=event_id).first()
-
+@router.delete("/{event_id}/individuals/{person_id}", status_code=204)
+def delete_event_persons(event_id: int, person_id: int, db: Session = Depends(get_db), _=Depends(get_current_user)):
+    event_person = db.execute(
+        select(EventPerson).where(EventPerson.person_id == person_id, EventPerson.event_id == event_id)
+    ).scalar_one_or_none()
     if not event_person:
-        return jsonify(f"Person with id #{person_id} is not assigned to Event with id #{event_id}."), 404
-
-    db.session.delete(event_person)
-    db.session.commit()
-
-    # 204 codes don't respond with any content
-    return 'Successfully removed individual', 204
+        raise HTTPException(status_code=404, detail=f"Person with id #{person_id} is not assigned to Event with id #{event_id}.")
+    db.delete(event_person)
+    db.commit()
 
 
-# ---- Participant
+# ---- Participants
 
-@events.route('/<event_id>/participants/<person_id>', methods=['POST', 'PUT'])
-@jwt_required
-def add_event_participants(event_id, person_id):
-    event_participant_schema = EventParticipantSchema(exclude=['event'])
-    try:
-        valid_confirmation = event_participant_schema.load(request.json, partial=('event_id', 'person_id'))
-    except ValidationError as err:
-        return jsonify(err.messages), 422
-
-    event = db.session.query(Event).filter_by(id=event_id).first()
-
-    event_participant = db.session.query(EventParticipant).filter_by(event_id=event_id, person_id=person_id).first()
-
+@router.post("/{event_id}/participants/{person_id}")
+def add_event_participants(event_id: int, person_id: int, payload: EventParticipantCreate, db: Session = Depends(get_db), _=Depends(get_current_user)):
+    event = db.get(Event, event_id)
     if not event:
-        return jsonify(f"Event with id #{event_id} does not exist."), 404
+        raise HTTPException(status_code=404, detail=f"Event with id #{event_id} does not exist.")
 
-    # If participant is already booked for the event
+    event_participant = db.execute(
+        select(EventParticipant).where(EventParticipant.event_id == event_id, EventParticipant.person_id == person_id)
+    ).scalar_one_or_none()
     if event_participant:
-        return jsonify(f"Person with id#{person_id} is already booked for event with id#{event_id}."), 422
-    else:
-        new_entry = EventParticipant(
-            **{'event_id': event_id, 'person_id': person_id, 'confirmed': valid_confirmation['confirmed']})
-        db.session.add(new_entry)
-        db.session.commit()
+        raise HTTPException(status_code=422, detail=f"Person with id#{person_id} is already booked for event with id#{event_id}.")
 
-    return jsonify(f"Person with id #{person_id} successfully booked for Event with id #{event_id}.")
+    new_entry = EventParticipant(event_id=event_id, person_id=person_id, confirmed=payload.confirmed)
+    db.add(new_entry)
+    db.commit()
+    return f"Person with id #{person_id} successfully booked for Event with id #{event_id}."
 
 
-@events.route('/<event_id>/participants/<person_id>', methods=['PATCH'])
-@jwt_required
-def modify_event_participant(event_id, person_id):
-    event_participant_schema = EventParticipantSchema(exclude=['event'])
-    event_person_schema = EventPersonSchema(exclude=['event'])
-    try:
-        valid_confirmation = event_participant_schema.load(request.json, partial=('event_id', 'person_id'))
-    except ValidationError as err:
-        return jsonify(err.messages), 422
-
-    event_participant = db.session.query(EventParticipant).filter_by(person_id=person_id).filter_by(
-        event_id=event_id).first()
-
+@router.patch("/{event_id}/participants/{person_id}")
+def modify_event_participant(event_id: int, person_id: int, payload: EventParticipantCreate, db: Session = Depends(get_db), _=Depends(get_current_user)):
+    event_participant = db.execute(
+        select(EventParticipant).where(EventParticipant.person_id == person_id, EventParticipant.event_id == event_id)
+    ).scalar_one_or_none()
     if not event_participant:
-        return jsonify(f"Person with id #{person_id} is not associated with Event with id #{event_id}."), 404
-
-    setattr(event_participant, 'confirmed', valid_confirmation['confirmed'])
-    db.session.commit()
-
-    return jsonify(event_person_schema.dump(event_participant))
+        raise HTTPException(status_code=404, detail=f"Person with id #{person_id} is not associated with Event with id #{event_id}.")
+    setattr(event_participant, 'confirmed', payload.confirmed)
+    db.commit()
+    return EventParticipantSchema().dump(event_participant)
 
 
-@events.route('/<event_id>/participants/<person_id>', methods=['DELETE'])
-@jwt_required
-def delete_event_participant(event_id, person_id):
-    event_participant = db.session.query(EventParticipant).filter_by(person_id=person_id).filter_by(
-        event_id=event_id).first()
-
+@router.delete("/{event_id}/participants/{person_id}", status_code=204)
+def delete_event_participant(event_id: int, person_id: int, db: Session = Depends(get_db), _=Depends(get_current_user)):
+    event_participant = db.execute(
+        select(EventParticipant).where(EventParticipant.person_id == person_id, EventParticipant.event_id == event_id)
+    ).scalar_one_or_none()
     if not event_participant:
-        return jsonify(f"Person with id #{person_id} is not assigned to Event with id #{event_id}."), 404
-
-    db.session.delete(event_participant)
-    db.session.commit()
-
-    # 204 codes don't respond with any content
-    return 'Successfully removed participant', 204
+        raise HTTPException(status_code=404, detail=f"Person with id #{person_id} is not assigned to Event with id #{event_id}.")
+    db.delete(event_participant)
+    db.commit()
 
 
-# ---- Image
+# ---- Images
 
-@events.route('/<event_id>/images/<image_id>', methods=['POST'])
-@jwt_required
-def add_event_images(event_id, image_id):
-    event = db.session.query(Event).filter_by(id=event_id).first()
-    image = db.session.query(Image).filter_by(id=image_id).first()
-
-    event_image = db.session.query(ImageEvent).filter_by(event_id=event_id, image_id=image_id).first()
-
+@router.post("/{event_id}/images/{image_id}", status_code=201)
+def add_event_images(event_id: int, image_id: int, db: Session = Depends(get_db), _=Depends(get_current_user)):
+    event = db.get(Event, event_id)
     if not event:
-        return jsonify(f"Event with id #{event_id} does not exist."), 404
-
+        raise HTTPException(status_code=404, detail=f"Event with id #{event_id} does not exist.")
+    image = db.get(Image, image_id)
     if not image:
-        return jsonify(f"Image with id #{image_id} does not exist."), 404
-
-    # If image is already attached to the event
+        raise HTTPException(status_code=404, detail=f"Image with id #{image_id} does not exist.")
+    event_image = db.execute(
+        select(ImageEvent).where(ImageEvent.event_id == event_id, ImageEvent.image_id == image_id)
+    ).scalar_one_or_none()
     if event_image:
-        return jsonify(f"Image with id #{image_id} is already attached to event with id #{event_id}."), 422
-    else:
-        new_entry = ImageEvent(**{'event_id': event_id, 'image_id': image_id})
-        db.session.add(new_entry)
-        db.session.commit()
-
-    return jsonify(f"Image with id #{image_id} successfully added to Event with id #{event_id}."), 201
+        raise HTTPException(status_code=422, detail=f"Image with id #{image_id} is already attached to event with id #{event_id}.")
+    new_entry = ImageEvent(event_id=event_id, image_id=image_id)
+    db.add(new_entry)
+    db.commit()
+    return f"Image with id #{image_id} successfully added to Event with id #{event_id}."
 
 
-@events.route('/<event_id>/images/<image_id>', methods=['PUT'])
-@jwt_required
-def put_event_images(event_id, image_id):
-    # check for old image id in parameter list (?old=<id>)
-    old_image_id = request.args['old']
+@router.put("/{event_id}/images/{image_id}")
+def put_event_images(event_id: int, image_id: int, old: Optional[str] = Query(None), db: Session = Depends(get_db), _=Depends(get_current_user)):
     new_image_id = image_id
-
-    if old_image_id == 'false':
-        post_resp = add_event_images(event_id, new_image_id)
-        return jsonify({'deleted': 'No image to delete', 'posted': str(post_resp[0].data, "utf-8")})
+    if old == 'false' or old is None:
+        add_event_images(event_id, new_image_id, db)
+        return {'deleted': 'No image to delete', 'posted': f"Image with id #{new_image_id} successfully added to Event with id #{event_id}."}
     else:
-        del_resp = delete_event_image(event_id, old_image_id)
-        post_resp = add_event_images(event_id, new_image_id)
+        old_image_id = int(old)
+        old_image = db.execute(
+            select(ImageEvent).where(ImageEvent.event_id == event_id, ImageEvent.image_id == old_image_id)
+        ).scalar_one_or_none()
+        deleted_msg = 'Not found'
+        if old_image:
+            db.delete(old_image)
+            deleted_msg = 'Successfully removed image'
+        add_event_images(event_id, new_image_id, db)
+        return {'deleted': deleted_msg, 'posted': f"Image with id #{new_image_id} successfully added to Event with id #{event_id}."}
 
-        if (del_resp[1] == 404):
-            return jsonify({'deleted': str(del_resp[0].data, "utf-8"), 'posted': str(post_resp[0].data, "utf-8")})
-        else:
-            return jsonify({'deleted': del_resp[0], 'posted': str(post_resp[0].data, "utf-8")})
 
-
-@events.route('/<event_id>/images/<image_id>', methods=['DELETE'])
-@jwt_required
-def delete_event_image(event_id, image_id):
-    event_image = db.session.query(ImageEvent).filter_by(event_id=event_id, image_id=image_id).first()
-
+@router.delete("/{event_id}/images/{image_id}", status_code=204)
+def delete_event_image(event_id: int, image_id: int, db: Session = Depends(get_db), _=Depends(get_current_user)):
+    event_image = db.execute(
+        select(ImageEvent).where(ImageEvent.event_id == event_id, ImageEvent.image_id == image_id)
+    ).scalar_one_or_none()
     if not event_image:
-        return jsonify(f"Image with id #{image_id} is not assigned to Event with id #{event_id}."), 404
-
-    db.session.delete(event_image)
-    db.session.commit()
-
-    # 204 codes don't respond with any content
-    return 'Successfully removed image', 204
+        raise HTTPException(status_code=404, detail=f"Image with id #{image_id} is not assigned to Event with id #{event_id}.")
+    db.delete(event_image)
+    db.commit()
 
 
-# --- Groups
+# ---- Groups
 
-@events.route('/<event_id>/groups/<group_id>', methods=['POST'])
-@jwt_required
-def add_event_group(event_id, group_id):
-    event = db.session.query(Event).filter_by(id=event_id).first()
-
-    group = db.session.query(Group).filter_by(id=group_id).first()
-
-    event_group = db.session.query(EventGroup).filter_by(event_id=event_id, group_id=group_id).first()
+@router.post("/{event_id}/groups/{group_id}", status_code=201)
+def add_event_group(event_id: int, group_id: int, db: Session = Depends(get_db), _=Depends(get_current_user)):
+    event = db.get(Event, event_id)
     if not event:
-        return jsonify(f"Event with id #{event_id} does not exist."), 404
+        raise HTTPException(status_code=404, detail=f"Event with id #{event_id} does not exist.")
+    group = db.get(Group, group_id)
     if not group:
-        return jsonify(f"Group with id #{group_id} does not exist."), 404
+        raise HTTPException(status_code=404, detail=f"Group with id #{group_id} does not exist.")
     if not group.active:
-        return jsonify(
-            f"Group with id #{group_id} is not an active group. Activate the group before attaching it to an event."), 422
+        raise HTTPException(status_code=422, detail=f"Group with id #{group_id} is not an active group. Activate the group before attaching it to an event.")
+
+    event_group = db.execute(
+        select(EventGroup).where(EventGroup.event_id == event_id, EventGroup.group_id == group_id)
+    ).scalar_one_or_none()
+
     if event_group:
-        if event_group.active == True:
-            return jsonify(f"Group with id #{group_id} is already attached to event with id #{event_id}."), 422
+        if event_group.active:
+            raise HTTPException(status_code=422, detail=f"Group with id #{group_id} is already attached to event with id #{event_id}.")
         else:
             setattr(event_group, 'active', True)
     else:
-        new_entry = EventGroup(**{'event_id': event_id, 'group_id': group_id, 'active': True})
-        db.session.add(new_entry)
+        new_entry = EventGroup(event_id=event_id, group_id=group_id, active=True)
+        db.add(new_entry)
 
-    group_members = db.session.query(Member).filter_by(group_id=group_id, active=True).all()
+    group_members = db.execute(
+        select(Member).where(Member.group_id == group_id, Member.active == True)
+    ).scalars().all()
 
     for group_member in group_members:
-        person_id = group_member.person_id
-        if not db.session.query(EventParticipant).filter_by(event_id=event.id, person_id=person_id).first():
-            new_participant = EventParticipant(**{'event_id': event_id, 'person_id': person_id, 'confirmed': True})
-            db.session.add(new_participant)
-            # send notification
-            # internationalize later
-            person = db.session.query(Person).filter_by(id=person_id).first()
-            person_email = person.email
-            if person_email:
-                print("email would be sent")
-                # send_notification_email(person_email, event)
+        pid = group_member.person_id
+        existing = db.execute(
+            select(EventParticipant).where(EventParticipant.event_id == event_id, EventParticipant.person_id == pid)
+        ).scalar_one_or_none()
+        if not existing:
+            new_participant = EventParticipant(event_id=event_id, person_id=pid, confirmed=True)
+            db.add(new_participant)
 
-    print(translate.getTranslation('en-US', 'country.name.CX'))
-
-    db.session.commit()
-    return jsonify(f"Group with id #{group_id} successfully attached to event with id #{event_id}."), 201
+    db.commit()
+    return f"Group with id #{group_id} successfully attached to event with id #{event_id}."
 
 
-def send_notification_email(person_email, event):
-    # Make Python class/module that has methods like getTranslation(), getLocaleCode()
-    subj = translate.getTranslation('en-US', 'email.group-added-to-event.subject').gloss
-    body = translate.getTranslation('en-US', 'email.group-added-to-event.body').gloss
-    msg = Message(subj, sender='tumissionscomputing@gmail.com', recipients=[person_email])
-    # link = url_for('events.read_one_event', event_id = event_id)
-    ip = "http://localhost:8080"
-    link = f"{ip}/event/{event.id}/details"
-    print(subj, body)
-    msg.html = f"" + body
-    mail.send(msg)
-
-
-@events.route('/<event_id>/groups/<group_id>', methods=['DELETE'])
-@jwt_required
-def delete_event_group(event_id, group_id):
-    event_group = db.session.query(EventGroup).filter_by(event_id=event_id, group_id=group_id).first()
-    if not event_group or event_group.active == False:
-        return jsonify(f"Group with id #{group_id} is not currently attached to event with id #{event_id}."), 404
-
+@router.delete("/{event_id}/groups/{group_id}", status_code=204)
+def delete_event_group(event_id: int, group_id: int, db: Session = Depends(get_db), _=Depends(get_current_user)):
+    event_group = db.execute(
+        select(EventGroup).where(EventGroup.event_id == event_id, EventGroup.group_id == group_id)
+    ).scalar_one_or_none()
+    if not event_group or not event_group.active:
+        raise HTTPException(status_code=404, detail=f"Group with id #{group_id} is not currently attached to event with id #{event_id}.")
     setattr(event_group, 'active', False)
-    db.session.commit()
-    return "Image deleted from event", 204
+    db.commit()

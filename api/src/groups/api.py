@@ -1,581 +1,433 @@
 import datetime
+from typing import Optional, List
 
-from flask import request, jsonify
-from flask_jwt_extended import jwt_required
-from marshmallow import ValidationError
+from fastapi import APIRouter, Depends, HTTPException, Query
+from sqlalchemy import select
+from sqlalchemy.orm import Session
 
-from . import groups
-from .models import GroupSchema, Group, Attendance, Member, MemberSchema, Meeting, MeetingSchema, AttendanceSchema
-from .. import db
+from ..db import get_db
+from ..auth.dependencies import get_current_user
+from .models import (
+    Group, GroupCreate, GroupUpdate, GroupRead, GroupSchema,
+    Meeting, MeetingCreate, MeetingUpdate, MeetingSchema,
+    Member, MemberCreate, MemberSchema,
+    Attendance, AttendanceCreate, AttendanceSchema,
+)
 from ..images.models import Image, ImageGroup
 from ..people.models import Role, Manager, Person
+
+router = APIRouter()
+
+group_schema = GroupSchema()
+meeting_schema = MeetingSchema()
+member_schema = MemberSchema()
+attendance_schema = AttendanceSchema()
 
 
 # ---- Group
 
-group_schema = GroupSchema()
+@router.post("/groups", status_code=201)
+def create_group(payload: dict, db: Session = Depends(get_db), _=Depends(get_current_user)):
+    payload['active'] = True
+    members_to_add = payload.pop('person_ids', None)
 
+    manager = db.get(Manager, payload.get('managerId') or payload.get('manager_id'))
+    if manager is None:
+        raise HTTPException(status_code=404, detail="Manager not found")
 
-def group_dump(group):
-    group.manager_info = group.manager
-    group.manager_info.person = group.manager.person
-    group.member_list = group.members
-    return jsonify(group_schema.dump(group))
-
-
-@groups.route('/groups', methods=['POST'])
-@jwt_required
-def create_group():
-    request.json['active'] = True
-    members_to_add = None
-    if 'person_ids' in request.json.keys():
-        members_to_add = request.json['person_ids']
-        del request.json['person_ids']
-
-    try:
-        valid_group = group_schema.load(request.json)
-    except ValidationError as err:
-        return jsonify(err.messages), 422
-
+    valid_group = group_schema.load(payload)
     new_group = Group(**valid_group)
-
-    if db.session.query(Manager).filter_by(id=new_group.manager_id).first() is None:
-        return jsonify(msg="Manager not found"), 404
-
-    db.session.add(new_group)
+    db.add(new_group)
+    db.flush()
 
     today = datetime.datetime.today().strftime('%Y-%m-%d')
+    if members_to_add:
+        for member_pid in members_to_add:
+            new_member = _generate_member(db, new_group.id, member_pid, today, True)
+            db.add(new_member)
 
-    if members_to_add is not None:
-        for member in members_to_add:
-            new_member = generate_member(new_group.id, member, today, True)
-            db.session.add(new_member)
+    group_overseer = db.execute(select(Role).where(Role.name_i18n == "role.group-overseer")).scalar_one_or_none()
+    manager_account = db.execute(select(Person).where(Person.id == manager.person_id)).scalar_one_or_none()
+    if manager_account and group_overseer:
+        if group_overseer not in manager_account.roles:
+            manager_account.roles.append(group_overseer)
 
-    # Add group_overseer role to the existing manager account -> if they have an account
-    group_overseer = db.session.query(Role).filter_by(name_i18n="role.group-overseer").first()
-    subq = db.session.query(Manager.person_id).filter_by(id=new_group.manager_id).subquery()
-    manager_account = db.session.query(Person).filter(Person.id.in_(subq)).first()
-
-    if manager_account:
-        manager_roles = manager_account.roles
-        if group_overseer and group_overseer not in manager_roles:
-            manager_roles.append(group_overseer)
-            setattr(manager_account, 'roles', manager_roles)
-            print("adding group overseer role", end='\n\n\n')
-
-    # db.session.add(manager_account)
-    db.session.commit()
-    return group_dump(new_group), 201
+    db.commit()
+    db.refresh(new_group)
+    return _group_dump(new_group)
 
 
-@groups.route('/groups')
-def read_all_groups():
-    query = db.session.query(Group)
-    return_group = request.args.get('return_group')
+@router.get("/groups")
+def read_all_groups(
+    return_group: Optional[str] = Query(None),
+    db: Session = Depends(get_db),
+):
+    query = select(Group)
     if return_group == 'inactive':
-        query = query.filter_by(active=False)
+        query = query.where(Group.active == False)
     elif return_group in ('all', 'both'):
-        pass  # Don't filter
+        pass
     else:
-        query = query.filter_by(active=True)
-    query = query.all()
-
-    for group in query:
-        group.member_list = group.members
-        group.manager_info = group.manager
-        group.manager_info.person = group.manager.person
-    return jsonify(group_schema.dump(query, many=True))
+        query = query.where(Group.active == True)
+    groups = db.execute(query).scalars().all()
+    return group_schema.dump(groups, many=True)
 
 
-@groups.route('/groups/<group_id>')
-@jwt_required
-def read_one_group(group_id):
-    result = db.session.query(Group).filter_by(id=group_id).first()
-    if result is None:
-        return jsonify(msg="Group not found"), 404
-    return group_dump(result), 200
-
-@groups.route('/find_group/<group_name>/<manager>')
-@jwt_required
-def find_group(group_name=None, manager=None):
-    matching_group_count = db.session.query(Group).filter_by(name=group_name, manager_id=manager).count()
-    return jsonify(matching_group_count), 200
-
-@groups.route('/groups/<group_id>', methods=['PATCH'])
-@jwt_required
-def update_group(group_id):
-    # fetch the optional 'person_ids' field in the request object
-    update_person_ids = []
-    if 'person_ids' in request.json.keys():
-        update_person_ids = request.json['person_ids']
-        del request.json['person_ids']
-
-    try:
-        valid_group = group_schema.load(request.json)
-    except ValidationError as err:
-        return jsonify(err.messages), 422
-
-    group = db.session.query(Group).filter_by(id=group_id).first()
+@router.get("/groups/{group_id}")
+def read_one_group(group_id: int, db: Session = Depends(get_db), _=Depends(get_current_user)):
+    group = db.get(Group, group_id)
     if group is None:
-        return jsonify(msg="Group not found"), 404
+        raise HTTPException(status_code=404, detail="Group not found")
+    return _group_dump(group)
 
-    new_manager_id = None
-    # fetch 'manager_id' from the request object
-    if 'manager_id' in request.json.keys():
-        new_manager_id = request.json['manager_id']
-    if db.session.query(Manager).filter_by(id=new_manager_id).first() is None:
-        return jsonify(msg="Manager not found"), 404
 
-    # if the manager changed, then try to add the overseer role to the manager's account
-    if new_manager_id and new_manager_id is not group.manager_id:
-        group_overseer = db.session.query(Role).filter_by(name_i18n="role.group-overseer").first()
+@router.get("/find_group/{group_name}/{manager}")
+def find_group(group_name: str, manager: int, db: Session = Depends(get_db), _=Depends(get_current_user)):
+    count = db.execute(
+        select(Group).where(Group.name == group_name, Group.manager_id == manager)
+    ).scalars().all()
+    return len(count)
+
+
+@router.patch("/groups/{group_id}", status_code=201)
+def update_group(group_id: int, payload: dict, db: Session = Depends(get_db), _=Depends(get_current_user)):
+    update_person_ids = payload.pop('person_ids', [])
+
+    group = db.get(Group, group_id)
+    if group is None:
+        raise HTTPException(status_code=404, detail="Group not found")
+
+    new_manager_id = payload.get('managerId') or payload.get('manager_id')
+    if new_manager_id and db.get(Manager, new_manager_id) is None:
+        raise HTTPException(status_code=404, detail="Manager not found")
+
+    if new_manager_id and new_manager_id != group.manager_id:
+        group_overseer = db.execute(select(Role).where(Role.name_i18n == "role.group-overseer")).scalar_one_or_none()
         if group_overseer:
-            manager = db.session.query(Manager).filter_by(id=new_manager_id).first()
-            manager_account = db.session.query(Person).filter_by(person_id=manager.person_id).first()
-            if manager_account:
-                manager_roles = manager_account.roles
-                if group_overseer not in manager_roles:
-                    manager_roles.append(group_overseer)
-                    setattr(manager_account, 'roles', manager_roles)
-                    print("adding group overseer role", end='\n\n\n')
-
-    old_member_joined_dates = []
-    for member in group.members:
-        old_member_joined_dates.append({member.person_id: member.joined})
-
-    old_person_ids = [member.person_id for member in group.members]
-    print(f"old person ids: {old_person_ids}")
-    print(f"new person ids: {update_person_ids}")
+            new_manager = db.get(Manager, new_manager_id)
+            if new_manager:
+                manager_account = db.execute(select(Person).where(Person.id == new_manager.person_id)).scalar_one_or_none()
+                if manager_account and group_overseer not in manager_account.roles:
+                    manager_account.roles.append(group_overseer)
 
     today = datetime.datetime.today().strftime('%Y-%m-%d')
-
-    # for each update_person_id, if it already exists, skip, otherwise, add
-    # this way it keeps the original member_id unchanged
-    if update_person_ids != []:
-        for update_person_id in update_person_ids:
-            if update_person_id not in old_person_ids:
-                new_member = generate_member(group.id, update_person_id, today, True)
-                db.session.add(new_member)
+    if update_person_ids:
+        old_person_ids = [m.person_id for m in group.members]
+        for pid in update_person_ids:
+            if pid not in old_person_ids:
+                new_member = _generate_member(db, group.id, pid, today, True)
+                db.add(new_member)
             else:
-                print(f"NEW ID: {update_person_id}")
-                new_member = db.session.query(Member).filter_by(person_id=update_person_id, group_id=group_id).first()
-                setattr(new_member, 'active', True)
+                existing = db.execute(
+                    select(Member).where(Member.person_id == pid, Member.group_id == group_id)
+                ).scalar_one_or_none()
+                if existing:
+                    setattr(existing, 'active', True)
+        for old_pid in old_person_ids:
+            if old_pid not in update_person_ids:
+                del_member = db.execute(
+                    select(Member).where(Member.group_id == group.id, Member.person_id == old_pid)
+                ).scalar_one_or_none()
+                if del_member:
+                    setattr(del_member, 'active', False)
 
-    if update_person_ids != []:
-        for old_person_id in old_person_ids:
-            if old_person_id not in update_person_ids:
-                delete_member = db.session.query(Member).filter_by(group_id=group.id, person_id=old_person_id).first()
-                setattr(delete_member, 'active', False)
-
-    # set other attributes
+    valid_group = group_schema.load(payload)
     for key, val in valid_group.items():
         setattr(group, key, val)
 
-    db.session.commit()
-    return group_dump(group), 201
+    db.commit()
+    db.refresh(group)
+    return _group_dump(group)
 
 
-@groups.route('/groups/activate/<group_id>', methods=['PUT'])
-@jwt_required
-def activate_group(group_id):
-    group = db.session.query(Group).filter_by(id=group_id).first()
-
+@router.put("/groups/activate/{group_id}")
+def activate_group(group_id: int, db: Session = Depends(get_db), _=Depends(get_current_user)):
+    group = db.get(Group, group_id)
     if group is None:
-        return jsonify(msg="Group not found"), 404
-
+        raise HTTPException(status_code=404, detail="Group not found")
     setattr(group, 'active', True)
-    db.session.commit()
-    return jsonify(group_schema.dump(group))
+    db.commit()
+    return group_schema.dump(group)
 
 
-@groups.route('/groups/deactivate/<group_id>', methods=['PUT'])
-@jwt_required
-def deactivate_group(group_id):
-    group = db.session.query(Group).filter_by(id=group_id).first()
-
+@router.put("/groups/deactivate/{group_id}")
+def deactivate_group(group_id: int, db: Session = Depends(get_db), _=Depends(get_current_user)):
+    group = db.get(Group, group_id)
     if group is None:
-        return jsonify(msg="Group not found"), 404
-
+        raise HTTPException(status_code=404, detail="Group not found")
     setattr(group, 'active', False)
-    db.session.commit()
-    return jsonify(group_schema.dump(group))
+    db.commit()
+    return group_schema.dump(group)
 
 
 # ---- Meeting
 
-meeting_schema = MeetingSchema()
+@router.post("/meetings", status_code=201)
+def create_meeting(payload: MeetingCreate, db: Session = Depends(get_db), _=Depends(get_current_user)):
+    new_meeting = Meeting(**meeting_schema.load(payload.model_dump()))
+    db.add(new_meeting)
+    db.commit()
+    db.refresh(new_meeting)
+    return meeting_schema.dump(new_meeting)
 
 
-@groups.route('/meetings', methods=['POST'])
-@jwt_required
-def create_meeting():
-    if 'active' not in request.json.keys():
-        request.json['active'] = True
-    try:
-        valid_meeting = meeting_schema.load(request.json)
-    except ValidationError as err:
-        return jsonify(err.messages), 422
-
-    new_meeting = Meeting(**valid_meeting)
-    db.session.add(new_meeting)
-    db.session.commit()
-    return jsonify(meeting_schema.dump(new_meeting)), 201
+@router.get("/meetings")
+def read_all_meetings(db: Session = Depends(get_db)):
+    result = db.execute(select(Meeting)).scalars().all()
+    if not result:
+        raise HTTPException(status_code=404, detail="No meetings found")
+    return meeting_schema.dump(result, many=True)
 
 
-@groups.route('/meetings')
-def read_all_meetings():
-    result = db.session.query(Meeting).all()
-
-    if result == []:
-        return jsonify(msg="No meetings found"), 404
-
-    for r in result:
-        r.address = r.address
-    return jsonify(meeting_schema.dump(result, many=True))
+@router.get("/meetings/group/{group_id}")
+def read_all_meetings_by_group(group_id: int, db: Session = Depends(get_db), _=Depends(get_current_user)):
+    result = db.execute(select(Meeting).where(Meeting.group_id == group_id)).scalars().all()
+    return meeting_schema.dump(result, many=True)
 
 
-@groups.route('/meetings/group/<group_id>')
-@jwt_required
-def read_all_meetings_by_group(group_id):
-    result = db.session.query(Meeting).filter_by(group_id=group_id).all()
-
-    if len(result) == 0:
-        return jsonify(msg="No meetings found"), 200
-
-    for r in result:
-        r.address = r.address
-
-    return jsonify(meeting_schema.dump(result, many=True))
+@router.get("/meetings/address/{address_id}")
+def read_all_meetings_by_location(address_id: int, db: Session = Depends(get_db), _=Depends(get_current_user)):
+    result = db.execute(select(Meeting).where(Meeting.address_id == address_id)).scalars().all()
+    if not result:
+        raise HTTPException(status_code=404, detail="No meetings found")
+    return meeting_schema.dump(result, many=True)
 
 
-@groups.route('/meetings/address/<address_id>')
-@jwt_required
-def read_all_meetings_by_location(address_id):
-    result = db.session.query(Meeting).filter_by(address_id=address_id).all()
-
-    if len(result) == 0:
-        return jsonify(msg="No meetings found"), 404
-
-    return jsonify(meeting_schema.dump(result, many=True))
-
-
-@groups.route('/meetings/<meeting_id>')
-@jwt_required
-def read_one_meeting(meeting_id):
-    result = db.session.query(Meeting).filter_by(id=meeting_id).first()
-
+@router.get("/meetings/{meeting_id}")
+def read_one_meeting(meeting_id: int, db: Session = Depends(get_db), _=Depends(get_current_user)):
+    result = db.get(Meeting, meeting_id)
     if result is None:
-        return jsonify(msg="Meeting not found"), 404
-
-    result.address = result.address
-
-    return jsonify(meeting_schema.dump(result))
+        raise HTTPException(status_code=404, detail="Meeting not found")
+    return meeting_schema.dump(result)
 
 
-@groups.route('/meetings/<meeting_id>', methods=['PATCH'])
-@jwt_required
-def update_meeting(meeting_id):
-    try:
-        valid_meeting = meeting_schema.load(request.json)
-    except ValidationError as err:
-        return jsonify(err.messages), 422
-
-    meeting = db.session.query(Meeting).filter_by(id=meeting_id).first()
-
+@router.patch("/meetings/{meeting_id}")
+def update_meeting(meeting_id: int, payload: MeetingUpdate, db: Session = Depends(get_db), _=Depends(get_current_user)):
+    meeting = db.get(Meeting, meeting_id)
     if meeting is None:
-        return jsonify(msg="Meeting not found"), 404
-
-    for key, val in valid_meeting.items():
+        raise HTTPException(status_code=404, detail="Meeting not found")
+    for key, val in meeting_schema.load(payload.model_dump(exclude_unset=True)).items():
         setattr(meeting, key, val)
+    db.commit()
+    return meeting_schema.dump(meeting)
 
-    db.session.commit()
-    return jsonify(meeting_schema.dump(meeting))
 
-
-@groups.route('/meetings/delete/<meeting_id>', methods=['DELETE'])
-@jwt_required
-def delete_meeting(meeting_id):
-    # USE WITH CARE!!! --- WILL DELETE MEETING AND ALL ATTENDANCE TO THAT MEETING
-    meeting = db.session.query(Meeting).filter_by(id=meeting_id).first()
-
+@router.delete("/meetings/delete/{meeting_id}")
+def delete_meeting(meeting_id: int, db: Session = Depends(get_db), _=Depends(get_current_user)):
+    meeting = db.get(Meeting, meeting_id)
     if meeting is None:
-        return jsonify(msg='Meeting not found'), 404
-
-    for member in meeting.members:
-        db.session.delete(member)
-    db.session.delete(meeting)
-    db.session.commit()
-
-    return jsonify(msg='Meeting ' + meeting_id + ' deleted'), 200
+        raise HTTPException(status_code=404, detail="Meeting not found")
+    for member in meeting.attendances:
+        db.delete(member)
+    db.delete(meeting)
+    db.commit()
+    return {'msg': f'Meeting {meeting_id} deleted'}
 
 
-@groups.route('/meetings/activate/<meeting_id>', methods=['PUT'])
-@jwt_required
-def activate_meeting(meeting_id):
-    meeting = db.session.query(Meeting).filter_by(id=meeting_id).first()
-
+@router.put("/meetings/activate/{meeting_id}")
+def activate_meeting(meeting_id: int, db: Session = Depends(get_db), _=Depends(get_current_user)):
+    meeting = db.get(Meeting, meeting_id)
     if meeting is None:
-        return jsonify(msg="Meeting not found"), 404
-
+        raise HTTPException(status_code=404, detail="Meeting not found")
     setattr(meeting, 'active', True)
-    db.session.commit()
-    return jsonify(meeting_schema.dump(meeting))
+    db.commit()
+    return meeting_schema.dump(meeting)
 
 
-@groups.route('/meetings/deactivate/<meeting_id>', methods=['PUT'])
-@jwt_required
-def deactivate_meeting(meeting_id):
-    meeting = db.session.query(Meeting).filter_by(id=meeting_id).first()
-
+@router.put("/meetings/deactivate/{meeting_id}")
+def deactivate_meeting(meeting_id: int, db: Session = Depends(get_db), _=Depends(get_current_user)):
+    meeting = db.get(Meeting, meeting_id)
     if meeting is None:
-        return jsonify(msg="Meeting not found"), 404
-
+        raise HTTPException(status_code=404, detail="Meeting not found")
     setattr(meeting, 'active', False)
-    db.session.commit()
-    return jsonify(meeting_schema.dump(meeting))
+    db.commit()
+    return meeting_schema.dump(meeting)
 
 
 # ---- Member
 
-member_schema = MemberSchema()
+def _generate_member(db: Session, group_id: int, person_id: int, joined: str, active: bool) -> Member:
+    data = {
+        'group_id': group_id,
+        'person_id': person_id,
+        'joined': joined,
+        'active': active,
+    }
+    return Member(**member_schema.load(data))
 
 
-def generate_member(group_id, person_id, joined, active):
-    member = {}
-    member['group_id'] = group_id
-    member['person_id'] = person_id
-    member['joined'] = joined
-    member['active'] = active
-    member = Member(**member_schema.load(member))
-    return member
-
-
-@groups.route('/members', methods=['POST'])
-@jwt_required
-def create_member():
-    request.json['active'] = True
-    try:
-        valid_member = member_schema.load(request.json)
-    except ValidationError as err:
-        return jsonify(err.messages), 422
-
-    if db.session.query(Member).filter_by( \
-            group_id=valid_member["group_id"],
-            person_id=valid_member["person_id"]
-    ).count() != 0:
-        return 'member already exists', 409
-
+@router.post("/members", status_code=201)
+def create_member(payload: MemberCreate, db: Session = Depends(get_db), _=Depends(get_current_user)):
+    valid_member = member_schema.load({**payload.model_dump(), 'active': True})
+    existing = db.execute(
+        select(Member).where(Member.group_id == valid_member['group_id'], Member.person_id == valid_member['person_id'])
+    ).scalar_one_or_none()
+    if existing:
+        raise HTTPException(status_code=409, detail='member already exists')
     new_member = Member(**valid_member)
-    db.session.add(new_member)
-    db.session.commit()
-    return jsonify(member_schema.dump(new_member)), 201
+    db.add(new_member)
+    db.commit()
+    db.refresh(new_member)
+    return member_schema.dump(new_member)
 
 
-@groups.route('/members')
-@jwt_required
-def read_all_members():
-    result = db.session.query(Member).all()
-
-    if result == []:
-        return jsonify(msg="No members found"), 404
-
-    return jsonify(member_schema.dump(result, many=True))
+@router.get("/members")
+def read_all_members(db: Session = Depends(get_db), _=Depends(get_current_user)):
+    result = db.execute(select(Member)).scalars().all()
+    if not result:
+        raise HTTPException(status_code=404, detail="No members found")
+    return member_schema.dump(result, many=True)
 
 
-@groups.route('/members/<member_id>')
-@jwt_required
-def read_one_member(member_id):
-    result = db.session.query(Member).filter_by(id=member_id).first()
-
+@router.get("/members/{member_id}")
+def read_one_member(member_id: int, db: Session = Depends(get_db), _=Depends(get_current_user)):
+    result = db.get(Member, member_id)
     if result is None:
-        return jsonify(msg="No members found"), 404
+        raise HTTPException(status_code=404, detail="No members found")
+    return member_schema.dump(result)
 
-    return jsonify(member_schema.dump(result))
 
-
-@groups.route('/members/<member_id>', methods=['PATCH'])
-@jwt_required
-def update_member(member_id):
-    try:
-        valid_member = member_schema.load(request.json)
-    except ValidationError as err:
-        return jsonify(err.messages), 422
-
-    member = db.session.query(Member).filter_by(id=member_id).first()
-
+@router.patch("/members/{member_id}")
+def update_member(member_id: int, payload: MemberCreate, db: Session = Depends(get_db), _=Depends(get_current_user)):
+    member = db.get(Member, member_id)
     if member is None:
-        return jsonify(msg="No members found"), 404
-
+        raise HTTPException(status_code=404, detail="No members found")
+    valid_member = member_schema.load(payload.model_dump())
     for key, val in valid_member.items():
         setattr(member, key, val)
+    db.commit()
+    return member_schema.dump(member)
 
-    db.session.commit()
-    return jsonify(member_schema.dump(member))
 
-
-@groups.route('/members/activate/<member_id>', methods=['PUT'])
-@jwt_required
-def activate_member(member_id):
-    member = db.session.query(Member).filter_by(id=member_id).first()
-
+@router.put("/members/activate/{member_id}")
+def activate_member(member_id: int, db: Session = Depends(get_db), _=Depends(get_current_user)):
+    member = db.get(Member, member_id)
     if member is None:
-        return jsonify(msg="Member not found"), 404
-
+        raise HTTPException(status_code=404, detail="Member not found")
     setattr(member, 'active', True)
-    db.session.commit()
-    return jsonify(member_schema.dump(member))
+    db.commit()
+    return member_schema.dump(member)
 
 
-@groups.route('/members/deactivate/<member_id>', methods=['PUT'])
-@jwt_required
-def deactivate_member(member_id):
-    member = db.session.query(Member).filter_by(id=member_id).first()
-
+@router.put("/members/deactivate/{member_id}")
+def deactivate_member(member_id: int, db: Session = Depends(get_db), _=Depends(get_current_user)):
+    member = db.get(Member, member_id)
     if member is None:
-        return jsonify(msg="Member not found"), 404
-
+        raise HTTPException(status_code=404, detail="Member not found")
     setattr(member, 'active', False)
-    db.session.commit()
-    return jsonify(member_schema.dump(member))
+    db.commit()
+    return member_schema.dump(member)
 
 
 # ---- Attendance
 
-attendance_schema = AttendanceSchema()
-
-
-@groups.route('/attendance', methods=['POST'])
-@jwt_required
-def create_attendance():
-    try:
-        valid_attendance = attendance_schema.load(request.json)
-    except ValidationError as err:
-        return jsonify(err.messages), 422
-
-    if db.session.query(Attendance).filter_by( \
-            meeting_id=valid_attendance["meeting_id"],
-            member_id=valid_attendance["member_id"]
-    ).count() != 0:
-        return 'attendance already exists', 409
-
+@router.post("/attendance", status_code=201)
+def create_attendance(payload: AttendanceCreate, db: Session = Depends(get_db), _=Depends(get_current_user)):
+    valid_attendance = attendance_schema.load(payload.model_dump())
+    existing = db.execute(
+        select(Attendance).where(
+            Attendance.meeting_id == valid_attendance['meeting_id'],
+            Attendance.member_id == valid_attendance['member_id']
+        )
+    ).scalar_one_or_none()
+    if existing:
+        raise HTTPException(status_code=409, detail='attendance already exists')
     new_attendance = Attendance(**valid_attendance)
-    db.session.add(new_attendance)
-    db.session.commit()
-    return jsonify(attendance_schema.dump(new_attendance)), 201
+    db.add(new_attendance)
+    db.commit()
+    return attendance_schema.dump(new_attendance)
 
 
-@groups.route('/attendance')
-@jwt_required
-def read_all_attendance():
-    result = db.session.query(Attendance).all()
-
-    if result == []:
-        return jsonify(msg="No attendance records found"), 404
-
-    return jsonify(attendance_schema.dump(result, many=True))
-
-
-@groups.route('/attendance/meeting/<meeting_id>')
-@jwt_required
-def read_attendance_by_meeting(meeting_id):
-    result = db.session.query(Attendance).filter_by(meeting_id=meeting_id).all()
-
-    if result == []:
-        return jsonify(msg="No attendance records found"), 404
-
-    return jsonify(attendance_schema.dump(result, many=True))
-
-
-@groups.route('/attendance/member/<member_id>')
-@jwt_required
-def read_attendance_by_member(member_id):
-    result = db.session.query(Attendance).filter_by(member_id=member_id).all()
-
-    if result == []:
-        return jsonify(msg="No attendance records found"), 404
-
-    return jsonify(attendance_schema.dump(result, many=True))
-
-
-@groups.route('/attendance', methods=['DELETE'])
-@jwt_required
-def delete_attendance():
-    try:
-        valid_attendance = attendance_schema.load(request.json)
-    except ValidationError as err:
-        return jsonify(err.messages), 422
-
-    meeting_id = valid_attendance["meeting_id"]
-    member_id = valid_attendance["member_id"]
-
-    result = db.session.query(Attendance).filter_by(meeting_id=meeting_id, \
-                                                    member_id=member_id
-                                                    ).first()
-
+@router.get("/attendance")
+def read_all_attendance(db: Session = Depends(get_db), _=Depends(get_current_user)):
+    result = db.execute(select(Attendance)).scalars().all()
     if not result:
-        return f"Attendance with member_id {member_id} and meeting_id {meeting_id} doesn't exist", 404
+        raise HTTPException(status_code=404, detail="No attendance records found")
+    return attendance_schema.dump(result, many=True)
 
-    db.session.delete(result)
-    db.session.commit()
 
-    # 204 codes don't respond with any content
-    return jsonify(attendance_schema.dump(valid_attendance)), 204
+@router.get("/attendance/meeting/{meeting_id}")
+def read_attendance_by_meeting(meeting_id: int, db: Session = Depends(get_db), _=Depends(get_current_user)):
+    result = db.execute(select(Attendance).where(Attendance.meeting_id == meeting_id)).scalars().all()
+    if not result:
+        raise HTTPException(status_code=404, detail="No attendance records found")
+    return attendance_schema.dump(result, many=True)
+
+
+@router.get("/attendance/member/{member_id}")
+def read_attendance_by_member(member_id: int, db: Session = Depends(get_db), _=Depends(get_current_user)):
+    result = db.execute(select(Attendance).where(Attendance.member_id == member_id)).scalars().all()
+    if not result:
+        raise HTTPException(status_code=404, detail="No attendance records found")
+    return attendance_schema.dump(result, many=True)
+
+
+@router.delete("/attendance", status_code=204)
+def delete_attendance(payload: AttendanceCreate, db: Session = Depends(get_db), _=Depends(get_current_user)):
+    valid_attendance = attendance_schema.load(payload.model_dump())
+    meeting_id = valid_attendance['meeting_id']
+    member_id = valid_attendance['member_id']
+    result = db.execute(
+        select(Attendance).where(Attendance.meeting_id == meeting_id, Attendance.member_id == member_id)
+    ).scalar_one_or_none()
+    if not result:
+        raise HTTPException(status_code=404, detail=f"Attendance with member_id {member_id} and meeting_id {meeting_id} doesn't exist")
+    db.delete(result)
+    db.commit()
 
 
 # ---- Image
 
-@groups.route('/<group_id>/images/<image_id>', methods=['POST'])
-@jwt_required
-def add_group_images(group_id, image_id):
-    group = db.session.query(Group).filter_by(id=group_id).first()
-    image = db.session.query(Image).filter_by(id=image_id).first()
-
-    group_image = db.session.query(ImageGroup).filter_by(group_id=group_id, image_id=image_id).first()
-
+@router.post("/{group_id}/images/{image_id}", status_code=201)
+def add_group_images(group_id: int, image_id: int, db: Session = Depends(get_db), _=Depends(get_current_user)):
+    group = db.get(Group, group_id)
     if not group:
-        return jsonify(f"Group with id #{group_id} does not exist."), 404
-
+        raise HTTPException(status_code=404, detail=f"Group with id #{group_id} does not exist.")
+    image = db.get(Image, image_id)
     if not image:
-        return jsonify(f"Image with id #{image_id} does not exist."), 404
-
-    # If image is already attached to the group
+        raise HTTPException(status_code=404, detail=f"Image with id #{image_id} does not exist.")
+    group_image = db.execute(
+        select(ImageGroup).where(ImageGroup.group_id == group_id, ImageGroup.image_id == image_id)
+    ).scalar_one_or_none()
     if group_image:
-        return jsonify(f"Image with id#{image_id} is already attached to group with id#{group_id}."), 422
-    else:
-        new_entry = ImageGroup(**{'group_id': group_id, 'image_id': image_id})
-        db.session.add(new_entry)
-        db.session.commit()
-
-    return jsonify(f"Image with id #{image_id} successfully added to Group with id #{group_id}."), 201
+        raise HTTPException(status_code=422, detail=f"Image with id#{image_id} is already attached to group with id#{group_id}.")
+    new_entry = ImageGroup(group_id=group_id, image_id=image_id)
+    db.add(new_entry)
+    db.commit()
+    return f"Image with id #{image_id} successfully added to Group with id #{group_id}."
 
 
-@groups.route('/<group_id>/images/<image_id>', methods=['PUT'])
-@jwt_required
-def put_group_images(group_id, image_id):
-    # check for old image id in parameter list (?old=<id>)
-    old_image_id = request.args['old']
+@router.put("/{group_id}/images/{image_id}")
+def put_group_images(group_id: int, image_id: int, old: Optional[str] = Query(None), db: Session = Depends(get_db), _=Depends(get_current_user)):
     new_image_id = image_id
-
-    if old_image_id == 'false':
-        post_resp = add_group_images(group_id, new_image_id)
-        return jsonify({'deleted': 'No image to delete', 'posted': str(post_resp[0].data, "utf-8")})
+    if old == 'false' or old is None:
+        add_group_images(group_id, new_image_id, db)
+        return {'deleted': 'No image to delete', 'posted': f"Image with id #{new_image_id} successfully added to Group with id #{group_id}."}
     else:
-        del_resp = delete_group_image(group_id, old_image_id)
-        post_resp = add_group_images(group_id, new_image_id)
+        old_image_id = int(old)
+        old_image = db.execute(
+            select(ImageGroup).where(ImageGroup.group_id == group_id, ImageGroup.image_id == old_image_id)
+        ).scalar_one_or_none()
+        deleted_msg = 'Not found'
+        if old_image:
+            db.delete(old_image)
+            deleted_msg = 'Successfully removed image'
+        add_group_images(group_id, new_image_id, db)
+        return {'deleted': deleted_msg, 'posted': f"Image with id #{new_image_id} successfully added to Group with id #{group_id}."}
 
-        return jsonify({'deleted': del_resp[0], 'posted': str(post_resp[0].data, "utf-8")})
 
-
-@groups.route('/<group_id>/images/<image_id>', methods=['DELETE'])
-@jwt_required
-def delete_group_image(group_id, image_id):
-    group_image = db.session.query(ImageGroup).filter_by(group_id=group_id, image_id=image_id).first()
-
+@router.delete("/{group_id}/images/{image_id}", status_code=204)
+def delete_group_image(group_id: int, image_id: int, db: Session = Depends(get_db), _=Depends(get_current_user)):
+    group_image = db.execute(
+        select(ImageGroup).where(ImageGroup.group_id == group_id, ImageGroup.image_id == image_id)
+    ).scalar_one_or_none()
     if not group_image:
-        return jsonify(f"Image with id #{image_id} is not assigned to Group with id #{group_id}."), 404
+        raise HTTPException(status_code=404, detail=f"Image with id #{image_id} is not assigned to Group with id #{group_id}.")
+    db.delete(group_image)
+    db.commit()
 
-    db.session.delete(group_image)
-    db.session.commit()
 
-    # 204 codes don't respond with any content
-    return 'Successfully removed image', 204
+# ---- Helpers
+
+def _group_dump(group):
+    return group_schema.dump(group)

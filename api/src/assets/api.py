@@ -1,133 +1,117 @@
-from flask import request
-from flask.json import jsonify
-from flask_jwt_extended import jwt_required
-from marshmallow import ValidationError
-from sqlalchemy import func
+from typing import Optional
 
-from . import assets
-from .models import Asset, AssetSchema
-from .. import db
-from src.shared.helpers import modify_entity, get_exclusion_list
+from fastapi import APIRouter, Depends, HTTPException, Query
+from sqlalchemy import select, func
+from sqlalchemy.orm import Session
+
+from ..db import get_db
+from ..auth.dependencies import get_current_user
+from .models import Asset, AssetCreate, AssetUpdate, AssetRead, AssetSchema
 from ..events.models import EventAsset
+
+router = APIRouter()
 
 
 # ---- Asset
 
-@assets.route('/', methods=['POST'])
-@jwt_required
-def create_asset():
-    asset_schema = AssetSchema(exclude=get_exclusion_list(request.args, ['location']))
-    try:
-        valid_asset = asset_schema.load(request.json)
-    except ValidationError as err:
-        return jsonify(err.messages), 422
-
-    new_asset = Asset(**valid_asset)
-    db.session.add(new_asset)
-    db.session.commit()
-    return jsonify(asset_schema.dump(new_asset)), 201
+@router.post("/", status_code=201)
+def create_asset(payload: AssetCreate, db: Session = Depends(get_db), _=Depends(get_current_user)):
+    new_asset = Asset(**payload.model_dump())
+    db.add(new_asset)
+    db.commit()
+    db.refresh(new_asset)
+    return AssetSchema().dump(new_asset)
 
 
-@assets.route('/')
-@jwt_required
-def read_all_assets():
-    asset_schema = AssetSchema(exclude=get_exclusion_list(request.args, ['location']))
-    query = db.session.query(Asset).add_columns(func.count(EventAsset.event_id).label('event_count'))
+@router.get("/")
+def read_all_assets(
+    return_group: Optional[str] = Query(None),
+    desc: Optional[str] = Query(None),
+    location_id: Optional[int] = Query(None),
+    sort: Optional[str] = Query(None),
+    db: Session = Depends(get_db),
+    _=Depends(get_current_user),
+):
+    query = (
+        select(Asset, func.count(EventAsset.event_id).label('event_count'))
+        .outerjoin(EventAsset, Asset.id == EventAsset.asset_id)
+        .group_by(Asset.id)
+    )
 
-    # -- return_inactives --
-    # Filter assets based on active status
-    return_group = request.args.get('return_group')
     if return_group == 'inactive':
-        query = query.filter_by(active=False)
+        query = query.where(Asset.active == False)
     elif return_group in ('all', 'both'):
-        pass  # Don't filter
+        pass
     else:
-        query = query.filter_by(active=True)
+        query = query.where(Asset.active == True)
 
-    # -- description --
-    # Filter events on a wildcard description string
-    desc_filter = request.args.get('desc')
-    if desc_filter:
-        query = query.filter(Asset.description.like(f"%{desc_filter}%"))
+    if desc:
+        query = query.where(Asset.description.like(f"%{desc}%"))
+    if location_id:
+        query = query.where(Asset.location_id == location_id)
 
-    # -- location --
-    # Filter events on a wildcard location string?
-    location_filter = request.args.get('location_id')
-    if location_filter:
-        query = query.filter_by(location_id=location_filter)
-
-    # Sorting
-    sort_filter = request.args.get('sort')
-    if sort_filter:
+    if sort:
         sort_column = None
-        if sort_filter[:11] == 'description':
+        if sort[:11] == 'description':
             sort_column = Asset.description
+        if sort_column is not None:
+            if sort[-4:] == 'desc':
+                sort_column = sort_column.desc()
+            query = query.order_by(sort_column)
 
-        if sort_filter[-4:] == 'desc' and sort_column:
-            sort_column = sort_column.desc()
-
-        query = query.order_by(sort_column)
-
-    result = query.join(EventAsset, isouter=True).group_by(Asset.id).all()
-
-    temp_result = list()
+    result = db.execute(query).all()
+    schema = AssetSchema()
+    temp_result = []
     for item in result:
-        temp_result.append(asset_schema.dump(item[0]))
-        temp_result[-1]['event_count'] = item[1]
+        dumped = schema.dump(item[0])
+        dumped['event_count'] = item[1]
+        temp_result.append(dumped)
+    return temp_result
 
-    return jsonify(asset_schema.dump(temp_result, many=True))
+
+@router.get("/{asset_id}")
+def read_one_asset(asset_id: int, db: Session = Depends(get_db), _=Depends(get_current_user)):
+    row = db.execute(
+        select(Asset, func.count(EventAsset.event_id).label('event_count'))
+        .outerjoin(EventAsset, Asset.id == EventAsset.asset_id)
+        .where(Asset.id == asset_id)
+        .group_by(Asset.id)
+    ).first()
+    if not row:
+        raise HTTPException(status_code=404, detail=f"Asset with id #{asset_id} does not exist.")
+    result = AssetSchema().dump(row[0])
+    result['event_count'] = row[1]
+    return result
 
 
-@assets.route('/<asset_id>')
-@jwt_required
-def read_one_asset(asset_id):
-    asset_schema = AssetSchema(exclude=get_exclusion_list(request.args, ['location']))
-    asset = db.session.query(Asset).filter_by(id=asset_id).add_columns(
-        func.count(EventAsset.event_id).label('event_count')).join(EventAsset, isouter=True).group_by(Asset.id).first()
-
+@router.put("/{asset_id}")
+def replace_asset(asset_id: int, payload: AssetCreate, db: Session = Depends(get_db), _=Depends(get_current_user)):
+    asset = db.get(Asset, asset_id)
     if not asset:
-        return jsonify(f"Asset with id #{asset_id} does not exist."), 404
-
-    result = asset_schema.dump(asset[0])
-    result['event_count'] = asset[1]
-
-    return jsonify(asset_schema.dump(result))
-
-
-@assets.route('/<asset_id>', methods=['PUT'])
-@jwt_required
-def replace_asset(asset_id):
-    asset_schema = AssetSchema(exclude=get_exclusion_list(request.args, ['location']))
-    try:
-        valid_asset = asset_schema.load(request.json)
-    except ValidationError as err:
-        return jsonify(err.messages), 422
-
-    return modify_entity(Asset, asset_schema, asset_id, valid_asset)
+        raise HTTPException(status_code=404, detail=f"Asset with id #{asset_id} does not exist.")
+    for key, val in payload.model_dump().items():
+        setattr(asset, key, val)
+    db.commit()
+    db.refresh(asset)
+    return AssetSchema().dump(asset)
 
 
-@assets.route('/<asset_id>', methods=['PATCH'])
-@jwt_required
-def update_asset(asset_id):
-    asset_schema = AssetSchema(exclude=get_exclusion_list(request.args, ['location']))
-    try:
-        valid_attributes = asset_schema.load(request.json, partial=True)
-    except ValidationError as err:
-        return jsonify(err.messages), 422
-
-    return modify_entity(Asset, asset_schema, asset_id, valid_attributes)
-
-
-@assets.route('/<asset_id>', methods=['DELETE'])
-@jwt_required
-def delete_asset(asset_id):
-    asset = db.session.query(Asset).filter_by(id=asset_id).first()
-
+@router.patch("/{asset_id}")
+def update_asset(asset_id: int, payload: AssetUpdate, db: Session = Depends(get_db), _=Depends(get_current_user)):
+    asset = db.get(Asset, asset_id)
     if not asset:
-        return jsonify(f"Event with id #{asset_id} does not exist."), 404
+        raise HTTPException(status_code=404, detail=f"Asset with id #{asset_id} does not exist.")
+    for key, val in payload.model_dump(exclude_unset=True).items():
+        setattr(asset, key, val)
+    db.commit()
+    db.refresh(asset)
+    return AssetSchema().dump(asset)
 
+
+@router.delete("/{asset_id}", status_code=204)
+def delete_asset(asset_id: int, db: Session = Depends(get_db), _=Depends(get_current_user)):
+    asset = db.get(Asset, asset_id)
+    if not asset:
+        raise HTTPException(status_code=404, detail=f"Asset with id #{asset_id} does not exist.")
     setattr(asset, 'active', False)
-    db.session.commit()
-
-    # 204 codes don't respond with any content
-    return 'Successfully deleted asset', 204
+    db.commit()

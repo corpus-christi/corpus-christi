@@ -1,88 +1,66 @@
-from flask import request
-from flask.json import jsonify
-from flask_jwt_extended import jwt_required
-from marshmallow import ValidationError
+from typing import Optional
 
+from fastapi import APIRouter, Depends, HTTPException, Query
+from sqlalchemy import select
+from sqlalchemy.orm import Session
+
+from ..db import get_db
+from ..auth.dependencies import get_current_user
+from .models import Team, TeamCreate, TeamUpdate, TeamRead, TeamMember, TeamMemberCreate, TeamMemberRead, TeamSchema, TeamMemberSchema
 from ..people.models import Person, PersonSchema
-from .models import Team, TeamMember, TeamSchema, TeamMemberSchema
-from . import teams
-from .. import db
-from src.shared.helpers import modify_entity, get_exclusion_list
+
+router = APIRouter()
+
 
 # ---- Team
 
-@teams.route('/', methods=['POST'])
-@jwt_required
-def create_team():
-    team_schema = TeamSchema(exclude=get_exclusion_list(request.args, ['members', 'events']))
-    try:
-        valid_team = team_schema.load(request.json)
-    except ValidationError as err:
-        return jsonify(err.messages), 422
+@router.post("/", status_code=201)
+def create_team(payload: TeamCreate, db: Session = Depends(get_db), _=Depends(get_current_user)):
+    new_team = Team(**payload.model_dump())
+    db.add(new_team)
+    db.commit()
+    db.refresh(new_team)
+    return TeamSchema().dump(new_team)
 
-    new_team = Team(**valid_team)
-    db.session.add(new_team)
-    db.session.commit()
-    return jsonify(team_schema.dump(new_team)), 201
-    
 
-@teams.route('/')
-@jwt_required
-def read_all_teams():
-    team_schema = TeamSchema(exclude=get_exclusion_list(request.args, ['members', 'events']))
-    query = db.session.query(Team)
+@router.get("/")
+def read_all_teams(
+    return_group: Optional[str] = Query(None),
+    desc: Optional[str] = Query(None),
+    sort: Optional[str] = Query(None),
+    db: Session = Depends(get_db),
+    _=Depends(get_current_user),
+):
+    query = select(Team)
 
-    # -- return_inactives --
-    # Filter assets based on active status
-    return_group = request.args.get('return_group')
     if return_group == 'inactive':
-        query = query.filter_by(active=False)
+        query = query.where(Team.active == False)
     elif return_group in ('all', 'both'):
-        pass # Don't filter
+        pass
     else:
-        query = query.filter_by(active=True)
+        query = query.where(Team.active == True)
 
-    # -- description --
-    # Filter events on a wildcard description string
-    desc_filter = request.args.get('desc')
-    if desc_filter:
-        query = query.filter(Team.description.like(f"%{desc_filter}%"))
+    if desc:
+        query = query.where(Team.description.like(f"%{desc}%"))
 
-    # Sorting
-    sort_filter = request.args.get('sort')
-    if sort_filter:
+    if sort:
         sort_column = None
-        if sort_filter[:11] == 'description':
+        if sort[:11] == 'description':
             sort_column = Team.description
+        if sort_column is not None:
+            if sort[-4:] == 'desc':
+                sort_column = sort_column.desc()
+            query = query.order_by(sort_column)
 
-        if sort_filter[-4:] == 'desc' and sort_column:
-            sort_column = sort_column.desc()
-        
-        query = query.order_by(sort_column)
-
-    result = query.all()
-    return jsonify(team_schema.dump(result, many=True))
-    
-
-@teams.route('/<team_id>')
-@jwt_required
-def read_one_team(team_id):
-    team_schema = TeamSchema(exclude=get_exclusion_list(request.args, ['members', 'events']))
-    team = db.session.query(Team).filter_by(id=team_id).first()
-
-    if not team:
-        return jsonify(f"Team with id #{team_id} does not exist."), 404
-
-    return jsonify(team_schema.dump(team))
+    result = db.execute(query).scalars().all()
+    return TeamSchema().dump(result, many=True)
 
 
-@teams.route('/members')
-@jwt_required
-def read_all_team_members():
-    team_schema = TeamSchema(exclude=['members', 'events'])
+@router.get("/members")
+def read_all_team_members(db: Session = Depends(get_db), _=Depends(get_current_user)):
+    teams = db.execute(select(Team)).scalars().all()
+    team_schema = TeamSchema()
     person_schema = PersonSchema()
-    teams = db.session.query(Team).all()
-
     constructed_dict = dict()
     for team in teams:
         for member in team.members:
@@ -92,118 +70,101 @@ def read_all_team_members():
                 constructed_dict[member_id]['active'] = member.active
                 constructed_dict[member_id]['teams'] = list()
             constructed_dict[member_id]['teams'].append(team_schema.dump(team))
+    return constructed_dict
 
-    return jsonify(constructed_dict)
 
-
-@teams.route('/<team_id>', methods=['PUT'])
-@jwt_required
-def replace_team(team_id):
-    team_schema = TeamSchema(exclude=get_exclusion_list(request.args, ['members', 'events']))
-    try:
-        valid_team = team_schema.load(request.json)
-    except ValidationError as err:
-        return jsonify(err.messages), 422
-
-    return modify_entity(Team, team_schema, team_id, valid_team)
-    
-
-@teams.route('/<team_id>', methods=['PATCH'])
-@jwt_required
-def update_team(team_id):
-    team_schema = TeamSchema(exclude=get_exclusion_list(request.args, ['members', 'events']))
-    try: 
-        valid_attributes = team_schema.load(request.json, partial=True)
-    except ValidationError as err:
-        return jsonify(err.messages), 422
-                
-    return modify_entity(Team, team_schema, team_id, valid_attributes)
-    
-
-@teams.route('/<team_id>', methods=['DELETE'])
-@jwt_required
-def delete_team(team_id):
-    team = db.session.query(Team).filter_by(id=team_id).first()
-
+@router.get("/{team_id}")
+def read_one_team(team_id: int, db: Session = Depends(get_db), _=Depends(get_current_user)):
+    team = db.get(Team, team_id)
     if not team:
-        return jsonify(f"Team with id #{team_id} does not exist."), 404
-        
+        raise HTTPException(status_code=404, detail=f"Team with id #{team_id} does not exist.")
+    return TeamSchema().dump(team)
+
+
+@router.put("/{team_id}")
+def replace_team(team_id: int, payload: TeamCreate, db: Session = Depends(get_db), _=Depends(get_current_user)):
+    team = db.get(Team, team_id)
+    if not team:
+        raise HTTPException(status_code=404, detail=f"Team with id #{team_id} does not exist.")
+    for key, val in payload.model_dump().items():
+        setattr(team, key, val)
+    db.commit()
+    db.refresh(team)
+    return TeamSchema().dump(team)
+
+
+@router.patch("/{team_id}")
+def update_team(team_id: int, payload: TeamUpdate, db: Session = Depends(get_db), _=Depends(get_current_user)):
+    team = db.get(Team, team_id)
+    if not team:
+        raise HTTPException(status_code=404, detail=f"Team with id #{team_id} does not exist.")
+    for key, val in payload.model_dump(exclude_unset=True).items():
+        setattr(team, key, val)
+    db.commit()
+    db.refresh(team)
+    return TeamSchema().dump(team)
+
+
+@router.delete("/{team_id}", status_code=204)
+def delete_team(team_id: int, db: Session = Depends(get_db), _=Depends(get_current_user)):
+    team = db.get(Team, team_id)
+    if not team:
+        raise HTTPException(status_code=404, detail=f"Team with id #{team_id} does not exist.")
     setattr(team, 'active', False)
-    db.session.commit()
-    
-    # 204 codes don't respond with any content
-    return 'Successfully deleted team', 204
+    db.commit()
 
-@teams.route('/<team_id>/members')
-@jwt_required
-def get_team_members(team_id):
-    team_member_schema = TeamMemberSchema(exclude=get_exclusion_list(request.args, ['team']))
-    team_members = db.session.query(TeamMember).filter_by(team_id=team_id).all()
 
+# ---- TeamMember
+
+@router.get("/{team_id}/members")
+def get_team_members(team_id: int, db: Session = Depends(get_db), _=Depends(get_current_user)):
+    team_members = db.execute(select(TeamMember).where(TeamMember.team_id == team_id)).scalars().all()
     if not team_members:
-        return jsonify(f"Team with id #{team_id} does not have any members."), 404
+        raise HTTPException(status_code=404, detail=f"Team with id #{team_id} does not have any members.")
+    return TeamMemberSchema().dump(team_members, many=True)
 
-    return jsonify(team_member_schema.dump(team_members, many=True))
 
-@teams.route('/<team_id>/members/<member_id>', methods=['PATCH'])
-@jwt_required
-def modify_team_member(team_id, member_id):
-    team_member_schema = TeamMemberSchema(exclude=get_exclusion_list(request.args, ['team']))
-    try:
-        valid_attributes = team_member_schema.load(request.json, partial=('team_id', 'member_id'))
-    except ValidationError as err:
-        return jsonify(err.messages), 422
-
-    team_member = db.session.query(TeamMember).filter_by(member_id=member_id).filter_by(team_id=team_id).first()
-
-    if not team_member:
-        return jsonify(f"Member with id #{member_id} is not associated with Team with id #{team_id}."), 404
-
-    setattr(team_member, 'active', valid_attributes['active'])
-    db.session.commit()
-
-    return jsonify(team_member_schema.dump(team_member))
-
-@teams.route('/<team_id>/members/<member_id>', methods=['POST','PUT'])
-@jwt_required
-def add_team_member(team_id, member_id):
-    team_member_schema = TeamMemberSchema(exclude=get_exclusion_list(request.args, ['team']))
-    try:
-        valid_attributes = team_member_schema.load(request.json, partial=('team_id', 'member_id'))
-    except ValidationError as err:
-        return jsonify(err.messages), 422
-
-    team = db.session.query(Team).filter_by(id=team_id).first()
-    person = db.session.query(Person).filter_by(id=member_id).first()
-
+@router.post("/{team_id}/members/{member_id}")
+def add_team_member(team_id: int, member_id: int, payload: TeamMemberCreate, db: Session = Depends(get_db), _=Depends(get_current_user)):
+    team = db.get(Team, team_id)
     if not team:
-        return jsonify(f"Team with id #{team_id} does not exist."), 404
+        raise HTTPException(status_code=404, detail=f"Team with id #{team_id} does not exist.")
+    person = db.get(Person, member_id)
     if not person:
-        return jsonify(f"Person with id #{member_id} does not exist."), 404
+        raise HTTPException(status_code=404, detail=f"Person with id #{member_id} does not exist.")
 
-    team_member = db.session.query(TeamMember).filter_by(team_id=team_id,member_id=member_id).first()
+    team_member = db.execute(
+        select(TeamMember).where(TeamMember.team_id == team_id, TeamMember.member_id == member_id)
+    ).scalar_one_or_none()
+    if team_member:
+        raise HTTPException(status_code=422, detail=f"Person with id #{member_id} is already on Team with id #{team_id}.")
 
+    new_entry = TeamMember(team_id=team_id, member_id=member_id, active=payload.active)
+    db.add(new_entry)
+    db.commit()
+    return 'Team member successfully added.'
+
+
+@router.patch("/{team_id}/members/{member_id}")
+def modify_team_member(team_id: int, member_id: int, payload: TeamMemberCreate, db: Session = Depends(get_db), _=Depends(get_current_user)):
+    team_member = db.execute(
+        select(TeamMember).where(TeamMember.member_id == member_id, TeamMember.team_id == team_id)
+    ).scalar_one_or_none()
     if not team_member:
-        new_entry = TeamMember(**{'team_id': team_id, 'member_id': member_id, 'active': valid_attributes['active']})
-        db.session.add(new_entry)
-        db.session.commit()
-        return 'Team member successfully added.'
-    else:
-        return jsonify(f"Person with id #{member_id} is already on Team with id #{team_id}."), 422
+        raise HTTPException(status_code=404, detail=f"Member with id #{member_id} is not associated with Team with id #{team_id}.")
+    setattr(team_member, 'active', payload.active)
+    db.commit()
+    return TeamMemberSchema().dump(team_member)
 
-@teams.route('/<team_id>/members/<member_id>', methods=['DELETE'])
-@jwt_required
-def delete_team_member(team_id, member_id):
-    team_member = db.session.query(TeamMember).filter_by(team_id=team_id).filter_by(member_id=member_id).first()
 
+@router.delete("/{team_id}/members/{member_id}", status_code=204)
+def delete_team_member(team_id: int, member_id: int, db: Session = Depends(get_db), _=Depends(get_current_user)):
+    team_member = db.execute(
+        select(TeamMember).where(TeamMember.team_id == team_id, TeamMember.member_id == member_id)
+    ).scalar_one_or_none()
     if not team_member:
-        return jsonify(f"Member with id #{member_id} is not on Team with id #{team_id}."), 404
-
+        raise HTTPException(status_code=404, detail=f"Member with id #{member_id} is not on Team with id #{team_id}.")
     if not team_member.active:
-        return jsonify(f"Member with id #{member_id} is already set as INACTIVE on Team with id #{team_id}."), 422
-
+        raise HTTPException(status_code=422, detail=f"Member with id #{member_id} is already set as INACTIVE on Team with id #{team_id}.")
     setattr(team_member, 'active', False)
-    db.session.commit()
-
-    # 204 codes don't respond with any content
-    return 'Successfully removed team member', 204
+    db.commit()
