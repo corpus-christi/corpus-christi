@@ -7,19 +7,15 @@
       <form>
         <v-text-field
           v-model="group.name"
-          v-bind:label="$t('groups.name')"
+          v-bind:label="t('groups.name')"
           name="title"
-          v-validate="'required'"
-          v-bind:error-messages="errors.first('title')"
           data-cy="title"
         />
         <v-textarea
           rows="3"
           v-model="group.description"
-          v-bind:label="$t('groups.group-description')"
+          v-bind:label="t('groups.group-description')"
           name="description"
-          v-validate="'required'"
-          v-bind:error-messages="errors.collect('description')"
           data-cy="description"
         />
         <entity-search
@@ -27,196 +23,168 @@
           :value="manager"
           @input="updateSelection"
           name="manager"
-          v-bind:error-messages="errors.first('manager')"
         />
       </form>
     </v-card-text>
     <v-card-actions>
       <v-btn
         color="secondary"
-        flat
+        variant="text"
         v-on:click="cancel"
         :disabled="formDisabled"
         data-cy="form-cancel"
-        >{{ $t("actions.cancel") }}</v-btn
+        >{{ t("actions.cancel") }}</v-btn
       >
       <v-spacer />
       <v-btn
         color="primary"
-        outline
+        variant="outlined"
         v-on:click="addAnother"
-        v-if="!editMode"
-        :loading="addMoreLoading"
+        v-if="!props.editMode"
+        :loading="props.addMoreLoading"
         :disabled="formDisabled"
         data-cy="form-addanother"
-        >{{ $t("actions.add-another") }}</v-btn
+        >{{ t("actions.add-another") }}</v-btn
       >
       <v-btn
         color="primary"
-        raised
+        variant="elevated"
         v-on:click="save"
-        :loading="saveLoading"
+        :loading="props.saveLoading"
         :disabled="formDisabled"
         data-cy="form-save"
-        >{{ $t("actions.save") }}</v-btn
+        >{{ t("actions.save") }}</v-btn
       >
     </v-card-actions>
 
     <v-snackbar v-model="snackbar.show">
       {{ snackbar.text }}
-      <v-btn flat @click="snackbar.show = false" data-cy>
-        {{ $t("actions.close") }}
-      </v-btn>
+      <template #actions>
+        <v-btn variant="text" @click="snackbar.show = false" data-cy>
+          {{ t("actions.close") }}
+        </v-btn>
+      </template>
     </v-snackbar>
   </v-card>
 </template>
 
-<script>
+<script setup lang="ts">
+import { ref, computed, watch } from "vue";
+import { useI18n } from "vue-i18n";
+import { inject } from "vue";
+import type { AxiosInstance } from "axios";
 import { isEmpty } from "lodash";
-import { mapGetters } from "vuex";
-import EntitySearch from "../EntitySearch";
-export default {
-  components: { "entity-search": EntitySearch },
-  name: "GroupForm",
-  watch: {
-    initialData(groupProp) {
-      if (isEmpty(groupProp)) {
-        this.clear();
-      } else {
-        this.group = groupProp;
-        this.manager = this.parseGroup(this.group);
-        this.group.manager = groupProp.managerInfo;
-      }
+import EntitySearch from "../EntitySearch.vue";
+
+const { t } = useI18n();
+const http = inject<AxiosInstance>("$http")!;
+
+const props = defineProps<{
+  editMode: boolean;
+  initialData: Record<string, any>;
+  saveLoading?: boolean;
+  addMoreLoading?: boolean;
+}>();
+
+const emit = defineEmits(["cancel", "save", "add-another"]);
+
+const group = ref<Record<string, any>>({});
+const manager = ref<Record<string, any>>({});
+const snackbar = ref({ show: false, text: "" });
+
+const name = computed(() => {
+  return props.editMode
+    ? t("groups.edit-group")
+    : t("groups.create-group");
+});
+
+const formDisabled = computed(() => {
+  return props.saveLoading || props.addMoreLoading;
+});
+
+watch(
+  () => props.initialData,
+  (groupProp) => {
+    if (isEmpty(groupProp)) {
+      clear();
+    } else {
+      group.value = groupProp;
+      manager.value = parseGroup(group.value);
+      group.value.manager = groupProp.managerInfo;
     }
-  },
-
-  computed: {
-    groupKeys() {
-      return Object.keys(this.group);
-    },
-
-    name() {
-      return this.editMode
-        ? this.$t("groups.edit-group")
-        : this.$t("groups.create-group");
-    },
-
-    formDisabled() {
-      return this.saveLoading || this.addMoreLoading;
-    },
-
-    ...mapGetters(["currentLanguageCode"])
-  },
-
-  methods: {
-    getManagerName(managerInfo) {
-      var man = managerInfo.person;
-      return (
-        man.firstName +
-        " " +
-        man.lastName +
-        " " +
-        (man.secondLastName ? man.secondLastName : "")
-      );
-    },
-
-    parseGroup(obj) {
-      return {
-        id: obj.managerId
-      };
-    },
-
-    updateSelection(obj) {
-      if (obj.person) {
-        this.group.managerId = obj.id;
-        if (!this.group.manager) this.group.manager = {};
-        this.group.manager.person = obj.person;
-        if (!this.group.managerInfo) this.group.managerInfo = {};
-        this.group.managerInfo.person = obj.person;
-      }
-      //console.log("updateSelection");
-      //console.log(this.group);
-    },
-
-    validateGroup(group, operation) {
-      this.$validator.validateAll().then(isValid => {
-        if (isValid) {
-          this.$http
-            .get(`/api/v1/groups/find_group/${group.name}/${group.manager.id}`)
-            .then(response => {
-              if (response.data == 0) {
-                operation();
-              } else {
-                this.showSnackbar(this.$t("groups.messages.already-exists"));
-              }
-            });
-        }
-      });
-    },
-
-    showSnackbar(message) {
-      this.snackbar.text = message;
-      this.snackbar.show = true;
-    },
-
-    cancel() {
-      this.clear();
-      this.$validator.reset();
-      this.$emit("cancel");
-      this.manager = {};
-    },
-
-    clear() {
-      for (let key of this.groupKeys) {
-        this.group[key] = "";
-      }
-      delete this.group.address;
-      this.$validator.reset();
-    },
-
-    save() {
-      //console.log(this.group);
-      this.validateGroup(this.group, () => {
-        this.group.active = true;
-        this.group.active = true;
-        this.$emit("save", this.group);
-      });
-      this.manager = {};
-    },
-
-    addAnother() {
-      this.validateGroup(this.group, () => {
-        this.group.active = true;
-        this.$emit("add-another", this.group);
-        this.group = {};
-      });
-    }
-  },
-  props: {
-    editMode: {
-      type: Boolean,
-      required: true
-    },
-    initialData: {
-      type: Object,
-      required: true
-    },
-    saveLoading: {
-      type: Boolean
-    },
-    addMoreLoading: {
-      type: Boolean
-    }
-  },
-  data: function() {
-    return {
-      group: {},
-      manager: {},
-      snackbar: {
-        show: false,
-        text: ""
-      }
-    };
   }
-};
+);
+
+function getManagerName(managerInfo: any) {
+  var man = managerInfo.person;
+  return (
+    man.firstName +
+    " " +
+    man.lastName +
+    " " +
+    (man.secondLastName ? man.secondLastName : "")
+  );
+}
+
+function parseGroup(obj: any) {
+  return {
+    id: obj.managerId
+  };
+}
+
+function updateSelection(obj: any) {
+  if (obj.person) {
+    group.value.managerId = obj.id;
+    if (!group.value.manager) group.value.manager = {};
+    group.value.manager.person = obj.person;
+    if (!group.value.managerInfo) group.value.managerInfo = {};
+    group.value.managerInfo.person = obj.person;
+  }
+}
+
+function showSnackbar(message: string) {
+  snackbar.value.text = message;
+  snackbar.value.show = true;
+}
+
+function cancel() {
+  clear();
+  emit("cancel");
+  manager.value = {};
+}
+
+function clear() {
+  for (let key of Object.keys(group.value)) {
+    group.value[key] = "";
+  }
+  delete group.value.address;
+}
+
+function validateGroup(grp: any, operation: () => void) {
+  http
+    .get(`/api/v1/groups/find_group/${grp.name}/${grp.manager.id}`)
+    .then(response => {
+      if (response.data == 0) {
+        operation();
+      } else {
+        showSnackbar(t("groups.messages.already-exists"));
+      }
+    });
+}
+
+function save() {
+  validateGroup(group.value, () => {
+    group.value.active = true;
+    emit("save", group.value);
+  });
+  manager.value = {};
+}
+
+function addAnother() {
+  validateGroup(group.value, () => {
+    group.value.active = true;
+    emit("add-another", group.value);
+    group.value = {};
+  });
+}
 </script>

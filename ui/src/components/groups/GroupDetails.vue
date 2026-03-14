@@ -1,11 +1,11 @@
 <template>
-  <v-layout>
-    <v-flex xs12 sm4>
+  <v-row>
+    <v-col cols="12" sm="4">
       <v-card>
-        <v-card-title primary-title>
+        <v-card-title>
           <div>
             <h3 class="headline mb-0">
-              {{ $t("groups.details.class-title") }}: {{ group.name }}
+              {{ t("groups.details.class-title") }}: {{ group.name }}
             </h3>
             <div>{{ group.description }}</div>
           </div>
@@ -14,66 +14,62 @@
       </v-card>
 
       <v-card class="mt-2" v-if="pageLoaded">
-        <v-card-title primary-title>
+        <v-card-title>
           <div>
-            <h3 class="headline mb-0">{{ $t("groups.details.title") }}</h3>
-            <div>{{ $t("groups.manager") }}: {{ getManagerName() }}</div>
+            <h3 class="headline mb-0">{{ t("groups.details.title") }}</h3>
+            <div>{{ t("groups.manager") }}: {{ getManagerName() }}</div>
             <div>
-              {{ $t("groups.details.member-count") }}:
+              {{ t("groups.details.member-count") }}:
               {{ group.memberList.length }}
             </div>
           </div>
         </v-card-title>
       </v-card>
-    </v-flex>
-  </v-layout>
+    </v-col>
+  </v-row>
 </template>
 
-<script>
-export default {
-  name: "GroupDetails",
-  data() {
-    return {
-      group: {},
-      pageLoaded: false
-    };
-  },
+<script setup lang="ts">
+import { ref, onMounted } from "vue";
+import { useI18n } from "vue-i18n";
+import { useRoute, useRouter } from "vue-router";
+import { inject } from "vue";
+import type { AxiosInstance } from "axios";
 
-  mounted() {
-    this.pageLoaded = false;
-    this.getGroup().then(() => {
-      this.pageLoaded = true;
-    });
-  },
+const { t } = useI18n();
+const http = inject<AxiosInstance>("$http")!;
+const route = useRoute();
+const router = useRouter();
 
-  methods: {
-    getGroup() {
-      const id = this.$route.params.group;
-      return this.$http.get(`/api/v1/groups/groups/${id}`).then(resp => {
-        this.group = resp.data;
-        console.log(this.group);
-      });
-    },
+const group = ref<Record<string, any>>({});
+const pageLoaded = ref(false);
 
-    navigateTo(path) {
-      this.$router.push({
-        path: "/groups/" + this.$route.params.group + path
-      });
-    },
-
-    getManagerName() {
-      if (this.group.managerInfo) {
-        var man = this.group.managerInfo.person;
-        return (
-          man.firstName +
-          " " +
-          man.lastName +
-          " " +
-          (man.secondLastName ? man.secondLastName : "")
-        );
-      }
-      return true;
-    }
+function getManagerName() {
+  if (group.value.managerInfo) {
+    var man = group.value.managerInfo.person;
+    return (
+      man.firstName +
+      " " +
+      man.lastName +
+      " " +
+      (man.secondLastName ? man.secondLastName : "")
+    );
   }
-};
+  return true;
+}
+
+function getGroup() {
+  const id = route.params.group;
+  return http.get(`/api/v1/groups/groups/${id}`).then(resp => {
+    group.value = resp.data;
+    console.log(group.value);
+  });
+}
+
+onMounted(() => {
+  pageLoaded.value = false;
+  getGroup().then(() => {
+    pageLoaded.value = true;
+  });
+});
 </script>

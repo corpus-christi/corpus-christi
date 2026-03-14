@@ -1,29 +1,29 @@
 <template>
   <div>
     <v-btn
-      outline
+      variant="outlined"
       color="primary"
-      v-on:click="$router.push({ path: '/groups/all' })"
+      v-on:click="router.push({ path: '/groups/all' })"
       ><v-icon>arrow_back</v-icon>Back</v-btn
     >
     <v-tabs color="transparent" slider-color="accent">
       <v-tab
         ripple
-        :to="{ path: '/groups/' + $route.params.group + '/members' }"
+        :to="{ path: '/groups/' + route.params.group + '/members' }"
       >
-        <v-icon>person</v-icon>&nbsp;{{ $t("groups.members.title") }}
+        <v-icon>person</v-icon>&nbsp;{{ t("groups.members.title") }}
       </v-tab>
       <v-tab
         ripple
-        :to="{ path: '/groups/' + $route.params.group + '/meetings' }"
+        :to="{ path: '/groups/' + route.params.group + '/meetings' }"
       >
-        <v-icon>devices_other</v-icon>&nbsp;{{ $t("groups.meetings.title") }}
+        <v-icon>devices_other</v-icon>&nbsp;{{ t("groups.meetings.title") }}
       </v-tab>
       <v-tab
         ripple
-        :to="{ path: '/groups/' + $route.params.group + '/details' }"
+        :to="{ path: '/groups/' + route.params.group + '/details' }"
       >
-        <v-icon>list</v-icon>&nbsp;{{ $t("groups.details.title") }}
+        <v-icon>list</v-icon>&nbsp;{{ t("groups.details.title") }}
       </v-tab>
     </v-tabs>
     <hr class="vertical-spacer" />
@@ -31,19 +31,13 @@
   </div>
 </template>
 
-<script>
-export default {
-  name: "Group",
-  data() {
-    return {
-      tabs: {
-        members: 0,
-        meetings: 1,
-        details: 2
-      }
-    };
-  }
-};
+<script setup lang="ts">
+import { useI18n } from "vue-i18n";
+import { useRouter, useRoute } from "vue-router";
+
+const { t } = useI18n();
+const router = useRouter();
+const route = useRoute();
 </script>
 
 <style scoped>
