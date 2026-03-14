@@ -1,36 +1,36 @@
 <template>
   <v-card>
     <v-card-text>
-      <v-layout align-space-around justify-space-between column fill-height>
+      <v-row align="space-around" justify="space-between" no-gutters>
         <form method="POST" ref="imageForm">
-          <v-flex class="text-xs-center">
+          <v-col class="text-center">
             <v-btn
-              flat
+              variant="text"
               color="primary"
-              small
+              size="small"
               @click="openFileChooser"
               v-if="!saved"
             >
-              {{ $t("actions.choose-image") }}
+              {{ t("actions.choose-image") }}
             </v-btn>
-          </v-flex>
-          <v-flex class="text-xs-center" v-if="!preview && !saved && !missing">
-            <span>{{ $t("images.messages.no-image") }}</span>
-          </v-flex>
-          <v-flex v-if="missing" class="text-xs-center">
-            <span>{{ $t("images.messages.not-found") }}</span>
-          </v-flex>
-          <v-layout fill-height align-center justify-center row>
-            <v-flex class="text-xs-right" v-if="preview">
+          </v-col>
+          <v-col class="text-center" v-if="!preview && !saved && !missing">
+            <span>{{ t("images.messages.no-image") }}</span>
+          </v-col>
+          <v-col v-if="missing" class="text-center">
+            <span>{{ t("images.messages.not-found") }}</span>
+          </v-col>
+          <v-row align="center" justify="center">
+            <v-col class="text-right" v-if="preview">
               <span>{{ filename }}</span>
-            </v-flex>
-            <v-flex v-if="preview">
-              <v-btn icon small @click="removePreview">
+            </v-col>
+            <v-col v-if="preview">
+              <v-btn icon size="small" @click="removePreview">
                 <v-icon>close</v-icon>
               </v-btn>
-            </v-flex>
-          </v-layout>
-          <v-flex hidden>
+            </v-col>
+          </v-row>
+          <v-col style="display:none">
             <input
               type="file"
               hidden
@@ -38,158 +38,158 @@
               name="file"
               @change="previewImage"
             />
-          </v-flex>
-          <v-flex v-if="!saved">
+          </v-col>
+          <v-col v-if="!saved">
             <v-text-field
-              :placeholder="$t('images.image-description')"
+              :placeholder="t('images.image-description')"
               name="description"
             />
-          </v-flex>
+          </v-col>
         </form>
-        <v-flex v-if="saved">
+        <v-col v-if="saved">
           <v-img
             min-width="100%"
-            ref="preview"
+            ref="previewRef"
             :src="fetchImage"
             @error="noImage"
           >
-            <v-layout justify-end fill-height align-start>
+            <v-row justify="end" align="start">
               <v-btn
-                flat
+                variant="text"
                 icon
                 class="d-flex grey darken-4 display-3 white--text"
                 @click="deleteSelectedImage"
               >
                 <v-icon>close</v-icon>
               </v-btn>
-            </v-layout>
+            </v-row>
           </v-img>
-        </v-flex>
-      </v-layout>
+        </v-col>
+      </v-row>
     </v-card-text>
     <v-card-actions v-if="!saved">
       <v-spacer />
-      <v-btn flat @click="cancelDialog"> {{ $t("actions.cancel") }} </v-btn>
+      <v-btn variant="text" @click="cancelDialog"> {{ t("actions.cancel") }} </v-btn>
       <v-btn color="primary" @click="uploadSelectedImage">
-        {{ $t("actions.save") }}
+        {{ t("actions.save") }}
       </v-btn>
     </v-card-actions>
   </v-card>
 </template>
 
-<script>
-export default {
-  name: "ImageChooser",
-  computed: {
-    fetchImage() {
-      return `/api/v1/images/${this.id}?${Math.random()}`;
-    }
-  },
-  watch: {
-    imageId(id) {
-      this.clear();
-      if (id > -1) {
-        this.id = id;
-        this.saved = true;
-      }
-    }
-  },
-  methods: {
-    clear() {
-      this.id = -1;
-      this.saved = false;
-      this.preview = false;
-      this.missing = false;
-      this.filename = "";
-    },
+<script setup lang="ts">
+import { ref, computed, watch, onMounted } from "vue";
+import { useI18n } from "vue-i18n";
+import { inject } from "vue";
+import type { AxiosInstance } from "axios";
 
-    openFileChooser() {
-      const imageInput = this.$refs.image_chooser;
-      imageInput.click();
-    },
+const { t } = useI18n();
+const http = inject<AxiosInstance>("$http")!;
 
-    previewImage($event) {
-      if ($event.target.files.length > 0) {
-        this.preview = true;
-        this.filename = $event.target.files[0].name;
-      }
-    },
+const props = defineProps<{
+  imageId: number;
+}>();
 
-    removePreview() {
-      this.filename = "";
-      this.preview = false;
-    },
+const emit = defineEmits(["saved", "deleted", "missing", "cancel"]);
 
-    uploadSelectedImage() {
-      if (this.$refs.image_chooser.files.length > 0) {
-        const formData = new FormData(this.$refs.imageForm);
-        this.$http
-          .post("/api/v1/images/", formData)
-          .then(resp => {
-            console.log(resp);
-            this.saveSelectedImage(resp.data.id);
-          })
-          .catch(err => {
-            const response = err.response;
-            if (response) {
-              if (response.status == 303) {
-                this.saveSelectedImage(response.data.id);
-              } else {
-                this.saved = false;
-                console.error("IMAGE ERROR", response);
-              }
-            } else {
-              this.saved = false;
-            }
-          });
-      }
-      this.$forceUpdate();
-    },
+const id = ref(-1);
+const filename = ref("");
+const saved = ref(false);
+const preview = ref(false);
+const missing = ref(false);
+const imageForm = ref<HTMLFormElement | null>(null);
+const image_chooser = ref<HTMLInputElement | null>(null);
+const previewRef = ref<any>(null);
 
-    saveSelectedImage(id) {
-      this.id = id;
-      this.saved = true;
-      this.preview = false;
-      this.missing = false;
-      this.$emit("saved", id);
-    },
+const fetchImage = computed(() => `/api/v1/images/${id.value}?${Math.random()}`);
 
-    deleteSelectedImage() {
-      this.clear();
-      this.$emit("deleted");
-    },
-    noImage(error) {
-      console.error("IMAGE MISSING", error);
-      this.missing = true;
-      this.preview = false;
-      this.saved = false;
-      this.$emit("missing");
-    },
-    cancelDialog() {
-      this.$emit("cancel");
-    }
-  },
-  props: {
-    imageId: {
-      type: Number,
-      required: true
-    }
-  },
-  data() {
-    return {
-      id: -1,
-      filename: "",
-      saved: false,
-      preview: false,
-      missing: false
-    };
-  },
-  mounted() {
-    this.clear();
-    if (this.$props.imageId > -1) {
-      this.id = this.$props.imageId;
-      this.saved = true;
-    }
+watch(() => props.imageId, (newId) => {
+  clear();
+  if (newId > -1) {
+    id.value = newId;
+    saved.value = true;
   }
-};
+});
+
+function clear() {
+  id.value = -1;
+  saved.value = false;
+  preview.value = false;
+  missing.value = false;
+  filename.value = "";
+}
+
+function openFileChooser() {
+  image_chooser.value?.click();
+}
+
+function previewImage($event: Event) {
+  const target = $event.target as HTMLInputElement;
+  if (target.files && target.files.length > 0) {
+    preview.value = true;
+    filename.value = target.files[0].name;
+  }
+}
+
+function removePreview() {
+  filename.value = "";
+  preview.value = false;
+}
+
+function uploadSelectedImage() {
+  if (image_chooser.value && image_chooser.value.files && image_chooser.value.files.length > 0) {
+    const formData = new FormData(imageForm.value!);
+    http
+      .post("/api/v1/images/", formData)
+      .then(resp => {
+        saveSelectedImage(resp.data.id);
+      })
+      .catch(err => {
+        const response = err.response;
+        if (response) {
+          if (response.status == 303) {
+            saveSelectedImage(response.data.id);
+          } else {
+            saved.value = false;
+            console.error("IMAGE ERROR", response);
+          }
+        } else {
+          saved.value = false;
+        }
+      });
+  }
+}
+
+function saveSelectedImage(imageId: number) {
+  id.value = imageId;
+  saved.value = true;
+  preview.value = false;
+  missing.value = false;
+  emit("saved", imageId);
+}
+
+function deleteSelectedImage() {
+  clear();
+  emit("deleted");
+}
+
+function noImage(error: any) {
+  console.error("IMAGE MISSING", error);
+  missing.value = true;
+  preview.value = false;
+  saved.value = false;
+  emit("missing");
+}
+
+function cancelDialog() {
+  emit("cancel");
+}
+
+onMounted(() => {
+  clear();
+  if (props.imageId > -1) {
+    id.value = props.imageId;
+    saved.value = true;
+  }
+});
 </script>
