@@ -1,21 +1,21 @@
 <template>
   <div>
     <v-toolbar class="pa-1">
-      <v-layout align-center justify-space-between fill-height>
-        <v-flex md2>
-          <v-toolbar-title>{{ $t("groups.header") }}</v-toolbar-title>
-        </v-flex>
-        <v-flex md2>
+      <v-row align="center" justify="space-between">
+        <v-col md="2">
+          <v-toolbar-title>{{ t("groups.header") }}</v-toolbar-title>
+        </v-col>
+        <v-col md="2">
           <v-text-field
             v-model="search"
             append-icon="search"
-            v-bind:label="$t('actions.search')"
+            v-bind:label="t('actions.search')"
             single-line
             hide-details
             data-cy="form-search"
           />
-        </v-flex>
-        <v-flex md3>
+        </v-col>
+        <v-col md="3">
           <v-select
             hide-details
             solo
@@ -25,125 +25,134 @@
             data-cy="view-status-select"
           >
           </v-select>
-        </v-flex>
-        <v-flex shrink justify-self-end>
+        </v-col>
+        <v-col shrink>
           <v-btn
             color="primary"
-            raised
+            variant="elevated"
             v-on:click.stop="newGroup"
             data-cy="add-group"
           >
             <v-icon dark left>add</v-icon>
-            {{ $t("actions.add-group") }}
+            {{ t("actions.add-group") }}
           </v-btn>
-        </v-flex>
-      </v-layout>
+        </v-col>
+      </v-row>
     </v-toolbar>
 
     <v-data-table
       :headers="headers"
-      :rows-per-page-items="rowsPerPageItem"
+      :items-per-page-options="rowsPerPageItem"
       :items="visibleGroups"
       :search="search"
       :loading="tableLoading"
-      :pagination.sync="paginationInfo"
       must-sort
       class="elevation-1"
     >
-      <template slot="items" slot-scope="props">
-        <td
-          class="hover-hand"
-          v-on:click="$router.push({ path: '/groups/' + props.item.id })"
-        >
-          {{ props.item.name }}
-        </td>
-        <td
-          class="hover-hand"
-          v-on:click="$router.push({ path: '/groups/' + props.item.id })"
-        >
-          {{ props.item.description }}
-        </td>
-        <td
-          class="hover-hand"
-          v-on:click="$router.push({ path: '/groups/' + props.item.id })"
-        >
-          {{ getManagerName(props.item.managerInfo) }}
-        </td>
-        <td
-          class="hover-hand"
-          v-on:click="$router.push({ path: '/groups/' + props.item.id })"
-        >
-          {{ props.item.memberList.filter(ev => ev.active).length }}
-        </td>
-        <td class="text-no-wrap">
-          <template v-if="props.item.active">
-            <v-tooltip bottom>
-              <v-btn
-                icon
-                outline
-                small
-                color="primary"
-                slot="activator"
-                v-on:click="editGroup(props.item)"
-                data-cy="edit"
-              >
-                <v-icon small>edit</v-icon>
-              </v-btn>
-              <span>{{ $t("actions.edit") }}</span>
-            </v-tooltip>
-            <v-tooltip bottom>
-              <v-btn
-                icon
-                outline
-                small
-                color="primary"
-                slot="activator"
-                v-on:click="duplicate(props.item)"
-                data-cy="duplicate"
-              >
-                <v-icon small>filter_none</v-icon>
-              </v-btn>
-              <span>{{ $t("actions.duplicate") }}</span>
-            </v-tooltip>
-            <v-tooltip bottom>
-              <v-btn
-                icon
-                outline
-                small
-                color="primary"
-                slot="activator"
-                v-on:click="confirmArchive(props.item)"
-                data-cy="archive"
-              >
-                <v-icon small>archive</v-icon>
-              </v-btn>
-              <span>{{ $t("actions.tooltips.archive") }}</span>
-            </v-tooltip>
-          </template>
-          <template v-else>
-            <v-tooltip bottom v-if="!props.item.active">
-              <v-btn
-                icon
-                outline
-                small
-                color="primary"
-                slot="activator"
-                v-on:click="unarchive(props.item)"
-                :loading="props.item.id < 0"
-                data-cy="unarchive"
-              >
-                <v-icon small>undo</v-icon>
-              </v-btn>
-              <span>{{ $t("actions.tooltips.activate") }}</span>
-            </v-tooltip>
-          </template>
-        </td>
+      <template #item="{ item }">
+        <tr>
+          <td
+            class="hover-hand"
+            v-on:click="router.push({ path: '/groups/' + item.id })"
+          >
+            {{ item.name }}
+          </td>
+          <td
+            class="hover-hand"
+            v-on:click="router.push({ path: '/groups/' + item.id })"
+          >
+            {{ item.description }}
+          </td>
+          <td
+            class="hover-hand"
+            v-on:click="router.push({ path: '/groups/' + item.id })"
+          >
+            {{ getManagerName(item.managerInfo) }}
+          </td>
+          <td
+            class="hover-hand"
+            v-on:click="router.push({ path: '/groups/' + item.id })"
+          >
+            {{ item.memberList.filter((ev: any) => ev.active).length }}
+          </td>
+          <td class="text-no-wrap">
+            <template v-if="item.active">
+              <v-tooltip bottom>
+                <template #activator="{ props: tooltipProps }">
+                  <v-btn
+                    icon
+                    variant="outlined"
+                    size="small"
+                    color="primary"
+                    v-bind="tooltipProps"
+                    v-on:click="editGroup(item)"
+                    data-cy="edit"
+                  >
+                    <v-icon size="small">edit</v-icon>
+                  </v-btn>
+                </template>
+                <span>{{ t("actions.edit") }}</span>
+              </v-tooltip>
+              <v-tooltip bottom>
+                <template #activator="{ props: tooltipProps }">
+                  <v-btn
+                    icon
+                    variant="outlined"
+                    size="small"
+                    color="primary"
+                    v-bind="tooltipProps"
+                    v-on:click="duplicate(item)"
+                    data-cy="duplicate"
+                  >
+                    <v-icon size="small">filter_none</v-icon>
+                  </v-btn>
+                </template>
+                <span>{{ t("actions.duplicate") }}</span>
+              </v-tooltip>
+              <v-tooltip bottom>
+                <template #activator="{ props: tooltipProps }">
+                  <v-btn
+                    icon
+                    variant="outlined"
+                    size="small"
+                    color="primary"
+                    v-bind="tooltipProps"
+                    v-on:click="confirmArchive(item)"
+                    data-cy="archive"
+                  >
+                    <v-icon size="small">archive</v-icon>
+                  </v-btn>
+                </template>
+                <span>{{ t("actions.tooltips.archive") }}</span>
+              </v-tooltip>
+            </template>
+            <template v-else>
+              <v-tooltip bottom v-if="!item.active">
+                <template #activator="{ props: tooltipProps }">
+                  <v-btn
+                    icon
+                    variant="outlined"
+                    size="small"
+                    color="primary"
+                    v-bind="tooltipProps"
+                    v-on:click="unarchive(item)"
+                    :loading="item.id < 0"
+                    data-cy="unarchive"
+                  >
+                    <v-icon size="small">undo</v-icon>
+                  </v-btn>
+                </template>
+                <span>{{ t("actions.tooltips.activate") }}</span>
+              </v-tooltip>
+            </template>
+          </td>
+        </tr>
       </template>
     </v-data-table>
 
     <!-- New/Edit dialog -->
     <v-dialog v-model="groupDialog.show" max-width="500px" persistent>
-      <group-form
+      <GroupForm
         v-bind:editMode="groupDialog.editMode"
         v-bind:initialData="groupDialog.group"
         v-bind:saveLoading="groupDialog.saveLoading"
@@ -157,23 +166,23 @@
     <!-- Archive dialog -->
     <v-dialog v-model="archiveDialog.show" max-width="350px">
       <v-card>
-        <v-card-text>{{ $t("groups.messages.confirm-archive") }}</v-card-text>
+        <v-card-text>{{ t("groups.messages.confirm-archive") }}</v-card-text>
         <v-card-actions>
           <v-btn
             v-on:click="cancelArchive"
             color="secondary"
-            flat
+            variant="text"
             data-cy="cancel-archive"
-            >{{ $t("actions.cancel") }}</v-btn
+            >{{ t("actions.cancel") }}</v-btn
           >
           <v-spacer />
           <v-btn
             v-on:click="archiveGroup"
             color="primary"
-            raised
+            variant="elevated"
             :loading="archiveDialog.loading"
             data-cy="confirm-archive"
-            >{{ $t("actions.confirm") }}</v-btn
+            >{{ t("actions.confirm") }}</v-btn
           >
         </v-card-actions>
       </v-card>
@@ -181,253 +190,230 @@
 
     <v-snackbar v-model="snackbar.show">
       {{ snackbar.text }}
-      <v-btn flat @click="snackbar.show = false">
-        {{ $t("actions.close") }}
-      </v-btn>
+      <template #actions>
+        <v-btn variant="text" @click="snackbar.show = false">
+          {{ t("actions.close") }}
+        </v-btn>
+      </template>
     </v-snackbar>
   </div>
 </template>
 
-<script>
-import GroupForm from "./GroupForm";
-export default {
-  components: { "group-form": GroupForm },
-  name: "GroupTable",
-  mounted() {
-    this.tableLoading = true;
-    this.$http.get("/api/v1/groups/groups").then(resp => {
-      this.groups = resp.data;
-      this.tableLoading = false;
-    });
-    this.onResize();
-  },
-  data() {
-    return {
-      rowsPerPageItem: [
-        10,
-        15,
-        25,
-        { text: "$vuetify.dataIterator.rowsPerPageAll", value: -1 }
-      ],
-      paginationInfo: {
-        sortBy: "start", //default sorted column
-        rowsPerPage: 10,
-        page: 1
-      },
-      tableLoading: true,
-      groups: [],
+<script setup lang="ts">
+import { ref, computed, onMounted } from "vue";
+import { useI18n } from "vue-i18n";
+import { useRouter } from "vue-router";
+import { inject } from "vue";
+import type { AxiosInstance } from "axios";
+import GroupForm from "./GroupForm.vue";
 
-      search: "",
-      viewStatus: "viewActive",
-      groupDialog: {
-        show: false,
-        editMode: false,
-        saveLoading: false,
-        addMoreLoading: false,
-        group: {}
-      },
+const { t } = useI18n();
+const http = inject<AxiosInstance>("$http")!;
+const router = useRouter();
 
-      archiveDialog: {
-        show: false,
-        groupId: -1,
-        loading: false
-      },
+const rowsPerPageItem = [10, 15, 25, { title: "All", value: -1 }];
+const tableLoading = ref(true);
+const groups = ref<any[]>([]);
+const search = ref("");
+const viewStatus = ref("viewActive");
 
-      snackbar: {
-        show: false,
-        text: ""
-      }
-    };
-  },
+const groupDialog = ref({
+  show: false,
+  editMode: false,
+  saveLoading: false,
+  addMoreLoading: false,
+  group: {} as any
+});
 
-  computed: {
-    viewOptions() {
-      return [
-        { text: this.$t("actions.view-active"), value: "viewActive" },
-        { text: this.$t("actions.view-archived"), value: "viewArchived" },
-        { text: this.$t("actions.view-all"), value: "viewAll" }
-      ];
-    },
+const archiveDialog = ref({
+  show: false,
+  groupId: -1,
+  loading: false
+});
 
-    visibleGroups() {
-      let list = this.groups;
+const snackbar = ref({ show: false, text: "" });
 
-      if (this.viewStatus === "viewActive") {
-        return list.filter(ev => ev.active);
-      } else if (this.viewStatus === "viewArchived") {
-        return list.filter(ev => !ev.active);
-      } else {
-        return list;
-      }
-    },
+const viewOptions = computed(() => [
+  { title: t("actions.view-active"), value: "viewActive" },
+  { title: t("actions.view-archived"), value: "viewArchived" },
+  { title: t("actions.view-all"), value: "viewAll" }
+]);
 
-    headers() {
-      return [
-        { text: this.$t("groups.name"), value: "name" },
-        { text: this.$t("groups.description"), value: "description" },
-        {
-          text: this.$t("groups.manager"),
-          value: "managerInfo.person.lastName"
-        },
-        { text: this.$t("groups.member-count"), value: "memberList.length" },
-        { text: this.$t("actions.header"), sortable: false }
-      ];
-    }
-  },
-
-  methods: {
-    getManagerName(managerInfo) {
-      var man = managerInfo.person;
-      return (
-        man.firstName +
-        " " +
-        man.lastName +
-        " " +
-        (man.secondLastName ? man.secondLastName : "")
-      );
-    },
-
-    activateGroupDialog(group = {}, editMode = false) {
-      this.groupDialog.editMode = editMode;
-      this.groupDialog.group = group;
-      this.groupDialog.show = true;
-    },
-    newGroup() {
-      this.activateGroupDialog();
-    },
-
-    cancelGroup() {
-      this.groupDialog.show = false;
-    },
-
-    saveGroup(group, closeDialog = true) {
-      this.groupDialog.saveLoading = true;
-      let newGroup = JSON.parse(JSON.stringify(group));
-      delete newGroup.manager;
-      delete newGroup.id;
-      delete newGroup.memberList;
-      delete newGroup.managerInfo;
-      if (this.groupDialog.editMode) {
-        this.putGroup(group, newGroup);
-      } else {
-        this.postGroup(newGroup);
-      }
-      if (closeDialog) {
-        this.closeDialog();
-      }
-    },
-
-    putGroup(group, newGroup) {
-      const groupId = group.id;
-      const idx = this.groups.findIndex(ev => ev.id === group.id);
-      this.$http
-        .patch(`/api/v1/groups/groups/${groupId}`, newGroup)
-        .then(resp => {
-          Object.assign(this.groups[idx], resp.data);
-          this.groupDialog.saveLoading = false;
-          this.showSnackbar(this.$t("groups.messages.group-edited"));
-        })
-        .catch(err => {
-          console.error("PUT FALURE", err.response);
-          this.groupDialog.saveLoading = false;
-          this.showSnackbar(this.$t("groups.messages.error-editing-group"));
-        });
-    },
-
-    postGroup(newGroup) {
-      this.$http
-        .post("/api/v1/groups/groups", newGroup)
-        .then(resp => {
-          this.groups.push(resp.data);
-          this.groupDialog.saveLoading = false;
-          this.showSnackbar(this.$t("groups.messages.group-added"));
-        })
-        .catch(err => {
-          console.error("POST FAILURE", err.response);
-          this.groupDialog.saveLoading = false;
-          this.showSnackbar(this.$t("groups.messages.error-adding-group"));
-        });
-    },
-
-    closeDialog() {
-      this.groupDialog.show = false;
-    },
-
-    editGroup(group) {
-      this.activateGroupDialog({ ...group }, true);
-    },
-
-    activateArchiveDialog(groupId) {
-      this.archiveDialog.show = true;
-      this.archiveDialog.groupId = groupId;
-    },
-
-    confirmArchive(event) {
-      this.activateArchiveDialog(event.id);
-    },
-
-    cancelArchive() {
-      this.archiveDialog.show = false;
-    },
-    archiveGroup() {
-      console.log("Archived group");
-      this.archiveDialog.loading = true;
-      const groupId = this.archiveDialog.groupId;
-      const idx = this.groups.findIndex(ev => ev.id === groupId);
-      this.$http
-        .put(`/api/v1/groups/groups/deactivate/${groupId}`)
-        .then(resp => {
-          console.log("ARCHIVE", resp);
-          this.groups[idx].active = false;
-          this.archiveDialog.loading = false;
-          this.archiveDialog.show = false;
-          this.showSnackbar(this.$t("groups.messages.group-archived"));
-        })
-        .catch(err => {
-          console.error("ARCHIVE FALURE", err.response);
-          this.archiveDialog.loading = false;
-          this.archiveDialog.show = false;
-          this.showSnackbar(this.$t("groups.messages.error-archiving-group"));
-        });
-    },
-    unarchive(group) {
-      const idx = this.groups.findIndex(ev => ev.id === group.id);
-      const groupId = group.id;
-      group.id *= -1; // to show loading spinner
-      this.$http
-        .put(`/api/v1/groups/groups/activate/${groupId}`)
-        .then(resp => {
-          console.log("UNARCHIVED", resp);
-          Object.assign(this.groups[idx], resp.data);
-          this.showSnackbar(this.$t("groups.messages.group-unarchived"));
-        })
-        .catch(err => {
-          console.error("UNARCHIVE FALURE", err.response);
-          this.showSnackbar(this.$t("groups.messages.error-unarchiving-gropu"));
-        });
-    },
-    duplicate(group) {
-      const copyGroup = JSON.parse(JSON.stringify(group));
-      delete copyGroup.id;
-      this.activateGroupDialog(copyGroup);
-    },
-    addAnotherGroup(group) {
-      this.saveGroup(group, false);
-    },
-    onResize() {
-      this.windowSize = { x: window.innerWidth, y: window.innerHeight };
-      if (this.windowSize.x <= 960) {
-        this.windowSize.small = true;
-      } else {
-        this.windowSize.small = false;
-      }
-    },
-    showSnackbar(message) {
-      this.snackbar.text = message;
-      this.snackbar.show = true;
-    }
+const visibleGroups = computed(() => {
+  let list = groups.value;
+  if (viewStatus.value === "viewActive") {
+    return list.filter((ev: any) => ev.active);
+  } else if (viewStatus.value === "viewArchived") {
+    return list.filter((ev: any) => !ev.active);
+  } else {
+    return list;
   }
-};
+});
+
+const headers = computed(() => [
+  { title: t("groups.name"), value: "name" },
+  { title: t("groups.description"), value: "description" },
+  { title: t("groups.manager"), value: "managerInfo.person.lastName" },
+  { title: t("groups.member-count"), value: "memberList.length" },
+  { title: t("actions.header"), sortable: false }
+]);
+
+function getManagerName(managerInfo: any) {
+  var man = managerInfo.person;
+  return (
+    man.firstName +
+    " " +
+    man.lastName +
+    " " +
+    (man.secondLastName ? man.secondLastName : "")
+  );
+}
+
+function activateGroupDialog(group: any = {}, editMode = false) {
+  groupDialog.value.editMode = editMode;
+  groupDialog.value.group = group;
+  groupDialog.value.show = true;
+}
+
+function newGroup() {
+  activateGroupDialog();
+}
+
+function cancelGroup() {
+  groupDialog.value.show = false;
+}
+
+function saveGroup(group: any, closeDialog = true) {
+  groupDialog.value.saveLoading = true;
+  let newGroup = JSON.parse(JSON.stringify(group));
+  delete newGroup.manager;
+  delete newGroup.id;
+  delete newGroup.memberList;
+  delete newGroup.managerInfo;
+  if (groupDialog.value.editMode) {
+    putGroup(group, newGroup);
+  } else {
+    postGroup(newGroup);
+  }
+  if (closeDialog) {
+    closeDialogFn();
+  }
+}
+
+function putGroup(group: any, newGroup: any) {
+  const groupId = group.id;
+  const idx = groups.value.findIndex((ev: any) => ev.id === group.id);
+  http
+    .patch(`/api/v1/groups/groups/${groupId}`, newGroup)
+    .then(resp => {
+      Object.assign(groups.value[idx], resp.data);
+      groupDialog.value.saveLoading = false;
+      showSnackbar(t("groups.messages.group-edited"));
+    })
+    .catch(err => {
+      console.error("PUT FALURE", err.response);
+      groupDialog.value.saveLoading = false;
+      showSnackbar(t("groups.messages.error-editing-group"));
+    });
+}
+
+function postGroup(newGroup: any) {
+  http
+    .post("/api/v1/groups/groups", newGroup)
+    .then(resp => {
+      groups.value.push(resp.data);
+      groupDialog.value.saveLoading = false;
+      showSnackbar(t("groups.messages.group-added"));
+    })
+    .catch(err => {
+      console.error("POST FAILURE", err.response);
+      groupDialog.value.saveLoading = false;
+      showSnackbar(t("groups.messages.error-adding-group"));
+    });
+}
+
+function closeDialogFn() {
+  groupDialog.value.show = false;
+}
+
+function editGroup(group: any) {
+  activateGroupDialog({ ...group }, true);
+}
+
+function activateArchiveDialog(groupId: number) {
+  archiveDialog.value.show = true;
+  archiveDialog.value.groupId = groupId;
+}
+
+function confirmArchive(event: any) {
+  activateArchiveDialog(event.id);
+}
+
+function cancelArchive() {
+  archiveDialog.value.show = false;
+}
+
+function archiveGroup() {
+  console.log("Archived group");
+  archiveDialog.value.loading = true;
+  const groupId = archiveDialog.value.groupId;
+  const idx = groups.value.findIndex((ev: any) => ev.id === groupId);
+  http
+    .put(`/api/v1/groups/groups/deactivate/${groupId}`)
+    .then(resp => {
+      console.log("ARCHIVE", resp);
+      groups.value[idx].active = false;
+      archiveDialog.value.loading = false;
+      archiveDialog.value.show = false;
+      showSnackbar(t("groups.messages.group-archived"));
+    })
+    .catch(err => {
+      console.error("ARCHIVE FALURE", err.response);
+      archiveDialog.value.loading = false;
+      archiveDialog.value.show = false;
+      showSnackbar(t("groups.messages.error-archiving-group"));
+    });
+}
+
+function unarchive(group: any) {
+  const idx = groups.value.findIndex((ev: any) => ev.id === group.id);
+  const groupId = group.id;
+  group.id *= -1;
+  http
+    .put(`/api/v1/groups/groups/activate/${groupId}`)
+    .then(resp => {
+      console.log("UNARCHIVED", resp);
+      Object.assign(groups.value[idx], resp.data);
+      showSnackbar(t("groups.messages.group-unarchived"));
+    })
+    .catch(err => {
+      console.error("UNARCHIVE FALURE", err.response);
+      showSnackbar(t("groups.messages.error-unarchiving-gropu"));
+    });
+}
+
+function duplicate(group: any) {
+  const copyGroup = JSON.parse(JSON.stringify(group));
+  delete copyGroup.id;
+  activateGroupDialog(copyGroup);
+}
+
+function addAnotherGroup(group: any) {
+  saveGroup(group, false);
+}
+
+function showSnackbar(message: string) {
+  snackbar.value.text = message;
+  snackbar.value.show = true;
+}
+
+onMounted(() => {
+  tableLoading.value = true;
+  http.get("/api/v1/groups/groups").then(resp => {
+    groups.value = resp.data;
+    tableLoading.value = false;
+  });
+});
 </script>
 
 <style scoped>
