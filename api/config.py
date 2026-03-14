@@ -1,92 +1,57 @@
-import datetime
 import os
-import sys
-from contextlib import redirect_stdout
-
-try:
-    import private
-except ImportError:
-    with redirect_stdout(sys.stderr):
-        print("Can't find 'private.py' configuration file")
-        sys.exit(1)
+from typing import Optional
+from pydantic_settings import BaseSettings
 
 BASE_DIR = os.path.abspath(os.path.dirname(__file__))
 
 
-def psql_url(db_config):
-    url_prefix = f'postgresql://{private.PSQL_USER}:{private.PSQL_PASS}@{private.PSQL_HOST}/'
+class Settings(BaseSettings):
+    # Database
+    PSQL_USER: str = "postgres"
+    PSQL_PASS: str = "postgres"
+    PSQL_HOST: str = "localhost"
+    PSQL_DB: Optional[str] = None
+    CC_ENV: str = "dev"
 
-    if  hasattr(private, "PSQL_DB"):
-        return url_prefix + private.PSQL_DB
-    elif db_config == 'test':
-        return url_prefix + 'cc-test'
-    elif db_config == 'dev':
-        return url_prefix + 'cc-dev'
-    elif db_config == 'staging':
-        return url_prefix + 'cc-staging'
-    elif db_config == 'prod':
-        return url_prefix + 'cc-prod'
-    else:
-        raise RuntimeError(f"Can't determine Postgres URL with dbconfig '{db_config}'")
+    # Security
+    JWT_SECRET_KEY: str = "change-me-in-production"
+    SECRET_KEY: str = "change-me-in-production"
 
+    # Mail
+    MAIL_USERNAME: str = ""
+    MAIL_PASSWORD: str = ""
+    MAIL_SERVER: str = "smtp.gmail.com"
+    MAIL_PORT: int = 465
+    MAIL_USE_TLS: bool = False
+    MAIL_USE_SSL: bool = True
+    MAIL_SUPPRESS_SEND: bool = False
 
-class Config:
-    SECRET_KEY = os.environ.get(private.FLASK_SECRET_KEY) or private.FLASK_SECRET_KEY
+    @property
+    def database_url(self) -> str:
+        if self.PSQL_DB:
+            db_name = self.PSQL_DB
+        elif self.CC_ENV == "test":
+            db_name = "cc-test"
+        elif self.CC_ENV == "staging":
+            db_name = "cc-staging"
+        elif self.CC_ENV == "prod":
+            db_name = "cc-prod"
+        else:
+            db_name = "cc-dev"
+        return f"postgresql://{self.PSQL_USER}:{self.PSQL_PASS}@{self.PSQL_HOST}/{db_name}"
 
-    JWT_SECRET_KEY = os.environ.get('JWT_SECRET_KEY') or private.JWT_SECRET_KEY
-    JWT_ACCESS_TOKEN_EXPIRES = datetime.timedelta(hours=8)
-    JWT_BLACKLIST_ENABLED = True
-    JWT_BLACKLIST_TOKEN_CHECKS = ['access']
+    @property
+    def debug(self) -> bool:
+        return self.CC_ENV in ("dev", "test")
 
-    SQLALCHEMY_TRACK_MODIFICATIONS = False
-    SQLALCHEMY_RECORD_QUERIES = True
+    @property
+    def testing(self) -> bool:
+        return self.CC_ENV == "test"
 
-    MAIL_SERVER = 'smtp.gmail.com'
-    MAIL_PORT = 465
-    MAIL_USE_TLS = False
-    MAIL_USE_SSL = True
-    try:
-        MAIL_USERNAME = private.EMAIL_USERNAME
-        MAIL_PASSWORD = private.EMAIL_PASSWORD
-    except AttributeError:
-        MAIL_USERNAME = ""
-        MAIL_PASSWORD = ""
-
-    MAIL_SUPPRESS_SEND = False
-
-    @staticmethod
-    def init_app(app):
-        pass
-
-
-class TestingConfig(Config):
-    TESTING = True
-    SQLALCHEMY_DATABASE_URI = os.environ.get('TEST_DB_URL') or psql_url('test')
-    JWT_BLACKLIST_ENABLED = False
+    class Config:
+        env_file = ".env"
+        env_file_encoding = "utf-8"
+        case_sensitive = True
 
 
-class DevelopmentConfig(Config):
-    TESTING = True
-    DEBUG = True
-    SQLALCHEMY_DATABASE_URI = os.environ.get('DEV_DB_URL') or psql_url('dev')
-
-
-class StagingConfig(Config):
-    TESTING = False
-    DEBUG = False
-    SQLALCHEMY_DATABASE_URI = os.environ.get('DEV_DB_URL') or psql_url('staging')
-
-
-class ProductionConfig(Config):
-    TESTING = False
-    DEBUG = False
-    SQLALCHEMY_DATABASE_URI = os.environ.get('PROD_DB_URL') or psql_url('prod')
-
-
-config = {
-    'dev': DevelopmentConfig,
-    'test': TestingConfig,
-    'staging': StagingConfig,
-    'prod': ProductionConfig,
-    'default': DevelopmentConfig
-}
+settings = Settings()

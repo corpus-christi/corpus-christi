@@ -1,29 +1,26 @@
 from datetime import datetime
 
-from flask_jwt_extended import decode_token
-from sqlalchemy.orm.exc import NoResultFound
+from jose import jwt as jose_jwt
+from sqlalchemy import select
+from sqlalchemy.orm import Session
 
+from config import settings
 from .exceptions import TokenNotFound
 from .models import TokenBlacklist
-from .. import db
 
 
 def _epoch_utc_to_datetime(epoch_utc):
-    """
-    Helper function for converting epoch timestamps (as stored in JWTs) into
-    python datetime objects (which are easier to use with sqlalchemy).
-    """
+    """Convert epoch timestamps (as stored in JWTs) into python datetime objects."""
     return datetime.fromtimestamp(epoch_utc)
 
 
-def add_token_to_database(encoded_token, identity_claim):
-    """
-    Adds a new token to the database. It is not revoked when it is added.
-    :param identity_claim:
-    """
-    decoded_token = decode_token(encoded_token)
+def add_token_to_database(db: Session, encoded_token: str, identity_claim: str = "sub"):
+    """Adds a new token to the database. It is not revoked when it is added."""
+    decoded_token = jose_jwt.decode(
+        encoded_token, settings.JWT_SECRET_KEY, algorithms=["HS256"]
+    )
     jti = decoded_token['jti']
-    token_type = decoded_token['type']
+    token_type = decoded_token.get('type', 'access')
     user_identity = decoded_token[identity_claim]
     expires = _epoch_utc_to_datetime(decoded_token['exp'])
     revoked = False
@@ -35,86 +32,76 @@ def add_token_to_database(encoded_token, identity_claim):
         expires=expires,
         revoked=revoked,
     )
-    db.session.add(db_token)
-    db.session.commit()
+    db.add(db_token)
+    db.commit()
 
 
-def is_token_revoked(decoded_token):
-    """
-    Checks if the given token is revoked or not. Because we are adding all the
-    tokens that we create into this database, if the token is not present
-    in the database we are going to consider it revoked, as we don't know where
-    it was created.
-    """
+def is_token_revoked(db: Session, decoded_token: dict) -> bool:
+    """Checks if the given token is revoked or not."""
     jti = decoded_token['jti']
-    try:
-        token = db.session.query(TokenBlacklist).filter_by(jti=jti).one()
-        return token.revoked
-    except NoResultFound:
+    token = db.execute(
+        select(TokenBlacklist).where(TokenBlacklist.jti == jti)
+    ).scalar_one_or_none()
+    if token is None:
         return True
+    return token.revoked
 
 
-def get_user_tokens(user_identity):
-    """
-    Returns all of the tokens, revoked and unrevoked, that are stored for the
-    given user
-    """
-    return TokenBlacklist.query.filter_by(user_identity=user_identity).all()
+def get_user_tokens(db: Session, user_identity: str):
+    """Returns all tokens for the given user."""
+    return db.execute(
+        select(TokenBlacklist).where(TokenBlacklist.user_identity == user_identity)
+    ).scalars().all()
 
 
-def revoke_token(token_id, user):
-    """
-    Revokes the given token. Raises a TokenNotFound error if the token does
-    not exist in the database
-    """
-    try:
-        token = db.session.query(TokenBlacklist).filter_by(id=token_id, user_identity=user).one()
-        token.revoked = True
-        db.session.commit()
-    except NoResultFound:
-        raise TokenNotFound("Could not find the token {}".format(token_id))
+def revoke_token(db: Session, token_id: int, user: str):
+    """Revokes the given token. Raises a TokenNotFound error if not found."""
+    token = db.execute(
+        select(TokenBlacklist).where(
+            TokenBlacklist.id == token_id,
+            TokenBlacklist.user_identity == user
+        )
+    ).scalar_one_or_none()
+    if token is None:
+        raise TokenNotFound(f"Could not find the token {token_id}")
+    token.revoked = True
+    db.commit()
 
 
-def revoke_tokens_of_account(person_id):
-    """
-    Revoke all tokens belonging to an account
-    """
-    try:
-        # If we do this at the top level, it creates a circular import.
-        from src.people.models import Person
-
-        account = db.session.query(Person).filter_by(id=person_id).first()
-        account_tokens = db.session.query(TokenBlacklist).filter_by(user_identity=account.username).all()
-        for token in account_tokens:
-            token.revoked = True
-        db.session.commit()
-    except NoResultFound:
-        # raise TokenNotFound("Could not find the token {}".format(token_id))
+def revoke_tokens_of_account(db: Session, person_id: int):
+    """Revoke all tokens belonging to an account."""
+    from src.people.models import Person
+    account = db.get(Person, person_id)
+    if account is None:
         raise TokenNotFound("Could not find token")
+    account_tokens = db.execute(
+        select(TokenBlacklist).where(TokenBlacklist.user_identity == account.username)
+    ).scalars().all()
+    for token in account_tokens:
+        token.revoked = True
+    db.commit()
 
 
-def unrevoke_token(token_id, user):
-    """
-    Unrevokes the given token. Raises a TokenNotFound error if the token does
-    not exist in the database
-    """
-    try:
-        token = db.session.query(TokenBlacklist).filter_by(id=token_id, user_identity=user).one()
-        token.revoked = False
-        db.session.commit()
-    except NoResultFound:
-        raise TokenNotFound("Could not find the token {}".format(token_id))
+def unrevoke_token(db: Session, token_id: int, user: str):
+    """Unrevokes the given token. Raises a TokenNotFound error if not found."""
+    token = db.execute(
+        select(TokenBlacklist).where(
+            TokenBlacklist.id == token_id,
+            TokenBlacklist.user_identity == user
+        )
+    ).scalar_one_or_none()
+    if token is None:
+        raise TokenNotFound(f"Could not find the token {token_id}")
+    token.revoked = False
+    db.commit()
 
 
-def prune_database():
-    """
-    Delete tokens that have expired from the database.
-    How (and if) you call this is entirely up you. You could expose it to an
-    endpoint that only administrators could call, you could run it as a cron,
-    set it up with flask cli, etc.
-    """
+def prune_database(db: Session):
+    """Delete tokens that have expired from the database."""
     now = datetime.now()
-    expired = db.session.query(TokenBlacklist).filter(TokenBlacklist.expires < now).all()
+    expired = db.execute(
+        select(TokenBlacklist).where(TokenBlacklist.expires < now)
+    ).scalars().all()
     for token in expired:
-        db.session.delete(token)
-    db.session.commit()
+        db.delete(token)
+    db.commit()

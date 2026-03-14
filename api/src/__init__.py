@@ -1,73 +1,75 @@
-from flask import Flask
-from flask_jwt_extended import JWTManager
-from flask_mail import Mail
+from contextlib import asynccontextmanager
 
-from config import config, BASE_DIR
-from .db import DbConfig
+from fastapi import FastAPI
+from fastapi.middleware.cors import CORSMiddleware
 
-db = DbConfig()
-jwt = JWTManager()
-mail = Mail()
+from config import BASE_DIR, settings
+
 
 BASE_DIR = BASE_DIR
 
 
-def create_app(config_name):
-    """Application factory for the API."""
-    print("config_name = ", config_name)
-    #  Initialize application.
-    app = Flask(__name__)
-    app.config.from_object(config[config_name])
-    config[config_name].init_app(app)
+@asynccontextmanager
+async def lifespan(app: FastAPI):
+    # Startup: create tables if they don't exist
+    from .db import Base, engine
+    Base.metadata.create_all(bind=engine)
+    yield
+    # Shutdown
 
-    # Set up the mailing service.
-    mail.init_app(app)
 
-    # Set up the database.
-    db.init_app(app)
+def create_app() -> FastAPI:
+    """Application factory for the FastAPI app."""
 
-    # Configure JSON Web Tokens
-    jwt.init_app(app)
+    app = FastAPI(title="Corpus Christi API", lifespan=lifespan)
 
-    # Attached CC modules
-    from .attributes import attributes as attributes_blueprint
-    app.register_blueprint(attributes_blueprint,
-                           url_prefix='/api/v1/attributes')
+    # CORS
+    app.add_middleware(
+        CORSMiddleware,
+        allow_origins=["*"],
+        allow_credentials=True,
+        allow_methods=["*"],
+        allow_headers=["*"],
+    )
 
-    from .auth import auth as auth_blueprint
-    app.register_blueprint(auth_blueprint, url_prefix='/api/v1/auth')
+    # Import and include all routers
+    from .etc.api import router as etc_router
+    app.include_router(etc_router)
 
-    from .etc import etc as etc_blueprint
-    app.register_blueprint(etc_blueprint, url_prefix='/')
+    from .auth.api import router as auth_router
+    app.include_router(auth_router, prefix="/api/v1/auth", tags=["auth"])
 
-    from .events import events as events_blueprint
-    app.register_blueprint(events_blueprint, url_prefix='/api/v1/events')
+    from .attributes.api import router as attributes_router
+    app.include_router(attributes_router, prefix="/api/v1/attributes", tags=["attributes"])
 
-    from .assets import assets as assets_blueprint
-    app.register_blueprint(assets_blueprint, url_prefix='/api/v1/assets')
+    from .events.api import router as events_router
+    app.include_router(events_router, prefix="/api/v1/events", tags=["events"])
 
-    from .teams import teams as teams_blueprint
-    app.register_blueprint(teams_blueprint, url_prefix='/api/v1/teams')
+    from .assets.api import router as assets_router
+    app.include_router(assets_router, prefix="/api/v1/assets", tags=["assets"])
 
-    from .emails import emails as emails_blueprint
-    app.register_blueprint(emails_blueprint, url_prefix='/api/v1/emails')
+    from .teams.api import router as teams_router
+    app.include_router(teams_router, prefix="/api/v1/teams", tags=["teams"])
 
-    from .groups import groups as groups_blueprint
-    app.register_blueprint(groups_blueprint, url_prefix='/api/v1/groups')
+    from .emails.api import router as emails_router
+    app.include_router(emails_router, prefix="/api/v1/emails", tags=["emails"])
 
-    from .courses import courses as courses_blueprint
-    app.register_blueprint(courses_blueprint, url_prefix='/api/v1/courses')
+    from .groups.api import router as groups_router
+    app.include_router(groups_router, prefix="/api/v1/groups", tags=["groups"])
 
-    from .i18n import i18n as i18n_blueprint
-    app.register_blueprint(i18n_blueprint, url_prefix='/api/v1/i18n')
+    from .courses.api import router as courses_router
+    app.include_router(courses_router, prefix="/api/v1/courses", tags=["courses"])
 
-    from .people import people as people_blueprint
-    app.register_blueprint(people_blueprint, url_prefix='/api/v1/people')
+    from .i18n.api import router as i18n_router
+    app.include_router(i18n_router, prefix="/api/v1/i18n", tags=["i18n"])
 
-    from .places import places as places_blueprint
-    app.register_blueprint(places_blueprint, url_prefix='/api/v1/places')
+    from .people.api import router as people_router
+    app.include_router(people_router, prefix="/api/v1/people", tags=["people"])
 
-    from .images import images as images_blueprint
-    app.register_blueprint(images_blueprint, url_prefix='/api/v1/images')
+    from .places.api import router as places_router
+    app.include_router(places_router, prefix="/api/v1/places", tags=["places"])
+
+    from .images.api import router as images_router
+    app.include_router(images_router, prefix="/api/v1/images", tags=["images"])
 
     return app
