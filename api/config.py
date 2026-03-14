@@ -6,7 +6,8 @@ BASE_DIR = os.path.abspath(os.path.dirname(__file__))
 
 
 class Settings(BaseSettings):
-    # Database
+    # Database — set DATABASE_URL directly to override all PSQL_* vars
+    DATABASE_URL: Optional[str] = None
     PSQL_USER: str = "postgres"
     PSQL_PASS: str = "postgres"
     PSQL_HOST: str = "localhost"
@@ -28,6 +29,8 @@ class Settings(BaseSettings):
 
     @property
     def database_url(self) -> str:
+        if self.DATABASE_URL:
+            return self.DATABASE_URL
         if self.PSQL_DB:
             db_name = self.PSQL_DB
         elif self.CC_ENV == "test":
