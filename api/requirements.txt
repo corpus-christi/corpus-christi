@@ -30,7 +30,7 @@ hstspreload==2020.12.22
 httpcore==0.9.1
 httpx==0.13.3
 hyperframe==5.2.0
-idna==2.10
+idna==3.15
 iniconfig==1.1.1
 ipython==7.19.0
 ipython-genutils==0.2.0
